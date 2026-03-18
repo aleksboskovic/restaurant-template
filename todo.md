@@ -44,3 +44,4 @@
 - [x] Mobiles Dropdown-Menü unsichtbar hinter HeroSection (z-index Fix)
 - [x] Stripe-Kartenzahlung auf Mobil und Desktop reparieren (Manus Sandbox-Keys korrekt konfiguriert)
 - [x] Öffnungszeiten verifiziert: Mi–Fr 11–14 & 17–22, Sa–So 13–22, Di 17–22, Mo geschlossen
+- [x] Hero-Text auf Mobil unsichtbar behoben: mobiles Menü hat jetzt max-height + dunklen Hintergrund bei transparent-Theme

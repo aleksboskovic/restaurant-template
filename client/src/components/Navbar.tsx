@@ -270,9 +270,10 @@ export default function Navbar() {
       {/* Mobile Menu - fixed outside header, overflow-hidden fix */}
       {mobileOpen && (
         <div
-          className="fixed left-0 right-0 md:hidden border-t border-[#1a3a32]/10 px-6 py-6 z-[49]"
+          className="fixed left-0 right-0 md:hidden border-t border-[#1a3a32]/10 px-6 py-6 z-[49] overflow-y-auto"
           style={{
             top: '67px',
+            maxHeight: 'calc(100vh - 67px)',
             ...(isTextile ? {
               backgroundImage: `url('${TEXTILE_BG}')`,
               backgroundSize: 'cover',
@@ -281,7 +282,7 @@ export default function Navbar() {
               backgroundImage: `url('${MANUSCRIPT_BG}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-            } : isDark ? {
+            } : isDark || isTransparent ? {
               backgroundColor: '#1a3a32',
             } : {
               backgroundColor: '#fdfbf7',

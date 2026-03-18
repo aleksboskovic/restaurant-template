@@ -32,7 +32,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#1a3a32' }}>
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
