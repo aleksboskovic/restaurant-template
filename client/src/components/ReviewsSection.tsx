@@ -2,7 +2,7 @@ import { useLang } from '@/contexts/LanguageContext';
 import { Star, ExternalLink } from 'lucide-react';
 
 const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?q=HABESHA+%C3%84THIOPISCHE+RESTAURANT+Cafe+%26+Bar+Rezensionen';
-const TRIPADVISOR_URL = 'https://www.tripadvisor.com/Restaurant_Review-g190441-d10071423-Reviews-Habesha-Salzburg_State_of_Salzburg.html';
+const TRIPADVISOR_URL = 'https://www.tripadvisor.com/Restaurant_Review-g190441-d28646928-Reviews-Habesha-Salzburg_Austrian_Alps.html';
 
 const FLAG_COLORS = ['#078930', '#FCDD09', '#DA121A'];
 
