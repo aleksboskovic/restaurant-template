@@ -41,3 +41,4 @@
 - [x] Stripe-Fehler beheben: useStripe außerhalb Elements-Provider
 - [x] Hero-Banner mit Countdown aus Sanity specialEvent einbauen
 - [x] Klick auf Banner öffnet Event-Detailseite
+- [x] Mobiles Dropdown-Menü unsichtbar hinter HeroSection (z-index Fix)

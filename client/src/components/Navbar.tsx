@@ -154,6 +154,7 @@ export default function Navbar() {
     : 'bg-[#1a3a32] text-white hover:bg-[#d4af37] hover:text-[#1a3a32]';
 
   return (
+    <>
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={headerStyle}
@@ -264,22 +265,27 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+    </header>
+
+      {/* Mobile Menu - fixed außerhalb des Headers, damit overflow-hidden der HeroSection es nicht abschneidet */}
       {mobileOpen && (
         <div
-          className="relative z-10 md:hidden border-t border-[#1a3a32]/10 px-6 py-6"
-          style={isTextile ? {
-            backgroundImage: `url('${TEXTILE_BG}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          } : isManuscript ? {
-            backgroundImage: `url('${MANUSCRIPT_BG}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          } : isDark ? {
-            backgroundColor: '#1a3a32',
-          } : {
-            backgroundColor: '#fdfbf7',
+          className="fixed left-0 right-0 md:hidden border-t border-[#1a3a32]/10 px-6 py-6 z-[49]"
+          style={{
+            top: '67px',
+            ...(isTextile ? {
+              backgroundImage: `url('${TEXTILE_BG}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : isManuscript ? {
+              backgroundImage: `url('${MANUSCRIPT_BG}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : isDark ? {
+              backgroundColor: '#1a3a32',
+            } : {
+              backgroundColor: '#fdfbf7',
+            })
           }}
         >
           {(isTextile || isManuscript) && (
@@ -339,6 +345,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
