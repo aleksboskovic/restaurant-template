@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import Stripe from "stripe";
 import {
   createOrder,
   getActiveOrders,
@@ -12,6 +13,10 @@ import {
   getOrderHistory,
   getDayStats,
 } from "./sanity";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2026-02-25.clover',
+});
 
 const orderItemSchema = z.object({
   dishName: z.string(),
@@ -32,6 +37,27 @@ export const appRouter = router({
 
   // ─── Orders ────────────────────────────────────────────────────────────────
   orders: router({
+    /** Create a Stripe PaymentIntent for card payments */
+    createPaymentIntent: publicProcedure
+      .input(z.object({
+        amount: z.number().positive(), // in euros
+        customerName: z.string().optional(),
+        customerEmail: z.string().email().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const amountCents = Math.round(input.amount * 100);
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amountCents,
+          currency: 'eur',
+          automatic_payment_methods: { enabled: true },
+          metadata: {
+            customerName: input.customerName || '',
+            customerEmail: input.customerEmail || '',
+          },
+        });
+        return { clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id };
+      }),
+
     /** Create a new order and save it to Sanity */
     create: publicProcedure
       .input(z.object({
@@ -49,7 +75,6 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         const orderId = await createOrder(input);
-        // Generate a human-readable order number
         const orderNum = `HAB-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
         return { success: true, orderId, orderNum };
       }),

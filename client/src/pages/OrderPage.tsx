@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import MenuSection from '@/components/MenuSection';
 import { getItemName } from '@/lib/menuData';
 import { menuItems } from '@/lib/menuData';
+import { trpc } from '@/lib/trpc';
 import {
   ShoppingCart, Truck, CreditCard, CheckCircle, Clock, Calendar,
   ChevronRight, ChevronLeft, Minus, Plus, X, AlertCircle
@@ -316,18 +317,102 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
   const [agbError, setAgbError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAgb, setShowAgb] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const grandTotal = total + DELIVERY_FEE;
+  const createOrder = trpc.orders.create.useMutation();
+  const createPaymentIntent = trpc.orders.createPaymentIntent.useMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agb) { setAgbError('Bitte akzeptieren Sie die AGB.'); return; }
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
-    clearCart();
-    const orderNum = `#HAB-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
-    onSuccess(orderNum);
-    setLoading(false);
+    setSubmitError('');
+
+    const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
+    const customerEmail = deliveryData.email || 'keine@email.at';
+    const deliveryAddress = deliveryData.street
+      ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
+      : undefined;
+    const deliveryTime = deliveryData.deliveryType === 'asap'
+      ? 'So schnell wie möglich (~45–60 Min.)'
+      : `${deliveryData.scheduleDate || ''} um ${deliveryData.scheduleTime || ''} Uhr`;
+    const orderItems = items.map(item => ({
+      dishName: item.name,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    try {
+      let stripePaymentIntentId: string | undefined;
+
+      // Kreditkartenzahlung: echten Stripe PaymentIntent erstellen und bestätigen
+      if (payMethod === 'card') {
+        if (!stripe || !elements) {
+          setSubmitError('Stripe ist nicht geladen. Bitte Seite neu laden.');
+          setLoading(false);
+          return;
+        }
+        const cardElement = elements.getElement(CardElement);
+        if (!cardElement) {
+          setSubmitError('Kartenelement nicht gefunden.');
+          setLoading(false);
+          return;
+        }
+
+        // PaymentIntent auf dem Server erstellen
+        const { clientSecret, paymentIntentId } = await createPaymentIntent.mutateAsync({
+          amount: grandTotal,
+          customerName,
+          customerEmail,
+        });
+
+        if (!clientSecret) {
+          setSubmitError('Zahlung konnte nicht initiiert werden.');
+          setLoading(false);
+          return;
+        }
+
+        // Zahlung mit Stripe bestätigen
+        const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { name: customerName, email: customerEmail },
+          },
+        });
+
+        if (stripeError) {
+          setSubmitError(stripeError.message || 'Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+          setLoading(false);
+          return;
+        }
+
+        stripePaymentIntentId = paymentIntentId;
+      }
+
+      // Bestellung in Sanity speichern (nach erfolgreicher Zahlung oder bei Barzahlung)
+      const { orderNum } = await createOrder.mutateAsync({
+        customerName,
+        phone: deliveryData.phone || '–',
+        email: customerEmail,
+        items: orderItems,
+        totalPrice: grandTotal,
+        orderType: 'delivery',
+        deliveryAddress,
+        deliveryTime,
+        paymentMethod: payMethod,
+        notes: deliveryData.notes || undefined,
+        stripePaymentIntentId,
+      });
+
+      clearCart();
+      onSuccess(`#${orderNum}`);
+    } catch (err) {
+      console.error('Bestellfehler:', err);
+      setSubmitError('Bestellung konnte nicht gespeichert werden. Bitte versuche es erneut.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -402,6 +487,13 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
         </label>
         {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
       </div>
+
+      {submitError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
+          <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
+          <p className="text-red-600 text-sm">{submitError}</p>
+        </div>
+      )}
 
       <div className="flex gap-3">
         <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">

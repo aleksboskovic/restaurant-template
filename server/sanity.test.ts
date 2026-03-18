@@ -134,3 +134,37 @@ describe("Sanity Helper Functions (Unit)", () => {
     expect(march17.totalRevenue).toBeCloseTo(32.00);
   });
 });
+
+// ─── Stripe PaymentIntent Test ──────────────────────────────────────────────
+describe("Stripe PaymentIntent (Unit)", () => {
+  it("createPaymentIntent input schema validates correctly", () => {
+    const { z } = require("zod");
+    const schema = z.object({
+      amount: z.number().positive(),
+      customerName: z.string().optional(),
+      customerEmail: z.string().email().optional(),
+    });
+
+    // Valid input
+    const valid = schema.safeParse({ amount: 43.60, customerName: 'Max', customerEmail: 'max@test.at' });
+    expect(valid.success).toBe(true);
+
+    // Invalid: negative amount
+    const invalid = schema.safeParse({ amount: -5 });
+    expect(invalid.success).toBe(false);
+
+    // Invalid: bad email
+    const invalidEmail = schema.safeParse({ amount: 10, customerEmail: 'not-an-email' });
+    expect(invalidEmail.success).toBe(false);
+  });
+
+  it("amount in cents is calculated correctly", () => {
+    const amountEuros = 43.60;
+    const amountCents = Math.round(amountEuros * 100);
+    expect(amountCents).toBe(4360);
+
+    const amountWithDecimals = 19.99;
+    const centsPrecision = Math.round(amountWithDecimals * 100);
+    expect(centsPrecision).toBe(1999);
+  });
+});

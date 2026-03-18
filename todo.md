@@ -33,3 +33,7 @@
 - [x] Äthiopisches Textilmuster als Navbar-Hintergrund (scroll-aktiviert, Flaggenbalken sichtbar)
 - [x] Textilmuster als Hintergrund der CultureSection
 - [x] Navbar-Hintergrund passt sich dynamisch der aktuellen Sektion an
+- [x] Testbestellungen aus Sanity im Live-Dashboard anzeigen (EmailJS nicht erforderlich)
+- [x] Bestellabsendung in OrderPage mit Sanity-Speicherung verbinden (tRPC createOrder aufrufen)
+- [x] Stripe-Zahlungsfluss korrekt implementieren (PaymentIntent Server-seitig erstellen)
+- [x] Stripe-Zahlung und Sanity-Bestellspeicherung synchronisieren
