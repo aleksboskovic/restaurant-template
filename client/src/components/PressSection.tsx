@@ -12,7 +12,11 @@ export default function PressSection() {
           {/* Text */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="h-px w-12 bg-[#d4af37]" />
+              <div className="flex gap-0.5">
+                <div className="h-px w-5" style={{ background: '#078930' }} />
+                <div className="h-px w-5" style={{ background: '#FCDD09' }} />
+                <div className="h-px w-5" style={{ background: '#DA121A' }} />
+              </div>
               <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">
                 {t.press_label}
               </span>

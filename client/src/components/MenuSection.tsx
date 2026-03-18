@@ -111,10 +111,18 @@ export default function MenuSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-px w-16 bg-[#d4af37]" />
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex gap-0.5">
+              <div className="h-px w-6" style={{ background: '#078930' }} />
+              <div className="h-px w-6" style={{ background: '#FCDD09' }} />
+              <div className="h-px w-6" style={{ background: '#DA121A' }} />
+            </div>
             <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">Speisekarte</span>
-            <div className="h-px w-16 bg-[#d4af37]" />
+            <div className="flex gap-0.5">
+              <div className="h-px w-6" style={{ background: '#DA121A' }} />
+              <div className="h-px w-6" style={{ background: '#FCDD09' }} />
+              <div className="h-px w-6" style={{ background: '#078930' }} />
+            </div>
           </div>
           <h2 className={`font-serif text-4xl md:text-5xl font-bold text-[#1a3a32] mb-4 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
             {t.menu_title}

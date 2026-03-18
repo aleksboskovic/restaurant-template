@@ -251,7 +251,7 @@ const translations: Record<Lang, Translations> = {
     contact_address_note: 'Unweit vom Hauptbahnhof & dem Mirabellgarten.',
     contact_phone_label: 'Reservierung & Kontakt',
     contact_hours_label: 'Öffnungszeiten',
-    contact_hours_value: 'Täglich: 11:00 – 22:00 Uhr',
+    contact_hours_value: 'Mi–Fr: 11:00–14:00, 17:00–22:00 | Sa–So: 13:00–22:00 | Mo: Geschlossen | Di: 17:00–22:00',
 
     footer_imprint: 'Impressum',
     footer_privacy: 'Datenschutz',
@@ -407,7 +407,7 @@ const translations: Record<Lang, Translations> = {
     contact_address_note: 'Not far from the central station & Mirabell Gardens.',
     contact_phone_label: 'Reservation & Contact',
     contact_hours_label: 'Opening Hours',
-    contact_hours_value: 'Daily: 11:00 AM – 10:00 PM',
+    contact_hours_value: 'Wed–Fri: 11:00–14:00, 17:00–22:00 | Sat–Sun: 13:00–22:00 | Mon: Closed | Tue: 17:00–22:00',
 
     footer_imprint: 'Imprint',
     footer_privacy: 'Privacy',
@@ -563,7 +563,7 @@ const translations: Record<Lang, Translations> = {
     contact_address_note: 'ከዋናው ጣቢያ እና ሚራቤልጋርተን ቅርብ።',
     contact_phone_label: 'ስልክ ቁጥር',
     contact_hours_label: 'የስራ ሰዓት',
-    contact_hours_value: 'በየቀኑ: ከ 11:00 እስከ 22:00',
+    contact_hours_value: 'ረ–ዓ: 11:00–14:00, 17:00–22:00 | ቅ–እ: 13:00–22:00 | ሰ: ዝጉ | ማ: 17:00–22:00',
 
     footer_imprint: 'ማስታወሻ',
     footer_privacy: 'ግላዊነት',
@@ -651,11 +651,18 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
+function detectInitialLang(): Lang {
+  const saved = localStorage.getItem('habesha-lang');
+  if (saved === 'de' || saved === 'en' || saved === 'am') return saved;
+  // Detect device language
+  const deviceLang = navigator.language?.toLowerCase() || '';
+  if (deviceLang.startsWith('am') || deviceLang.startsWith('ti')) return 'am';
+  if (deviceLang.startsWith('en')) return 'en';
+  return 'de'; // Default: German
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() => {
-    const saved = localStorage.getItem('habesha-lang');
-    return (saved as Lang) || 'de';
-  });
+  const [lang, setLangState] = useState<Lang>(() => detectInitialLang());
 
   const setLang = (newLang: Lang) => {
     setLangState(newLang);

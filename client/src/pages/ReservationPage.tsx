@@ -96,7 +96,13 @@ export default function ReservationPage() {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg border-l-4 border-[#d4af37] p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-6 relative overflow-hidden">
+            {/* Ethiopian flag left border */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 flex flex-col">
+              <div className="flex-1" style={{ background: '#078930' }} />
+              <div className="flex-1" style={{ background: '#FCDD09' }} />
+              <div className="flex-1" style={{ background: '#DA121A' }} />
+            </div>
             {/* Name + Phone */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div>

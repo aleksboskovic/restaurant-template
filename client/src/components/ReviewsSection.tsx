@@ -1,5 +1,10 @@
 import { useLang } from '@/contexts/LanguageContext';
-import { Star } from 'lucide-react';
+import { Star, ExternalLink } from 'lucide-react';
+
+const GOOGLE_REVIEWS_URL = 'https://www.google.com/search?q=HABESHA+%C3%84THIOPISCHE+RESTAURANT+Cafe+%26+Bar+Rezensionen';
+const TRIPADVISOR_URL = 'https://www.tripadvisor.com/Restaurant_Review-g190441-d10071423-Reviews-Habesha-Salzburg_State_of_Salzburg.html';
+
+const FLAG_COLORS = ['#078930', '#FCDD09', '#DA121A'];
 
 const reviews = [
   {
@@ -34,7 +39,11 @@ const reviews = [
 export default function ReviewsSection() {
   const { t, lang } = useLang();
 
-  const reviewTexts = [t.review1_text, t.review2_text, reviews[2][`text${lang === 'de' ? 'De' : lang === 'en' ? 'En' : 'Am'}` as keyof typeof reviews[2]] as string || t.review1_text];
+  const reviewTexts = [
+    t.review1_text,
+    t.review2_text,
+    reviews[2][`text${lang === 'de' ? 'De' : lang === 'en' ? 'En' : 'Am'}` as keyof typeof reviews[2]] as string || t.review1_text,
+  ];
 
   return (
     <section id="reviews" className="py-24 bg-[#fdfbf7]">
@@ -42,9 +51,17 @@ export default function ReviewsSection() {
         {/* Header */}
         <div className="text-center mb-14">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-px w-16 bg-[#d4af37]" />
+            <div className="flex gap-0.5">
+              <div className="h-px w-8" style={{ background: FLAG_COLORS[0] }} />
+              <div className="h-px w-8" style={{ background: FLAG_COLORS[1] }} />
+              <div className="h-px w-8" style={{ background: FLAG_COLORS[2] }} />
+            </div>
             <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">Bewertungen</span>
-            <div className="h-px w-16 bg-[#d4af37]" />
+            <div className="flex gap-0.5">
+              <div className="h-px w-8" style={{ background: FLAG_COLORS[2] }} />
+              <div className="h-px w-8" style={{ background: FLAG_COLORS[1] }} />
+              <div className="h-px w-8" style={{ background: FLAG_COLORS[0] }} />
+            </div>
           </div>
           <h2 className={`font-serif text-4xl md:text-5xl font-bold text-[#1a3a32] mb-3 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
             {t.reviews_title}
@@ -54,28 +71,50 @@ export default function ReviewsSection() {
           </p>
         </div>
 
-        {/* Rating Summary */}
+        {/* Rating Summary – clickable */}
         <div className="flex justify-center mb-12">
           <div className="bg-[#1a3a32] text-white rounded-2xl px-8 py-5 flex items-center gap-6">
-            <div className="text-center">
-              <div className="font-serif text-5xl font-bold text-[#d4af37]">4.9</div>
+            {/* Google */}
+            <a
+              href={GOOGLE_REVIEWS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center group cursor-pointer"
+              title="Google Bewertungen öffnen"
+            >
+              <div className="font-serif text-5xl font-bold text-[#d4af37] group-hover:text-white transition-colors duration-200">4.9</div>
               <div className="flex gap-0.5 mt-1 justify-center">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={14} className="fill-[#d4af37] text-[#d4af37]" />
                 ))}
               </div>
-              <div className="text-white/60 text-xs mt-1">Google Bewertung</div>
-            </div>
+              <div className="flex items-center justify-center gap-1 text-white/60 text-xs mt-1 group-hover:text-white/90 transition-colors">
+                <span>Google</span>
+                <ExternalLink size={10} />
+              </div>
+            </a>
+
             <div className="h-12 w-px bg-white/20" />
-            <div className="text-center">
-              <div className="font-serif text-5xl font-bold text-[#d4af37]">4.8</div>
+
+            {/* TripAdvisor */}
+            <a
+              href={TRIPADVISOR_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center group cursor-pointer"
+              title="TripAdvisor Bewertungen öffnen"
+            >
+              <div className="font-serif text-5xl font-bold text-[#d4af37] group-hover:text-white transition-colors duration-200">4.8</div>
               <div className="flex gap-0.5 mt-1 justify-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} className={i < 5 ? 'fill-[#d4af37] text-[#d4af37]' : 'text-white/30'} />
+                  <Star key={i} size={14} className="fill-[#d4af37] text-[#d4af37]" />
                 ))}
               </div>
-              <div className="text-white/60 text-xs mt-1">TripAdvisor</div>
-            </div>
+              <div className="flex items-center justify-center gap-1 text-white/60 text-xs mt-1 group-hover:text-white/90 transition-colors">
+                <span>TripAdvisor</span>
+                <ExternalLink size={10} />
+              </div>
+            </a>
           </div>
         </div>
 
@@ -84,10 +123,17 @@ export default function ReviewsSection() {
           {reviews.map((review, idx) => (
             <div
               key={review.key}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-[#1a3a32]/8 hover:shadow-md hover:border-[#d4af37]/30 transition-all duration-300"
+              className="bg-white rounded-2xl p-6 shadow-sm border border-[#1a3a32]/8 hover:shadow-md hover:border-[#d4af37]/30 transition-all duration-300 relative overflow-hidden"
             >
+              {/* Top flag accent */}
+              <div className="absolute top-0 left-0 right-0 h-[3px] flex">
+                <div className="flex-1" style={{ background: FLAG_COLORS[idx % 3] }} />
+                <div className="flex-1" style={{ background: FLAG_COLORS[(idx + 1) % 3] }} />
+                <div className="flex-1" style={{ background: FLAG_COLORS[(idx + 2) % 3] }} />
+              </div>
+
               {/* Stars */}
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-1 mb-4 mt-2">
                 {[...Array(review.stars)].map((_, i) => (
                   <Star key={i} size={14} className="fill-[#d4af37] text-[#d4af37]" />
                 ))}

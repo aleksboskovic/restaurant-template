@@ -1,6 +1,7 @@
 import { useLang } from '@/contexts/LanguageContext';
-import { MapPin, Phone, Clock, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Clock, CalendarCheck } from 'lucide-react';
 import { MapView } from '@/components/Map';
+import { Link } from 'wouter';
 
 export default function ContactSection() {
   const { t, lang } = useLang();
@@ -11,9 +12,18 @@ export default function ContactSection() {
         {/* Header */}
         <div className="text-center mb-14">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-px w-16 bg-[#d4af37]" />
+            {/* Ethiopian flag divider */}
+            <div className="flex gap-0.5">
+              <div className="h-px w-8 bg-[#078930]" />
+              <div className="h-px w-8 bg-[#FCDD09]" />
+              <div className="h-px w-8 bg-[#DA121A]" />
+            </div>
             <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">Kontakt</span>
-            <div className="h-px w-16 bg-[#d4af37]" />
+            <div className="flex gap-0.5">
+              <div className="h-px w-8 bg-[#DA121A]" />
+              <div className="h-px w-8 bg-[#FCDD09]" />
+              <div className="h-px w-8 bg-[#078930]" />
+            </div>
           </div>
           <h2 className={`font-serif text-4xl md:text-5xl font-bold text-white ${lang === 'am' ? 'font-ethiopic' : ''}`}>
             {t.contact_title}
@@ -61,26 +71,35 @@ export default function ContactSection() {
                 <Clock size={20} className="text-[#d4af37]" />
               </div>
               <div>
-                <p className={`text-[#d4af37] text-xs tracking-widest uppercase font-medium mb-1 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+                <p className={`text-[#d4af37] text-xs tracking-widest uppercase font-medium mb-3 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
                   {t.contact_hours_label}
                 </p>
-                <p className={`text-white font-semibold ${lang === 'am' ? 'font-ethiopic' : ''}`}>
-                  {t.contact_hours_value}
-                </p>
+                <div className="space-y-1 text-sm">
+                  {[
+                    { day: lang === 'de' ? 'Mittwoch – Freitag' : lang === 'en' ? 'Wednesday – Friday' : 'ረቡዕ – ዓርብ', hours: '11:00–14:00, 17:00–22:00' },
+                    { day: lang === 'de' ? 'Samstag – Sonntag' : lang === 'en' ? 'Saturday – Sunday' : 'ቅዳሜ – እሑድ', hours: '13:00–22:00' },
+                    { day: lang === 'de' ? 'Dienstag' : lang === 'en' ? 'Tuesday' : 'ማክሰኞ', hours: '17:00–22:00' },
+                    { day: lang === 'de' ? 'Montag' : lang === 'en' ? 'Monday' : 'ሰኞ', hours: lang === 'de' ? 'Geschlossen' : lang === 'en' ? 'Closed' : 'ዝጉ', closed: true },
+                  ].map(({ day, hours, closed }) => (
+                    <div key={day} className="flex items-baseline gap-3">
+                      <span className={`text-white/70 min-w-[140px] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{day}</span>
+                      <span className={`font-semibold ${closed ? 'text-[#DA121A]' : 'text-white'} ${lang === 'am' ? 'font-ethiopic' : ''}`}>{hours}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* External links */}
+            {/* Action buttons */}
             <div className="flex flex-wrap gap-3 pt-4">
-              <a
-                href="https://www.quandoo.at/place/habesha-athiopisches-restaurant-salzburg-77777"
-                target="_blank"
-                rel="noopener noreferrer"
+              {/* Tisch Reservieren – replaces Quandoo */}
+              <Link
+                href="/reservierung"
                 className="flex items-center gap-2 bg-[#d4af37] text-[#1a3a32] text-xs font-bold px-5 py-2.5 rounded-full hover:bg-[#d4af37]/90 transition-colors tracking-wide uppercase"
               >
-                <ExternalLink size={14} />
-                Quandoo Reservierung
-              </a>
+                <CalendarCheck size={14} />
+                {t.nav_reserve}
+              </Link>
               <a
                 href="tel:+436607324766"
                 className="flex items-center gap-2 border border-white/30 text-white text-xs font-bold px-5 py-2.5 rounded-full hover:bg-white/10 transition-colors tracking-wide uppercase"

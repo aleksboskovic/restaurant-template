@@ -75,11 +75,15 @@ export default function HeroSection() {
           {t.hero_title_sub}
         </p>
 
-        {/* Decorative line */}
-        <div className="flex items-center justify-center gap-4 mb-10">
-          <div className="h-px w-16 bg-[#d4af37]" />
-          <div className="w-2 h-2 rounded-full bg-[#d4af37]" />
-          <div className="h-px w-16 bg-[#d4af37]" />
+        {/* Ethiopian flag decorative divider */}
+        <div className="flex items-center justify-center gap-2 mb-10">
+          <div className="h-[2px] w-12 rounded-full" style={{ background: '#078930' }} />
+          <div className="h-[2px] w-12 rounded-full" style={{ background: '#FCDD09' }} />
+          <div className="h-[2px] w-12 rounded-full" style={{ background: '#DA121A' }} />
+          <div className="w-2 h-2 rounded-full border-2 border-white/60 mx-1" />
+          <div className="h-[2px] w-12 rounded-full" style={{ background: '#DA121A' }} />
+          <div className="h-[2px] w-12 rounded-full" style={{ background: '#FCDD09' }} />
+          <div className="h-[2px] w-12 rounded-full" style={{ background: '#078930' }} />
         </div>
 
         {/* CTAs */}

@@ -79,7 +79,11 @@ export default function Footer() {
                     0660 7324766
                   </a>
                 </p>
-                <p className={`${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.contact_hours_value}</p>
+                <p className={`${lang === 'am' ? 'font-ethiopic' : ''} text-xs leading-relaxed`}>
+                  Mi–Fr: 11–14 & 17–22 Uhr<br />
+                  Sa–So: 13–22 Uhr<br />
+                  Di: 17–22 Uhr | Mo: Geschlossen
+                </p>
               </div>
             </div>
           </div>
