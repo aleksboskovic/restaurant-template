@@ -42,3 +42,5 @@
 - [x] Hero-Banner mit Countdown aus Sanity specialEvent einbauen
 - [x] Klick auf Banner öffnet Event-Detailseite
 - [x] Mobiles Dropdown-Menü unsichtbar hinter HeroSection (z-index Fix)
+- [x] Stripe-Kartenzahlung auf Mobil und Desktop reparieren (Manus Sandbox-Keys korrekt konfiguriert)
+- [x] Öffnungszeiten verifiziert: Mi–Fr 11–14 & 17–22, Sa–So 13–22, Di 17–22, Mo geschlossen

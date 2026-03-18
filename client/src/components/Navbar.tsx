@@ -267,7 +267,7 @@ export default function Navbar() {
 
     </header>
 
-      {/* Mobile Menu - fixed außerhalb des Headers, damit overflow-hidden der HeroSection es nicht abschneidet */}
+      {/* Mobile Menu - fixed outside header, overflow-hidden fix */}
       {mobileOpen && (
         <div
           className="fixed left-0 right-0 md:hidden border-t border-[#1a3a32]/10 px-6 py-6 z-[49]"

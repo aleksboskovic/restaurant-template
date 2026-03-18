@@ -14,7 +14,7 @@ import {
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe('pk_test_51TCMQe2UCFWW91xfuJ9C22sdQAqXoSf6CozSFkX1B29aqLYFp3gkTaJYvlTX7udAgkm0gUg7tMv8wMAbRmgGG21l00hDKZ4bn2');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
 const DELIVERY_FEE = 3.50;
 const MIN_ORDER = 12.00;
