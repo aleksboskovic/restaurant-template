@@ -37,3 +37,4 @@
 - [x] Bestellabsendung in OrderPage mit Sanity-Speicherung verbinden (tRPC createOrder aufrufen)
 - [x] Stripe-Zahlungsfluss korrekt implementieren (PaymentIntent Server-seitig erstellen)
 - [x] Stripe-Zahlung und Sanity-Bestellspeicherung synchronisieren
+- [x] CardElement durch Stripe Payment Element ersetzen (Google Pay + Apple Pay)

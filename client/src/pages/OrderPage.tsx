@@ -12,7 +12,7 @@ import {
   ChevronRight, ChevronLeft, Minus, Plus, X, AlertCircle
 } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe('pk_test_51TCMQe2UCFWW91xfuJ9C22sdQAqXoSf6CozSFkX1B29aqLYFp3gkTaJYvlTX7udAgkm0gUg7tMv8wMAbRmgGG21l00hDKZ4bn2');
 
@@ -307,21 +307,124 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
 }
 
 // Step 3: Payment
-function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; deliveryData: any; onSuccess: (orderNum: string) => void }) {
+// Wrapper-Komponente: lädt PaymentIntent und gibt clientSecret an Elements weiter
+function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; deliveryData: any; onSuccess: (orderNum: string) => void }) {
+  const { items, total } = useCart();
+  const grandTotal = total + DELIVERY_FEE;
+  const [payMethod, setPayMethod] = useState<'card' | 'cash'>('card');
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+  const [intentLoading, setIntentLoading] = useState(false);
+  const { t, lang } = useLang();
+  const createPaymentIntent = trpc.orders.createPaymentIntent.useMutation();
+
+  const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
+  const customerEmail = deliveryData.email || 'keine@email.at';
+
+  // PaymentIntent laden wenn Kartenzahlung gewählt
+  const loadPaymentIntent = async () => {
+    if (clientSecret) return; // bereits geladen
+    setIntentLoading(true);
+    try {
+      const result = await createPaymentIntent.mutateAsync({
+        amount: grandTotal,
+        customerName,
+        customerEmail,
+      });
+      setClientSecret(result.clientSecret || null);
+      setPaymentIntentId(result.paymentIntentId);
+    } catch (err) {
+      console.error('PaymentIntent Fehler:', err);
+    } finally {
+      setIntentLoading(false);
+    }
+  };
+
+  const handlePayMethodChange = (method: 'card' | 'cash') => {
+    setPayMethod(method);
+    if (method === 'card' && !clientSecret) {
+      loadPaymentIntent();
+    }
+  };
+
+  // PaymentIntent beim ersten Render laden (Karte ist Standard)
+  const [initialized, setInitialized] = useState(false);
+  if (!initialized) {
+    setInitialized(true);
+    loadPaymentIntent();
+  }
+
+  if (payMethod === 'card' && clientSecret) {
+    return (
+      <Elements
+        stripe={stripePromise}
+        options={{
+          clientSecret,
+          appearance: {
+            theme: 'stripe',
+            variables: {
+              colorPrimary: '#1a3a32',
+              colorBackground: '#ffffff',
+              colorText: '#1a3a32',
+              colorDanger: '#df1b41',
+              fontFamily: 'system-ui, sans-serif',
+              borderRadius: '8px',
+            },
+          },
+        }}
+      >
+        <PaymentForm
+          onBack={onBack}
+          deliveryData={deliveryData}
+          onSuccess={onSuccess}
+          payMethod={payMethod}
+          onPayMethodChange={handlePayMethodChange}
+          paymentIntentId={paymentIntentId}
+          grandTotal={grandTotal}
+        />
+      </Elements>
+    );
+  }
+
+  return (
+    <PaymentForm
+      onBack={onBack}
+      deliveryData={deliveryData}
+      onSuccess={onSuccess}
+      payMethod={payMethod}
+      onPayMethodChange={handlePayMethodChange}
+      paymentIntentId={paymentIntentId}
+      grandTotal={grandTotal}
+      loadingIntent={intentLoading}
+    />
+  );
+}
+
+function PaymentForm({
+  onBack, deliveryData, onSuccess, payMethod, onPayMethodChange, paymentIntentId, grandTotal, loadingIntent
+}: {
+  onBack: () => void;
+  deliveryData: any;
+  onSuccess: (orderNum: string) => void;
+  payMethod: 'card' | 'cash';
+  onPayMethodChange: (m: 'card' | 'cash') => void;
+  paymentIntentId: string | null;
+  grandTotal: number;
+  loadingIntent?: boolean;
+}) {
   const { t, lang } = useLang();
   const { items, total, clearCart } = useCart();
   const stripe = useStripe();
   const elements = useElements();
-  const [payMethod, setPayMethod] = useState<'card' | 'cash'>('card');
   const [agb, setAgb] = useState(false);
   const [agbError, setAgbError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAgb, setShowAgb] = useState(false);
   const [submitError, setSubmitError] = useState('');
-
-  const grandTotal = total + DELIVERY_FEE;
   const createOrder = trpc.orders.create.useMutation();
-  const createPaymentIntent = trpc.orders.createPaymentIntent.useMutation();
+
+  const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
+  const customerEmail = deliveryData.email || 'keine@email.at';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -329,8 +432,6 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
     setLoading(true);
     setSubmitError('');
 
-    const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
-    const customerEmail = deliveryData.email || 'keine@email.at';
     const deliveryAddress = deliveryData.street
       ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
       : undefined;
@@ -346,39 +447,22 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
     try {
       let stripePaymentIntentId: string | undefined;
 
-      // Kreditkartenzahlung: echten Stripe PaymentIntent erstellen und bestätigen
       if (payMethod === 'card') {
         if (!stripe || !elements) {
           setSubmitError('Stripe ist nicht geladen. Bitte Seite neu laden.');
           setLoading(false);
           return;
         }
-        const cardElement = elements.getElement(CardElement);
-        if (!cardElement) {
-          setSubmitError('Kartenelement nicht gefunden.');
-          setLoading(false);
-          return;
-        }
 
-        // PaymentIntent auf dem Server erstellen
-        const { clientSecret, paymentIntentId } = await createPaymentIntent.mutateAsync({
-          amount: grandTotal,
-          customerName,
-          customerEmail,
-        });
-
-        if (!clientSecret) {
-          setSubmitError('Zahlung konnte nicht initiiert werden.');
-          setLoading(false);
-          return;
-        }
-
-        // Zahlung mit Stripe bestätigen
-        const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
-          payment_method: {
-            card: cardElement,
-            billing_details: { name: customerName, email: customerEmail },
+        // Payment Element bestätigen
+        const { error: stripeError } = await stripe.confirmPayment({
+          elements,
+          confirmParams: {
+            payment_method_data: {
+              billing_details: { name: customerName, email: customerEmail },
+            },
           },
+          redirect: 'if_required',
         });
 
         if (stripeError) {
@@ -387,10 +471,10 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
           return;
         }
 
-        stripePaymentIntentId = paymentIntentId;
+        stripePaymentIntentId = paymentIntentId || undefined;
       }
 
-      // Bestellung in Sanity speichern (nach erfolgreicher Zahlung oder bei Barzahlung)
+      // Bestellung in Sanity speichern
       const { orderNum } = await createOrder.mutateAsync({
         customerName,
         phone: deliveryData.phone || '–',
@@ -445,7 +529,7 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
         </div>
       </div>
 
-      {/* Payment method */}
+      {/* Payment method selector */}
       <div>
         <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
         <div className="space-y-2">
@@ -454,7 +538,7 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
             { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
           ].map(({ key, label, icon }) => (
             <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === key ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
-              <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => setPayMethod(key)} className="accent-[#1a3a32]" />
+              <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
               <span className="text-lg">{icon}</span>
               <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
             </label>
@@ -462,11 +546,24 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
         </div>
       </div>
 
+      {/* Stripe Payment Element (Karte, Google Pay, Apple Pay) */}
       {payMethod === 'card' && (
         <div>
-          <div className="border border-gray-200 rounded-xl p-4">
-            <CardElement options={{ style: { base: { fontSize: '14px', color: '#1a3a32', '::placeholder': { color: '#9ca3af' } } } }} />
-          </div>
+          {loadingIntent ? (
+            <div className="border border-gray-200 rounded-xl p-6 flex items-center justify-center gap-2 text-[#1a3a32]/50">
+              <span className="w-4 h-4 border-2 border-[#1a3a32]/20 border-t-[#1a3a32] rounded-full animate-spin" />
+              <span className="text-sm">Zahlungsoptionen werden geladen...</span>
+            </div>
+          ) : (
+            <div className="border border-gray-200 rounded-xl p-4">
+              <PaymentElement
+                options={{
+                  layout: 'tabs',
+                  wallets: { googlePay: 'auto', applePay: 'auto' },
+                }}
+              />
+            </div>
+          )}
           <p className={`text-xs text-[#1a3a32]/50 mt-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_secure}</p>
         </div>
       )}
@@ -499,7 +596,7 @@ function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
         <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
           <ChevronLeft size={16} /> {t.order_back}
         </button>
-        <button type="submit" disabled={loading} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
+        <button type="submit" disabled={loading || (payMethod === 'card' && !!loadingIntent)} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
           {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
           {t.order_submit}
         </button>
@@ -604,13 +701,11 @@ export default function OrderPage() {
             />
           )}
           {step === 3 && (
-            <Elements stripe={stripePromise}>
-              <PaymentForm
-                onBack={() => setStep(2)}
-                deliveryData={deliveryData}
-                onSuccess={(num) => setOrderNum(num)}
-              />
-            </Elements>
+            <PaymentStep
+              onBack={() => setStep(2)}
+              deliveryData={deliveryData}
+              onSuccess={(num) => setOrderNum(num)}
+            />
           )}
         </div>
       </div>

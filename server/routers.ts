@@ -49,7 +49,10 @@ export const appRouter = router({
         const paymentIntent = await stripe.paymentIntents.create({
           amount: amountCents,
           currency: 'eur',
-          automatic_payment_methods: { enabled: true },
+          automatic_payment_methods: {
+            enabled: true,
+            allow_redirects: 'never', // Verhindert Weiterleitungen (wichtig für SPA)
+          },
           metadata: {
             customerName: input.customerName || '',
             customerEmail: input.customerEmail || '',
