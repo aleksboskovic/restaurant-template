@@ -8,8 +8,9 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
 import Home from "./pages/Home";
 import ReservationPage from "./pages/ReservationPage";
-import OrderPage from "./pages/OrderPage";
-import NotFound from "./pages/NotFound";
+import OrderPage from './pages/OrderPage';
+import LiveOrders from './pages/LiveOrders';
+import NotFound from './pages/NotFound';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -19,8 +20,8 @@ function ScrollToTop() {
   }, [location]);
   return null;
 }
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <>
       <ScrollToTop />
@@ -28,6 +29,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/reservierung" component={ReservationPage} />
         <Route path="/bestellen" component={OrderPage} />
+        <Route path="/live-orders" component={LiveOrders} />
         <Route component={NotFound} />
       </Switch>
     </>
