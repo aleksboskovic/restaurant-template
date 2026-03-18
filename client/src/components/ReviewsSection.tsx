@@ -45,22 +45,12 @@ export default function ReviewsSection() {
     reviews[2][`text${lang === 'de' ? 'De' : lang === 'en' ? 'En' : 'Am'}` as keyof typeof reviews[2]] as string || t.review1_text,
   ];
 
-  const BG_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
-
   return (
     <section
       id="reviews"
-      className="py-24 relative"
-      style={{
-        backgroundImage: `url(${BG_URL})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
+      className="py-24"
     >
-      {/* Overlay für Lesbarkeit */}
-      <div className="absolute inset-0 bg-[#fdfbf7]/88 backdrop-blur-[1px]" />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-14">
           <div className="flex items-center justify-center gap-4 mb-4">

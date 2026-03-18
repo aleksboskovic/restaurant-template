@@ -107,7 +107,7 @@ export default function MenuSection() {
   const items = getMenuByCategory(activeTab);
 
   return (
-    <section id="menu" className="py-24 bg-[#f5f0e8]">
+    <section id="menu" className="py-24 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">

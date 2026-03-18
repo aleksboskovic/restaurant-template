@@ -21,7 +21,7 @@ export default function FactCard({ factKey, variant = 'light' }: FactCardProps) 
   const isDark = variant === 'dark';
 
   return (
-    <div className={`py-6 px-4 ${isDark ? 'bg-[#1a3a32]' : 'bg-[#f5f0e8]'}`}>
+    <div className={`py-6 px-4 ${isDark ? 'bg-[#1a3a32]' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto">
         <div
           className={`

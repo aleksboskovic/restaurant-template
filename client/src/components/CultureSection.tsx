@@ -40,7 +40,7 @@ export default function CultureSection() {
   ];
 
   return (
-    <section id="culture" ref={sectionRef} className="py-24 bg-[#fdfbf7]">
+    <section id="culture" ref={sectionRef} className="py-24 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 

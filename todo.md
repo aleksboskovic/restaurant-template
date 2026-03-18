@@ -1,0 +1,27 @@
+# HABESHA Restaurant Website – TODO
+
+## Abgeschlossen
+
+- [x] HTML-Website zu React/Vite migriert mit vollständiger Design-Erhaltung
+- [x] 3-Sprachen-Support (DE/EN/AM) mit Flaggen-Dropdown-Selektor
+- [x] Komplettes Menüsystem mit allen Gerichten und Zutaten übersetzt
+- [x] Tischreservierungssystem (/reservierung) mit Datum/Uhrzeit-Auswahl
+- [x] 3-Schritt Online-Bestellsystem (/bestellen) mit Stripe-Integration
+- [x] Äthiopische Flaggenfarben (grün/gelb/rot) im gesamten Design
+- [x] Lieferando und Quandoo-Buttons entfernt
+- [x] Google Maps, Google Reviews und TripAdvisor-Links integriert
+- [x] Kaffeezeremonie-Sektion und FactCard-Komponenten hinzugefügt
+- [x] Scroll-to-Top bei Seitennavigation implementiert
+- [x] Öffnungszeiten-Anzeige aktualisiert
+- [x] Äthiopisches Manuskript-Hintergrundbild in Gästebewertungssektion eingefügt
+- [x] Manuskript-Hintergrund auf alle hellen Sektionen ausgedehnt (CultureSection bis ReviewsSection)
+- [x] Alle Sektionen (Culture, Menu, Coffee, FactCards) auf transparenten Hintergrund umgestellt
+
+## Ausstehend
+
+- [ ] Backend-Implementierung für Bestellverwaltung (Sanity-Schemas: specialEvent, order)
+- [ ] Live-Order-Dashboard (/live-orders) mit Echtzeit-Updates fertigstellen
+- [ ] Dynamische Werbebanner aus Sanity implementieren
+- [ ] EmailJS einrichten wenn Domain und E-Mail des Kunden bereit sind
+- [ ] Liefergebühr und Mindestbestellwert definieren und implementieren (aktuell Platzhalter)
+- [ ] Stripe von Test-Modus auf Live-Modus umschalten wenn Kunde bereit ist
