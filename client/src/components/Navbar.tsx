@@ -4,6 +4,23 @@ import { useLang, Lang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Menu, X, ShoppingCart, ChevronDown } from 'lucide-react';
 
+// CDN URLs für die Hintergrundbilder
+const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
+const MANUSCRIPT_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
+
+// Sektions-Konfiguration: welche Sektion → welcher Navbar-Stil
+type NavTheme = 'transparent' | 'textile' | 'manuscript' | 'dark' | 'light';
+
+const SECTION_THEMES: { id: string; theme: NavTheme }[] = [
+  { id: 'hero',     theme: 'transparent' }, // Hero: komplett transparent
+  { id: 'culture',  theme: 'textile' },     // Kultur: Textilmuster
+  { id: 'press',    theme: 'dark' },        // Presse: dunkelgrün
+  { id: 'menu',     theme: 'manuscript' },  // Speisekarte: Manuskript
+  { id: 'kaffee',   theme: 'manuscript' },  // Kaffee: Manuskript
+  { id: 'reviews',  theme: 'manuscript' },  // Bewertungen: Manuskript
+  { id: 'contact',  theme: 'dark' },        // Kontakt: dunkelgrün
+];
+
 // Flag emoji + label for each language
 const LANG_OPTIONS: { code: Lang; flag: string; label: string }[] = [
   { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
@@ -14,20 +31,52 @@ const LANG_OPTIONS: { code: Lang; flag: string; label: string }[] = [
 export default function Navbar() {
   const { lang, setLang, t } = useLang();
   const { itemCount } = useCart();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeTheme, setActiveTheme] = useState<NavTheme>('transparent');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [location] = useLocation();
   const langRef = useRef<HTMLDivElement>(null);
 
   const isHome = location === '/';
-  const isTransparent = !isScrolled && isHome;
 
+  // ── IntersectionObserver: aktive Sektion erkennen ──────────────────────────
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (!isHome) {
+      setActiveTheme('light');
+      return;
+    }
+
+    // Erst nach kurzem Delay beobachten, damit DOM gerendert ist
+    const timer = setTimeout(() => {
+      const observers: IntersectionObserver[] = [];
+
+      SECTION_THEMES.forEach(({ id, theme }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                setActiveTheme(theme);
+              }
+            });
+          },
+          {
+            // Trigger wenn Sektion oben in den Viewport kommt (Navbar-Höhe ~80px)
+            rootMargin: '-80px 0px -60% 0px',
+            threshold: 0,
+          }
+        );
+        obs.observe(el);
+        observers.push(obs);
+      });
+
+      return () => observers.forEach(o => o.disconnect());
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [isHome, location]);
 
   // Close lang dropdown on outside click
   useEffect(() => {
@@ -53,28 +102,66 @@ export default function Navbar() {
   const currentLang = LANG_OPTIONS.find(l => l.code === lang)!;
 
   const navLinks = [
-    { label: t.nav_home, action: () => scrollTo('hero') },
-    { label: t.nav_culture, action: () => scrollTo('culture') },
-    { label: t.nav_menu, action: () => scrollTo('menu') },
-    { label: t.nav_reviews, action: () => scrollTo('reviews') },
-    { label: t.nav_contact, action: () => scrollTo('contact') },
+    { label: t.nav_home,     action: () => scrollTo('hero') },
+    { label: t.nav_culture,  action: () => scrollTo('culture') },
+    { label: t.nav_menu,     action: () => scrollTo('menu') },
+    { label: t.nav_reviews,  action: () => scrollTo('reviews') },
+    { label: t.nav_contact,  action: () => scrollTo('contact') },
   ];
+
+  // ── Theme-abhängige Styles ──────────────────────────────────────────────────
+  const isTransparent = activeTheme === 'transparent';
+  const isDark = activeTheme === 'dark';
+  const isTextile = activeTheme === 'textile';
+  const isManuscript = activeTheme === 'manuscript';
+
+  // Hintergrund-Style für den Header
+  const headerStyle: React.CSSProperties = (() => {
+    if (isTransparent) return {};
+    if (isTextile) return {
+      backgroundImage: `url('${TEXTILE_BG}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+      boxShadow: '0 2px 20px rgba(0,0,0,0.2)',
+    };
+    if (isManuscript) return {
+      backgroundImage: `url('${MANUSCRIPT_BG}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+      boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
+    };
+    if (isDark) return {
+      backgroundColor: '#1a3a32',
+      boxShadow: '0 2px 20px rgba(0,0,0,0.3)',
+    };
+    // light fallback
+    return { backgroundColor: '#fdfbf7', boxShadow: '0 2px 12px rgba(0,0,0,0.08)' };
+  })();
+
+  // Overlay-Farbe je nach Theme
+  const overlayClass = (() => {
+    if (isTextile)    return 'absolute inset-0 bg-[#fdfbf7]/80 backdrop-blur-[1px] pointer-events-none';
+    if (isManuscript) return 'absolute inset-0 bg-[#fdfbf7]/82 backdrop-blur-[1px] pointer-events-none';
+    return null;
+  })();
+
+  // Text-Farben je nach Theme
+  const textColor = (isDark || isTransparent) ? 'text-white' : 'text-[#1a3a32]';
+  const textColorMuted = (isDark || isTransparent) ? 'text-white/90' : 'text-[#1a3a32]';
+  const borderColor = (isDark || isTransparent) ? 'border-white/30 hover:border-white/60' : 'border-[#1a3a32]/20 hover:border-[#d4af37]';
+  const reserveBtnClass = isDark || isTransparent
+    ? 'bg-[#d4af37] text-[#1a3a32] hover:bg-white hover:text-[#1a3a32]'
+    : 'bg-[#1a3a32] text-white hover:bg-[#d4af37] hover:text-[#1a3a32]';
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500`}
-      style={isTransparent ? {} : {
-        backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-        boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
-      }}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      style={headerStyle}
     >
-      {/* Overlay to keep text readable when scrolled */}
-      {!isTransparent && (
-        <div className="absolute inset-0 bg-[#fdfbf7]/82 backdrop-blur-[2px] pointer-events-none" />
-      )}
-      {/* Ethiopian flag stripe at very top – always on top of overlay */}
+      {/* Overlay (nur bei Textil/Manuskript) */}
+      {overlayClass && <div className={overlayClass} />}
+
+      {/* Ethiopian flag stripe – immer sichtbar */}
       <div className="relative z-10 h-[3px] flex w-full">
         <div className="flex-1 bg-[#078930]" />
         <div className="flex-1 bg-[#FCDD09]" />
@@ -86,9 +173,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex flex-col leading-tight group">
-            <span className={`font-serif text-xl md:text-2xl font-bold tracking-wider transition-colors duration-300 ${
-              isTransparent ? 'text-white' : 'text-[#1a3a32]'
-            }`}>
+            <span className={`font-serif text-xl md:text-2xl font-bold tracking-wider transition-colors duration-300 ${textColor}`}>
               HABESHA
             </span>
             <span className="text-[10px] tracking-[0.25em] uppercase text-[#d4af37] transition-colors duration-300">
@@ -102,9 +187,7 @@ export default function Navbar() {
               <button
                 key={label}
                 onClick={action}
-                className={`relative text-xs font-semibold tracking-[0.12em] uppercase px-3 py-2 transition-colors duration-300 hover:text-[#d4af37] group ${
-                  isTransparent ? 'text-white/90' : 'text-[#1a3a32]'
-                }`}
+                className={`relative text-xs font-semibold tracking-[0.12em] uppercase px-3 py-2 transition-colors duration-300 hover:text-[#d4af37] group ${textColorMuted}`}
               >
                 {label}
                 <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#d4af37] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
@@ -119,11 +202,7 @@ export default function Navbar() {
             <div className="hidden md:block relative" ref={langRef}>
               <button
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 text-sm ${
-                  isTransparent
-                    ? 'border-white/30 text-white hover:border-white/60'
-                    : 'border-[#1a3a32]/20 text-[#1a3a32] hover:border-[#d4af37]'
-                }`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 text-sm ${textColorMuted} ${borderColor}`}
               >
                 <span className="text-base leading-none">{currentLang.flag}</span>
                 <ChevronDown size={12} className={`transition-transform duration-200 ${langDropdownOpen ? 'rotate-180' : ''}`} />
@@ -152,9 +231,7 @@ export default function Navbar() {
             <Link href="/bestellen" className="relative p-1">
               <ShoppingCart
                 size={22}
-                className={`transition-colors duration-300 hover:text-[#d4af37] ${
-                  isTransparent ? 'text-white' : 'text-[#1a3a32]'
-                }`}
+                className={`transition-colors duration-300 hover:text-[#d4af37] ${textColor}`}
               />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#DA121A] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -166,7 +243,7 @@ export default function Navbar() {
             {/* Reserve Button */}
             <Link
               href="/reservierung"
-              className="hidden md:block bg-[#1a3a32] text-white text-xs font-semibold tracking-widest uppercase px-5 py-2.5 rounded-full hover:bg-[#d4af37] hover:text-[#1a3a32] transition-all duration-300 shadow-sm"
+              className={`hidden md:block text-xs font-semibold tracking-widest uppercase px-5 py-2.5 rounded-full transition-all duration-300 shadow-sm ${reserveBtnClass}`}
             >
               {t.nav_reserve}
             </Link>
@@ -178,9 +255,9 @@ export default function Navbar() {
               aria-label="Menü"
             >
               {mobileOpen ? (
-                <X size={24} className={isTransparent ? 'text-white' : 'text-[#1a3a32]'} />
+                <X size={24} className={textColor} />
               ) : (
-                <Menu size={24} className={isTransparent ? 'text-white' : 'text-[#1a3a32]'} />
+                <Menu size={24} className={textColor} />
               )}
             </button>
           </div>
@@ -190,60 +267,76 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div
-          className="relative z-10 md:hidden border-t border-[#1a3a32]/10 px-6 py-6 space-y-4"
-          style={{
-            backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg')`,
+          className="relative z-10 md:hidden border-t border-[#1a3a32]/10 px-6 py-6"
+          style={isTextile ? {
+            backgroundImage: `url('${TEXTILE_BG}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+          } : isManuscript ? {
+            backgroundImage: `url('${MANUSCRIPT_BG}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          } : isDark ? {
+            backgroundColor: '#1a3a32',
+          } : {
+            backgroundColor: '#fdfbf7',
           }}
         >
-          <div className="absolute inset-0 bg-[#fdfbf7]/88 backdrop-blur-[2px] pointer-events-none" />
+          {(isTextile || isManuscript) && (
+            <div className="absolute inset-0 bg-[#fdfbf7]/88 backdrop-blur-[2px] pointer-events-none" />
+          )}
           <div className="relative z-10 space-y-4">
-          {navLinks.map(({ label, action }) => (
-            <button
-              key={label}
-              onClick={action}
-              className="block w-full text-left text-sm font-semibold tracking-wide uppercase text-[#1a3a32] hover:text-[#d4af37] transition-colors py-2.5 border-b border-[#1a3a32]/8"
-            >
-              {label}
-            </button>
-          ))}
-
-          {/* Language switcher mobile */}
-          <div className="flex items-center gap-2 pt-2">
-            {LANG_OPTIONS.map(({ code, flag, label }) => (
+            {navLinks.map(({ label, action }) => (
               <button
-                key={code}
-                onClick={() => { setLang(code); setMobileOpen(false); }}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm transition-all ${
-                  lang === code
-                    ? 'bg-[#1a3a32] text-white border-[#1a3a32]'
-                    : 'text-[#1a3a32] border-[#1a3a32]/20 hover:border-[#d4af37]'
-                } ${code === 'am' ? 'font-ethiopic' : ''}`}
+                key={label}
+                onClick={action}
+                className={`block w-full text-left text-sm font-semibold tracking-wide uppercase transition-colors py-2.5 border-b hover:text-[#d4af37] ${
+                  isDark || isTransparent
+                    ? 'text-white border-white/10'
+                    : 'text-[#1a3a32] border-[#1a3a32]/8'
+                }`}
               >
-                <span className="text-base leading-none">{flag}</span>
-                <span className="text-xs">{code.toUpperCase()}</span>
+                {label}
               </button>
             ))}
-          </div>
 
-          <div className="flex gap-3 pt-2">
-            <Link
-              href="/reservierung"
-              onClick={() => setMobileOpen(false)}
-              className="flex-1 bg-[#1a3a32] text-white text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full hover:bg-[#d4af37] hover:text-[#1a3a32] transition-all"
-            >
-              {t.nav_reserve}
-            </Link>
-            <Link
-              href="/bestellen"
-              onClick={() => setMobileOpen(false)}
-              className="flex-1 text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] hover:bg-[#1a3a32] hover:text-white transition-all"
-            >
-              {t.nav_order}
-            </Link>
+            {/* Language switcher mobile */}
+            <div className="flex items-center gap-2 pt-2">
+              {LANG_OPTIONS.map(({ code, flag, label: lbl }) => (
+                <button
+                  key={code}
+                  onClick={() => { setLang(code); setMobileOpen(false); }}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm transition-all ${
+                    lang === code
+                      ? 'bg-[#1a3a32] text-white border-[#1a3a32]'
+                      : isDark || isTransparent
+                        ? 'text-white border-white/30 hover:border-white'
+                        : 'text-[#1a3a32] border-[#1a3a32]/20 hover:border-[#d4af37]'
+                  } ${code === 'am' ? 'font-ethiopic' : ''}`}
+                >
+                  <span className="text-base leading-none">{flag}</span>
+                  <span className="text-xs">{code.toUpperCase()}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Link
+                href="/reservierung"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 bg-[#1a3a32] text-white text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full hover:bg-[#d4af37] hover:text-[#1a3a32] transition-all"
+              >
+                {t.nav_reserve}
+              </Link>
+              <Link
+                href="/bestellen"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] hover:bg-[#1a3a32] hover:text-white transition-all"
+              >
+                {t.nav_order}
+              </Link>
+            </div>
           </div>
-          </div>{/* end z-10 wrapper */}
         </div>
       )}
     </header>

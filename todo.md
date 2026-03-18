@@ -32,3 +32,4 @@
 - [x] Abmelde-Button im Dashboard
 - [x] Äthiopisches Textilmuster als Navbar-Hintergrund (scroll-aktiviert, Flaggenbalken sichtbar)
 - [x] Textilmuster als Hintergrund der CultureSection
+- [x] Navbar-Hintergrund passt sich dynamisch der aktuellen Sektion an
