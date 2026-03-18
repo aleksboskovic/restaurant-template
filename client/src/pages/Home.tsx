@@ -10,7 +10,8 @@ import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import FactCard from '@/components/FactCard';
 
-const BG_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
+const MANUSCRIPT_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
+const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
 
 export default function Home() {
   return (
@@ -18,11 +19,28 @@ export default function Home() {
       <Navbar />
       <HeroSection />
 
-      {/* Gemeinsamer Hintergrund: Kultur bis Gästebewertungen */}
+      {/* CultureSection: Textilmuster-Hintergrund */}
       <div
         className="relative"
         style={{
-          backgroundImage: `url(${BG_URL})`,
+          backgroundImage: `url(${TEXTILE_BG})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Helles Overlay – Textilmuster leicht durchscheinend */}
+        <div className="absolute inset-0 bg-[#fdfbf7]/80 pointer-events-none" />
+        <div className="relative z-10">
+          <CultureSection />
+        </div>
+      </div>
+
+      {/* PressSection bis Gästebewertungen: Manuskript-Hintergrund */}
+      <div
+        className="relative"
+        style={{
+          backgroundImage: `url(${MANUSCRIPT_BG})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
           backgroundAttachment: 'fixed',
@@ -32,7 +50,6 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#fdfbf7]/85 pointer-events-none" />
 
         <div className="relative z-10">
-          <CultureSection />
           <PressSection />
 
           {/* Fakt 1: Injera – passend zur Speisekarte */}

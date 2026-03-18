@@ -31,3 +31,4 @@
 - [x] Volltextsuche nach Name, Produkt, Adresse, Bestellwert
 - [x] Abmelde-Button im Dashboard
 - [x] Äthiopisches Textilmuster als Navbar-Hintergrund (scroll-aktiviert, Flaggenbalken sichtbar)
+- [x] Textilmuster als Hintergrund der CultureSection
