@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { trpc } from '@/lib/trpc';
+import PinProtect from '@/components/PinProtect';
 import { CheckCircle, Clock, Package, Phone, Mail, MapPin, Utensils, RefreshCw, Volume2, VolumeX } from 'lucide-react';
 
 type OrderStatus = 'new' | 'in_progress' | 'done';
@@ -54,7 +55,7 @@ function playNotificationSound() {
   }
 }
 
-export default function LiveOrders() {
+function LiveOrdersDashboard() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [lastOrderCount, setLastOrderCount] = useState<number | null>(null);
   const [justUpdated, setJustUpdated] = useState<string | null>(null);
@@ -357,5 +358,14 @@ function OrderCard({
         </button>
       </div>
     </div>
+  );
+}
+
+// Geschützter Export: Dashboard nur nach PIN-Eingabe zugänglich
+export default function LiveOrders() {
+  return (
+    <PinProtect>
+      <LiveOrdersDashboard />
+    </PinProtect>
   );
 }

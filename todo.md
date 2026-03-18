@@ -19,8 +19,9 @@
 
 ## Ausstehend
 
-- [ ] Backend-Implementierung für Bestellverwaltung (Sanity-Schemas: specialEvent, order)
-- [ ] Live-Order-Dashboard (/live-orders) mit Echtzeit-Updates fertigstellen
+- [x] Sanity-Schemas (order, specialEvent, menuItem) über API anlegen
+- [x] PIN-Schutz für /live-orders Dashboard implementieren
+- [x] Live-Order-Dashboard (/live-orders) mit Echtzeit-Updates fertigstellen
 - [ ] Dynamische Werbebanner aus Sanity implementieren
 - [ ] EmailJS einrichten wenn Domain und E-Mail des Kunden bereit sind
 - [ ] Liefergebühr und Mindestbestellwert definieren und implementieren (aktuell Platzhalter)
