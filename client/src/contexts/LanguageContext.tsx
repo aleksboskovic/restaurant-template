@@ -171,6 +171,29 @@ interface Translations {
   // AGB
   agb_title: string;
   agb_content: string;
+
+  // Coffee Ceremony Section
+  coffee_label: string;
+  coffee_title: string;
+  coffee_subtitle: string;
+  coffee_col1_title: string;
+  coffee_col1_text: string;
+  coffee_col2_title: string;
+  coffee_col2_tej_name: string;
+  coffee_col2_tej_desc: string;
+  coffee_col2_berbere_name: string;
+  coffee_col2_berbere_desc: string;
+  coffee_col2_niter_name: string;
+  coffee_col2_niter_desc: string;
+
+  // Fact Cards
+  fact1_title: string;
+  fact1_text: string;
+  fact2_title: string;
+  fact2_text: string;
+  fact3_title: string;
+  fact3_text: string;
+  fact_did_you_know: string;
 }
 
 const translations: Record<Lang, Translations> = {
@@ -325,6 +348,27 @@ const translations: Record<Lang, Translations> = {
     persons_9: '9 Personen',
     persons_10: '10 Personen',
     persons_10plus: '10+ Personen (bitte anrufen)',
+
+    coffee_label: 'Kaffeezeremonie & Spezialitäten',
+    coffee_title: 'Die traditionelle Kaffeezeremonie & Spezialitäten',
+    coffee_subtitle: 'Äthiopien ist die Geburtsstätte des Kaffees. Seit Jahrtausenden ist die Kaffeezeremonie ein heiliges Ritual der Gemeinschaft und Gastfreundschaft.',
+    coffee_col1_title: 'Äthiopischer Hochlandkaffee',
+    coffee_col1_text: 'Der Kaffee wird dreimal gebraut: Abol (stark), Tona (mittel) und Baraka (leicht, der Segen). Jede Runde hat ihre eigene Bedeutung. Die Zeremonie dauert bis zu einer Stunde und ist ein Zeichen höchster Gastfreundschaft.',
+    coffee_col2_title: 'Weitere Spezialitäten',
+    coffee_col2_tej_name: 'Tej – Äthiopischer Honigwein',
+    coffee_col2_tej_desc: 'Ein traditionelles alkoholisches Getränk aus Honig und Gesho-Zweigen, seit Jahrhunderten in Äthiopien gebraut.',
+    coffee_col2_berbere_name: 'Berbere – Die Seele der Küche',
+    coffee_col2_berbere_desc: 'Eine komplexe Gewürzmischung aus über 15 Zutaten: Chili, Ingwer, Koriander, Kardamom und mehr. Das Herzstück jedes Wot.',
+    coffee_col2_niter_name: 'Niter Kibbeh – Gewürztes Buttersch malz',
+    coffee_col2_niter_desc: 'Geklarte Butter, verfeinert mit Zwiebeln, Knoblauch, Ingwer und Gewürzen. Die Basis für fast alle äthiopischen Gerichte.',
+
+    fact1_title: 'Wussten Sie schon?',
+    fact1_text: 'Injera ist nicht nur Brot – es ist gleichzeitig Teller, Löffel und Gabel. Man reißt ein Stück ab und wickelt damit das Essen ein.',
+    fact2_title: 'Wussten Sie schon?',
+    fact2_text: 'Äthiopien ist die Heimat des Kaffees. Die Kaffeepflanze wurde erstmals in der Region Kaffa entdeckt – daher auch der Name.',
+    fact3_title: 'Wussten Sie schon?',
+    fact3_text: 'Äthiopien hat einen eigenen Kalender mit 13 Monaten und ist ca. 7 Jahre hinter dem gregorianischen Kalender. Das neue Jahr beginnt im September.',
+    fact_did_you_know: 'Wussten Sie schon?',
 
     agb_title: 'AGB für Online-Bestellung',
     agb_content: `1. BESTELLUNG\nDurch Abschluss der Online-Bestellung geben Sie eine verbindliche Bestellung auf. Wir bestätigen Ihre Bestellung per E-Mail oder telefonisch.\n\n2. LIEFERUNG\nWir liefern innerhalb von 5020 Salzburg. Die Lieferzeit beträgt ca. 45–60 Minuten.\n\n3. MINDESTBESTELLWERT\nDer Mindestbestellwert wird bei der Bestellung angezeigt.\n\n4. ZAHLUNG\nDie Zahlung erfolgt per Kreditkarte (Stripe) oder bar bei Lieferung.\n\n5. STORNIERUNG\nEine Stornierung ist bis 15 Minuten nach Bestelleingang möglich. Bitte rufen Sie uns an: 0660 7324766.\n\n6. ALLERGENE\nBitte informieren Sie uns bei Allergien im Kommentarfeld.\n\n7. BETREIBER\nHabtom G.\nÄthiopisches Restaurant Habesha\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
@@ -482,6 +526,27 @@ const translations: Record<Lang, Translations> = {
     persons_10: '10 Persons',
     persons_10plus: '10+ Persons (please call)',
 
+    coffee_label: 'Coffee Ceremony & Specialties',
+    coffee_title: 'The Traditional Coffee Ceremony & Specialties',
+    coffee_subtitle: 'Ethiopia is the birthplace of coffee. For millennia, the coffee ceremony has been a sacred ritual of community and hospitality.',
+    coffee_col1_title: 'Ethiopian Highland Coffee',
+    coffee_col1_text: 'Coffee is brewed three times: Abol (strong), Tona (medium) and Baraka (light, the blessing). Each round has its own meaning. The ceremony lasts up to an hour and is a sign of the highest hospitality.',
+    coffee_col2_title: 'Further Specialties',
+    coffee_col2_tej_name: 'Tej – Ethiopian Honey Wine',
+    coffee_col2_tej_desc: 'A traditional alcoholic drink made from honey and gesho branches, brewed in Ethiopia for centuries.',
+    coffee_col2_berbere_name: 'Berbere – The Soul of the Kitchen',
+    coffee_col2_berbere_desc: 'A complex spice blend of over 15 ingredients: chili, ginger, coriander, cardamom and more. The heart of every Wot.',
+    coffee_col2_niter_name: 'Niter Kibbeh – Spiced Clarified Butter',
+    coffee_col2_niter_desc: 'Clarified butter refined with onions, garlic, ginger and spices. The base for almost all Ethiopian dishes.',
+
+    fact1_title: 'Did you know?',
+    fact1_text: 'Injera is not just bread – it is simultaneously plate, spoon and fork. You tear off a piece and wrap the food inside it.',
+    fact2_title: 'Did you know?',
+    fact2_text: 'Ethiopia is the home of coffee. The coffee plant was first discovered in the Kaffa region – hence the name.',
+    fact3_title: 'Did you know?',
+    fact3_text: 'Ethiopia has its own calendar with 13 months and is approximately 7 years behind the Gregorian calendar. The new year begins in September.',
+    fact_did_you_know: 'Did you know?',
+
     agb_title: 'Terms & Conditions for Online Orders',
     agb_content: `1. ORDER\nBy completing the online order, you place a binding order. We will confirm your order by email or phone.\n\n2. DELIVERY\nWe deliver within 5020 Salzburg. Delivery time is approx. 45–60 minutes.\n\n3. MINIMUM ORDER\nThe minimum order value is displayed during checkout.\n\n4. PAYMENT\nPayment is by credit card (Stripe) or cash on delivery.\n\n5. CANCELLATION\nCancellation is possible up to 15 minutes after order placement. Please call: 0660 7324766.\n\n6. ALLERGENS\nPlease inform us of any allergies in the comment field.\n\n7. OPERATOR\nHabtom G.\nEthiopian Restaurant Habesha\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
   },
@@ -637,6 +702,27 @@ const translations: Record<Lang, Translations> = {
     persons_9: '9 ሰዎች',
     persons_10: '10 ሰዎች',
     persons_10plus: '10+ ሰዎች (እባክዎ ይደውሉ)',
+
+    coffee_label: 'የቃሑወ ስነታ እና ዘላይ ዘላይ ስንብስብ',
+    coffee_title: 'የበዓሉ የቃሑወ ስነታ እና ዘላይ ዘላይ ስንብስብ',
+    coffee_subtitle: 'እትዮጵያ የቃሑወ ተወላጃ ናት። ለሺህ ዓመታት የቡና ስነ ሥርዓት የህብረት እና የእንግዳ ተቀባይነት ቅዱስ ሥርዓት ነው።',
+    coffee_col1_title: 'የኢትዮጵያ ደጋ ቡና',
+    coffee_col1_text: 'ቡናው ሶስት ጊዜ ይፈላል: አቦል (ጠንካራ)፣ ቶና (መካከለኛ) እና ባርካ (ቀላል፣ ቡራኬ)። እያንዳንዱ ዙር የራሱ ትርጉም አለው። ሥርዓቱ እስከ አንድ ሰዓት ድረስ ይቆያል።',
+    coffee_col2_title: 'ሌሎች ልዩ ምግቦች',
+    coffee_col2_tej_name: 'ጠጅ – የኢትዮጵያ ማር ወይን',
+    coffee_col2_tej_desc: 'ከማር እና ከጌሾ ቅርንጫፎች የሚሰራ ባህላዊ አልኮሆል ሲሆን ለዘመናት በኢትዮጵያ ሲጠጣ ቆይቷል።',
+    coffee_col2_berbere_name: 'በርበሬ – የምግብ ቤቱ ነፍስ',
+    coffee_col2_berbere_desc: 'ከ15 በላይ ቅመሞች የተሰራ ውስብስብ ቅመም ድብልቅ: ቺሊ፣ ዝንጅብል፣ ኮሪያንደር፣ ካርዳሞም እና ሌሎችም።',
+    coffee_col2_niter_name: 'ንጥር ቅቤ – ቅመም ቅቤ',
+    coffee_col2_niter_desc: 'ከሽንኩርት፣ ነጭ ሽንኩርት፣ ዝንጅብል እና ቅመሞች ጋር የተጣራ ቅቤ። ለሁሉም ኢትዮጵያዊ ምግቦች መሠረት።',
+
+    fact1_title: 'ያውቁ ነበር?',
+    fact1_text: 'እንጀራ ዳቦ ብቻ አይደለም – ሳህን፣ ማንኪያ እና ሹካ ነው። አንድ ቁራጭ ቀደዱ እና ምግቡን ጠቅልሉ።',
+    fact2_title: 'ያውቁ ነበር?',
+    fact2_text: 'ኢትዮጵያ የቡና ቤት ናት። የቡና ተክሉ ለመጀመሪያ ጊዜ የተገኘው በካፋ ክልል ነው – ስለዚህ ስሙ ቡና ሆነ።',
+    fact3_title: 'ያውቁ ነበር?',
+    fact3_text: 'ኢትዮጵያ 13 ወር ያለው የራሷ የቀን አቆጣጠር አላት። አዲሱ ዓመት በሴፕቴምበር ይጀምራል።',
+    fact_did_you_know: 'ያውቁ ነበር?',
 
     agb_title: 'ለኦንላይን ትዕዛዝ ሁኔታዎች',
     agb_content: `1. ትዕዛዝ\nኦንላይን ትዕዛዙን ሲጨርሱ አስገዳጅ ትዕዛዝ ይሰጣሉ።\n\n2. ማድረስ\nበ5020 ሳልዝበርግ ውስጥ እናደርሳለን። የማድረስ ጊዜ ወደ 45–60 ደቂቃ ነው።\n\n3. ዝቅተኛ ትዕዛዝ\nዝቅተኛ የትዕዛዝ ዋጋ በክፍያ ጊዜ ይታያል።\n\n4. ክፍያ\nክፍያ በክሬዲት ካርድ (Stripe) ወይም ሲደርስ ጥሬ ገንዘብ ነው።\n\n5. ሰርዞ ማቆም\nትዕዛዝ ከተሰጠ ከ15 ደቂቃ ውስጥ መሰረዝ ይቻላል። ይደውሉ: 0660 7324766\n\n6. አለርጂዎች\nስለ አለርጂዎች በማስታወሻ ሳጥን ያሳውቁን።\n\n7. ኦፕሬተር\nHabtom G.\nሀበሻ የኢትዮጵያ ምግብ ቤት\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
