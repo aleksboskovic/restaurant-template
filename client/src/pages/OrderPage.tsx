@@ -354,7 +354,17 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
     loadPaymentIntent();
   }
 
-  if (payMethod === 'card' && clientSecret) {
+  // Kartenzahlung: CardPaymentInner MUSS innerhalb <Elements> sein
+  if (payMethod === 'card') {
+    if (intentLoading || !clientSecret) {
+      return (
+        <div className="border border-gray-200 rounded-xl p-10 flex flex-col items-center justify-center gap-3 text-[#1a3a32]/50">
+          <span className="w-8 h-8 border-2 border-[#1a3a32]/20 border-t-[#1a3a32] rounded-full animate-spin" />
+          <span className="text-sm">Zahlungsoptionen werden geladen...</span>
+          <button type="button" onClick={onBack} className="mt-4 text-xs text-[#1a3a32]/60 underline">Zurück</button>
+        </div>
+      );
+    }
     return (
       <Elements
         stripe={stripePromise}
@@ -373,11 +383,10 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
           },
         }}
       >
-        <PaymentForm
+        <CardPaymentInner
           onBack={onBack}
           deliveryData={deliveryData}
           onSuccess={onSuccess}
-          payMethod={payMethod}
           onPayMethodChange={handlePayMethodChange}
           paymentIntentId={paymentIntentId}
           grandTotal={grandTotal}
@@ -386,20 +395,269 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
     );
   }
 
+  // Barzahlung: kein Stripe nötig
   return (
-    <PaymentForm
+    <PaymentFormShell
       onBack={onBack}
       deliveryData={deliveryData}
       onSuccess={onSuccess}
       payMethod={payMethod}
       onPayMethodChange={handlePayMethodChange}
-      paymentIntentId={paymentIntentId}
       grandTotal={grandTotal}
-      loadingIntent={intentLoading}
-    />
+    >
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <p className="text-amber-700 text-sm">Bitte zahlen Sie bei der Lieferung in bar. Bitte halten Sie den genauen Betrag bereit.</p>
+      </div>
+    </PaymentFormShell>
   );
 }
 
+// Gemeinsame Formular-Shell (ohne Stripe-Hooks – sicher außerhalb Elements)
+function PaymentFormShell({
+  onBack, deliveryData, onSuccess, payMethod, onPayMethodChange, grandTotal, loadingIntent, children
+}: {
+  onBack: () => void;
+  deliveryData: any;
+  onSuccess: (orderNum: string) => void;
+  payMethod: 'card' | 'cash';
+  onPayMethodChange: (m: 'card' | 'cash') => void;
+  grandTotal: number;
+  loadingIntent?: boolean;
+  children?: React.ReactNode;
+}) {
+  const { t, lang } = useLang();
+  const { items, total, clearCart } = useCart();
+  const [agb, setAgb] = useState(false);
+  const [agbError, setAgbError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const createOrder = trpc.orders.create.useMutation();
+
+  const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
+  const customerEmail = deliveryData.email || 'keine@email.at';
+
+  const handleCashSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agb) { setAgbError('Bitte akzeptieren Sie die AGB.'); return; }
+    setLoading(true);
+    setSubmitError('');
+    const deliveryAddress = deliveryData.street
+      ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
+      : undefined;
+    const deliveryTime = deliveryData.deliveryType === 'asap'
+      ? 'So schnell wie möglich (~45–60 Min.)'
+      : `${deliveryData.scheduleDate || ''} um ${deliveryData.scheduleTime || ''} Uhr`;
+    const orderItems = items.map(item => ({ dishName: item.name, quantity: item.quantity, price: item.price }));
+    try {
+      const { orderNum } = await createOrder.mutateAsync({
+        customerName, phone: deliveryData.phone || '–', email: customerEmail,
+        items: orderItems, totalPrice: grandTotal, orderType: 'delivery',
+        deliveryAddress, deliveryTime, paymentMethod: 'cash', notes: deliveryData.notes || undefined,
+      });
+      clearCart();
+      onSuccess(`#${orderNum}`);
+    } catch (err) {
+      setSubmitError('Bestellung konnte nicht gespeichert werden. Bitte versuche es erneut.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={payMethod === 'cash' ? handleCashSubmit : (e) => e.preventDefault()} className="space-y-6">
+      {/* Order summary */}
+      <div className="bg-[#f5f0e8] rounded-xl p-5">
+        <h3 className="font-semibold text-[#1a3a32] text-sm mb-3">Bestellübersicht</h3>
+        <div className="space-y-1 mb-3">
+          {items.map(item => (
+            <div key={item.id} className="flex justify-between text-xs text-[#1a3a32]/70">
+              <span>{item.quantity}× {item.name}</span>
+              <span>{(item.price * item.quantity).toFixed(2).replace('.', ',')} €</span>
+            </div>
+          ))}
+        </div>
+        <div className="border-t border-[#1a3a32]/10 pt-2 space-y-1">
+          <div className="flex justify-between text-xs text-[#1a3a32]/60">
+            <span>{t.order_subtotal}</span><span>{total.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="flex justify-between text-xs text-[#1a3a32]/60">
+            <span>{t.order_delivery_fee}</span><span>{DELIVERY_FEE.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="flex justify-between font-bold text-[#1a3a32] text-base pt-1">
+            <span>{t.order_total}</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
+          </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
+          <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
+          <p>🕐 {deliveryData.deliveryType === 'asap' ? t.order_asap_desc : `${deliveryData.scheduleDate} um ${deliveryData.scheduleTime} Uhr`}</p>
+        </div>
+      </div>
+      {/* Payment method selector */}
+      <div>
+        <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
+        <div className="space-y-2">
+          {[
+            { key: 'card' as const, label: t.order_pay_card, icon: '💳' },
+            { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
+          ].map(({ key, label, icon }) => (
+            <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === key ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
+              <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
+              <span className="text-lg">{icon}</span>
+              <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      {/* Slot für Stripe Payment Element oder Barzahlungshinweis */}
+      {children}
+      {/* AGB */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={agb} onChange={e => { setAgb(e.target.checked); setAgbError(''); }} className="mt-0.5 w-4 h-4 accent-[#1a3a32]" />
+          <span className={`text-sm text-[#1a3a32]/70 leading-relaxed ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_agb_text}</span>
+        </label>
+        {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
+      </div>
+      {submitError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
+          <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
+          <p className="text-red-600 text-sm">{submitError}</p>
+        </div>
+      )}
+      <div className="flex gap-3">
+        <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
+          <ChevronLeft size={16} /> {t.order_back}
+        </button>
+        <button type="submit" disabled={loading || (payMethod === 'card' && !!loadingIntent)} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
+          {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+          {t.order_submit}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// CardPaymentInner – nur innerhalb <Elements> aufgerufen, daher useStripe/useElements sicher
+function CardPaymentInner({
+  onBack, deliveryData, onSuccess, onPayMethodChange, paymentIntentId, grandTotal
+}: {
+  onBack: () => void;
+  deliveryData: any;
+  onSuccess: (orderNum: string) => void;
+  onPayMethodChange: (m: 'card' | 'cash') => void;
+  paymentIntentId: string | null;
+  grandTotal: number;
+}) {
+  const { t, lang } = useLang();
+  const { items, clearCart } = useCart();
+  const stripe = useStripe();
+  const elements = useElements();
+  const [agb, setAgb] = useState(false);
+  const [agbError, setAgbError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const createOrder = trpc.orders.create.useMutation();
+
+  const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
+  const customerEmail = deliveryData.email || 'keine@email.at';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agb) { setAgbError('Bitte akzeptieren Sie die AGB.'); return; }
+    if (!stripe || !elements) { return; }
+    setLoading(true);
+    setSubmitError('');
+    const deliveryAddress = deliveryData.street
+      ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
+      : undefined;
+    const deliveryTime = deliveryData.deliveryType === 'asap'
+      ? 'So schnell wie möglich (~45–60 Min.)'
+      : `${deliveryData.scheduleDate || ''} um ${deliveryData.scheduleTime || ''} Uhr`;
+    const orderItems = items.map(item => ({ dishName: item.name, quantity: item.quantity, price: item.price }));
+    try {
+      const { error: stripeError } = await stripe.confirmPayment({
+        elements,
+        confirmParams: { payment_method_data: { billing_details: { name: customerName, email: customerEmail } } },
+        redirect: 'if_required',
+      });
+      if (stripeError) {
+        setSubmitError(stripeError.message || 'Zahlung fehlgeschlagen.');
+        setLoading(false);
+        return;
+      }
+      const { orderNum } = await createOrder.mutateAsync({
+        customerName, phone: deliveryData.phone || '–', email: customerEmail,
+        items: orderItems, totalPrice: grandTotal, orderType: 'delivery',
+        deliveryAddress, deliveryTime, paymentMethod: 'card',
+        notes: deliveryData.notes || undefined, stripePaymentIntentId: paymentIntentId || undefined,
+      });
+      clearCart();
+      onSuccess(`#${orderNum}`);
+    } catch (err) {
+      setSubmitError('Bestellung konnte nicht gespeichert werden.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Order summary – compact */}
+      <div className="bg-[#f5f0e8] rounded-xl p-4 text-xs text-[#1a3a32]/70">
+        <div className="flex justify-between font-bold text-[#1a3a32] text-sm mb-1">
+          <span>Gesamt</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
+        </div>
+        <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
+      </div>
+      {/* Payment method selector */}
+      <div>
+        <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
+        <div className="space-y-2">
+          {[
+            { key: 'card' as const, label: t.order_pay_card, icon: '💳' },
+            { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
+          ].map(({ key, label, icon }) => (
+            <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${key === 'card' ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
+              <input type="radio" name="pay" value={key} checked={key === 'card'} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
+              <span className="text-lg">{icon}</span>
+              <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      {/* Stripe Payment Element */}
+      <div className="border border-gray-200 rounded-xl p-4">
+        <PaymentElement options={{ layout: 'tabs', wallets: { googlePay: 'auto', applePay: 'auto' } }} />
+      </div>
+      <p className={`text-xs text-[#1a3a32]/50 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_secure}</p>
+      {/* AGB */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={agb} onChange={e => { setAgb(e.target.checked); setAgbError(''); }} className="mt-0.5 w-4 h-4 accent-[#1a3a32]" />
+          <span className={`text-sm text-[#1a3a32]/70 leading-relaxed ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_agb_text}</span>
+        </label>
+        {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
+      </div>
+      {submitError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
+          <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
+          <p className="text-red-600 text-sm">{submitError}</p>
+        </div>
+      )}
+      <div className="flex gap-3">
+        <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
+          <ChevronLeft size={16} /> {t.order_back}
+        </button>
+        <button type="submit" disabled={loading} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
+          {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+          {t.order_submit}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// Dummy PaymentForm – wird nicht mehr direkt verwendet, aber Typ-Kompatibilität sicherstellen
 function PaymentForm({
   onBack, deliveryData, onSuccess, payMethod, onPayMethodChange, paymentIntentId, grandTotal, loadingIntent
 }: {

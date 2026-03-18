@@ -168,3 +168,55 @@ describe("Stripe PaymentIntent (Unit)", () => {
     expect(centsPrecision).toBe(1999);
   });
 });
+
+// ─── SpecialEvent Banner Logic Tests ─────────────────────────────────────────
+describe('SpecialEvent Banner Logic', () => {
+  it('should identify active events correctly', () => {
+    const now = new Date();
+    const activeEvent = {
+      _id: 'test-1',
+      title: 'Test Event',
+      validFrom: new Date(now.getTime() - 1000 * 60 * 60).toISOString(), // 1h ago
+      validUntil: new Date(now.getTime() + 1000 * 60 * 60 * 24).toISOString(), // 24h from now
+    };
+    const isActive = new Date(activeEvent.validFrom) <= now && new Date(activeEvent.validUntil) >= now;
+    expect(isActive).toBe(true);
+  });
+
+  it('should identify upcoming events correctly', () => {
+    const now = new Date();
+    const upcomingEvent = {
+      _id: 'test-2',
+      title: 'Upcoming Event',
+      validFrom: new Date(now.getTime() + 1000 * 60 * 60 * 24).toISOString(), // 24h from now
+      validUntil: new Date(now.getTime() + 1000 * 60 * 60 * 48).toISOString(), // 48h from now
+    };
+    const isComing = new Date(upcomingEvent.validFrom) > now;
+    expect(isComing).toBe(true);
+  });
+
+  it('should identify expired events correctly', () => {
+    const now = new Date();
+    const expiredEvent = {
+      _id: 'test-3',
+      title: 'Expired Event',
+      validFrom: new Date(now.getTime() - 1000 * 60 * 60 * 48).toISOString(), // 48h ago
+      validUntil: new Date(now.getTime() - 1000 * 60 * 60).toISOString(), // 1h ago
+    };
+    const isExpired = new Date(expiredEvent.validUntil) < now;
+    expect(isExpired).toBe(true);
+  });
+
+  it('should filter events that have not yet expired', () => {
+    const now = new Date();
+    const events = [
+      { _id: '1', title: 'Active', validFrom: new Date(now.getTime() - 3600000).toISOString(), validUntil: new Date(now.getTime() + 86400000).toISOString() },
+      { _id: '2', title: 'Expired', validFrom: new Date(now.getTime() - 172800000).toISOString(), validUntil: new Date(now.getTime() - 3600000).toISOString() },
+      { _id: '3', title: 'Upcoming', validFrom: new Date(now.getTime() + 86400000).toISOString(), validUntil: new Date(now.getTime() + 172800000).toISOString() },
+    ];
+    const visible = events.filter(e => new Date(e.validUntil) > now);
+    expect(visible).toHaveLength(2);
+    expect(visible.map(e => e._id)).toContain('1');
+    expect(visible.map(e => e._id)).toContain('3');
+  });
+});

@@ -22,7 +22,7 @@
 - [x] Sanity-Schemas (order, specialEvent, menuItem) über API anlegen
 - [x] PIN-Schutz für /live-orders Dashboard implementieren
 - [x] Live-Order-Dashboard (/live-orders) mit Echtzeit-Updates fertigstellen
-- [ ] Dynamische Werbebanner aus Sanity implementieren
+- [x] Dynamische Werbebanner aus Sanity implementieren
 - [ ] EmailJS einrichten wenn Domain und E-Mail des Kunden bereit sind
 - [ ] Liefergebühr und Mindestbestellwert definieren und implementieren (aktuell Platzhalter)
 - [ ] Stripe von Test-Modus auf Live-Modus umschalten wenn Kunde bereit ist
@@ -38,3 +38,6 @@
 - [x] Stripe-Zahlungsfluss korrekt implementieren (PaymentIntent Server-seitig erstellen)
 - [x] Stripe-Zahlung und Sanity-Bestellspeicherung synchronisieren
 - [x] CardElement durch Stripe Payment Element ersetzen (Google Pay + Apple Pay)
+- [x] Stripe-Fehler beheben: useStripe außerhalb Elements-Provider
+- [x] Hero-Banner mit Countdown aus Sanity specialEvent einbauen
+- [x] Klick auf Banner öffnet Event-Detailseite

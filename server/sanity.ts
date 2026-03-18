@@ -87,6 +87,8 @@ export interface SpecialEvent {
   description_am?: string;
   validFrom: string;
   validUntil: string;
+  imageUrl?: string;
+  isActive?: boolean;
 }
 
 export async function createOrder(input: CreateOrderInput): Promise<string> {
