@@ -1,0 +1,522 @@
+import { useState } from 'react';
+import { useLang } from '@/contexts/LanguageContext';
+import { useCart } from '@/contexts/CartContext';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import MenuSection from '@/components/MenuSection';
+import { getItemName } from '@/lib/menuData';
+import { menuItems } from '@/lib/menuData';
+import {
+  ShoppingCart, Truck, CreditCard, CheckCircle, Clock, Calendar,
+  ChevronRight, ChevronLeft, Minus, Plus, X, AlertCircle
+} from 'lucide-react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe('pk_test_51TCMQe2UCFWW91xfuJ9C22sdQAqXoSf6CozSFkX1B29aqLYFp3gkTaJYvlTX7udAgkm0gUg7tMv8wMAbRmgGG21l00hDKZ4bn2');
+
+const DELIVERY_FEE = 3.50;
+const MIN_ORDER = 12.00;
+
+const TIME_SLOTS = [
+  '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+  '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
+  '19:00', '19:30', '20:00', '20:30', '21:00', '21:30',
+];
+
+function StepIndicator({ current }: { current: number }) {
+  const { t } = useLang();
+  const steps = [t.order_step1, t.order_step2, t.order_step3];
+  const icons = [ShoppingCart, Truck, CreditCard];
+
+  return (
+    <div className="flex items-center justify-center gap-0 mb-10">
+      {steps.map((step, idx) => {
+        const Icon = icons[idx];
+        const isActive = idx + 1 === current;
+        const isDone = idx + 1 < current;
+        return (
+          <div key={step} className="flex items-center">
+            <div className={`flex flex-col items-center ${idx < steps.length - 1 ? 'mr-0' : ''}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                isActive ? 'bg-[#1a3a32] text-white shadow-lg' :
+                isDone ? 'bg-[#d4af37] text-white' :
+                'bg-gray-100 text-gray-400'
+              }`}>
+                <Icon size={16} />
+              </div>
+              <span className={`text-xs mt-1 font-medium hidden sm:block ${isActive ? 'text-[#1a3a32]' : isDone ? 'text-[#d4af37]' : 'text-gray-400'}`}>
+                {step}
+              </span>
+            </div>
+            {idx < steps.length - 1 && (
+              <div className={`h-0.5 w-12 sm:w-20 mx-2 transition-all ${isDone ? 'bg-[#d4af37]' : 'bg-gray-200'}`} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Step 1: Cart view
+function Step1({ onNext }: { onNext: () => void }) {
+  const { t, lang } = useLang();
+  const { items, addItem, removeItem, updateQuantity, total } = useCart();
+  const belowMin = total < MIN_ORDER;
+
+  return (
+    <div>
+      {items.length === 0 ? (
+        <div className="text-center py-16">
+          <ShoppingCart size={48} className="text-gray-300 mx-auto mb-4" />
+          <p className={`text-[#1a3a32]/50 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_cart_empty}</p>
+          <p className="text-[#1a3a32]/40 text-sm mt-2">Bitte wählen Sie Gerichte aus der Speisekarte unten.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 mb-6">
+          {items.map(item => {
+            const menuItem = menuItems.find(m => m.id === item.id);
+            const displayName = menuItem ? getItemName(menuItem, lang) : item.name;
+            return (
+              <div key={item.id} className="flex items-center gap-4 bg-white rounded-xl p-4 border border-[#1a3a32]/8">
+                <div className="flex-1">
+                  <p className={`text-sm font-semibold text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{displayName}</p>
+                  <p className="text-[#d4af37] text-xs font-bold">{(item.price * item.quantity).toFixed(2).replace('.', ',')} €</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => removeItem(item.id)} className="w-7 h-7 rounded-full border border-[#1a3a32]/20 flex items-center justify-center hover:bg-[#1a3a32] hover:text-white transition-colors">
+                    <Minus size={12} />
+                  </button>
+                  <span className="text-[#1a3a32] font-bold text-sm w-5 text-center">{item.quantity}</span>
+                  <button onClick={() => {
+                    const mi = menuItems.find(m => m.id === item.id);
+                    if (mi) addItem({ id: mi.id, name: mi.nameDe, nameEn: mi.nameEn, nameAm: mi.nameAm, price: mi.priceNum });
+                  }} className="w-7 h-7 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/80 transition-colors">
+                    <Plus size={12} />
+                  </button>
+                  <button onClick={() => updateQuantity(item.id, 0)} className="w-7 h-7 rounded-full text-gray-400 hover:text-red-500 transition-colors ml-1">
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Summary */}
+      {items.length > 0 && (
+        <div className="bg-[#f5f0e8] rounded-xl p-5 space-y-2 mb-6">
+          <div className="flex justify-between text-sm text-[#1a3a32]/70">
+            <span className={lang === 'am' ? 'font-ethiopic' : ''}>{t.order_subtotal}</span>
+            <span>{total.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="flex justify-between text-sm text-[#1a3a32]/70">
+            <span className={lang === 'am' ? 'font-ethiopic' : ''}>{t.order_delivery_fee}</span>
+            <span>{DELIVERY_FEE.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="border-t border-[#1a3a32]/10 pt-2 flex justify-between font-bold text-[#1a3a32]">
+            <span className={lang === 'am' ? 'font-ethiopic' : ''}>{t.order_total}</span>
+            <span>{(total + DELIVERY_FEE).toFixed(2).replace('.', ',')} €</span>
+          </div>
+        </div>
+      )}
+
+      {belowMin && items.length > 0 && (
+        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+          <AlertCircle size={16} className="text-amber-500" />
+          <p className="text-amber-700 text-sm">
+            {t.order_min_order}: {MIN_ORDER.toFixed(2).replace('.', ',')} €
+            (noch {(MIN_ORDER - total).toFixed(2).replace('.', ',')} € fehlen)
+          </p>
+        </div>
+      )}
+
+      <button
+        onClick={onNext}
+        disabled={items.length === 0 || belowMin}
+        className="w-full btn-premium py-4 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        {t.order_next} <ChevronRight size={16} />
+      </button>
+    </div>
+  );
+}
+
+// Step 2: Delivery details
+function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
+  onNext: () => void;
+  onBack: () => void;
+  deliveryData: any;
+  setDeliveryData: (d: any) => void;
+}) {
+  const { t, lang } = useLang();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const today = new Date().toISOString().split('T')[0];
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!deliveryData.firstname) e.firstname = 'Pflichtfeld';
+    if (!deliveryData.lastname) e.lastname = 'Pflichtfeld';
+    if (!deliveryData.phone) e.phone = 'Pflichtfeld';
+    if (!deliveryData.email || !/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail';
+    if (!deliveryData.street) e.street = 'Pflichtfeld';
+    if (!deliveryData.zip) {
+      e.zip = 'Pflichtfeld';
+    } else if (!deliveryData.zip.startsWith('5020')) {
+      e.zip = t.order_zip_error;
+    }
+    if (!deliveryData.city) e.city = 'Pflichtfeld';
+    if (deliveryData.deliveryType === 'schedule') {
+      if (!deliveryData.scheduleDate) e.scheduleDate = 'Pflichtfeld';
+      else {
+        const d = new Date(deliveryData.scheduleDate);
+        const tod = new Date(); tod.setHours(0,0,0,0);
+        if (d < tod) e.scheduleDate = t.order_past_error;
+        if (d.getDay() === 0) e.scheduleDate = t.order_sunday_error;
+      }
+      if (!deliveryData.scheduleTime) e.scheduleTime = 'Pflichtfeld';
+    }
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validate()) onNext();
+  };
+
+  const inp = (field: string, placeholder: string, type = 'text', label: string) => (
+    <div>
+      <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+        {label} *
+      </label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={deliveryData[field] || ''}
+        onChange={e => setDeliveryData({ ...deliveryData, [field]: e.target.value })}
+        className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all ${errors[field] ? 'border-red-400' : 'border-gray-200'}`}
+      />
+      {errors[field] && <p className="text-red-500 text-xs mt-1">{errors[field]}</p>}
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      <div className="grid sm:grid-cols-2 gap-4">
+        {inp('firstname', 'Max', 'text', t.order_firstname)}
+        {inp('lastname', 'Mustermann', 'text', t.order_lastname)}
+      </div>
+      {inp('phone', '+43 ...', 'tel', t.res_phone)}
+      {inp('email', 'max@beispiel.at', 'email', t.res_email)}
+      {inp('street', 'Hauptstraße 1', 'text', t.order_street)}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+            {t.order_zip} *
+          </label>
+          <input
+            type="text"
+            placeholder="5020"
+            value={deliveryData.zip || ''}
+            onChange={e => setDeliveryData({ ...deliveryData, zip: e.target.value })}
+            className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all ${errors.zip ? 'border-red-400' : 'border-gray-200'}`}
+          />
+          {errors.zip && <p className="text-red-500 text-xs mt-1">{errors.zip}</p>}
+        </div>
+        {inp('city', 'Salzburg', 'text', t.order_city)}
+      </div>
+      <div>
+        <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+          {t.order_floor}
+        </label>
+        <input
+          type="text"
+          placeholder="z.B. 2. OG / Tür 5"
+          value={deliveryData.floor || ''}
+          onChange={e => setDeliveryData({ ...deliveryData, floor: e.target.value })}
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+        />
+      </div>
+
+      {/* Delivery time */}
+      <div>
+        <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+          Lieferzeit *
+        </label>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            { key: 'asap', icon: Clock, title: t.order_asap, sub: t.order_asap_desc },
+            { key: 'schedule', icon: Calendar, title: t.order_schedule, sub: t.order_schedule_desc },
+          ].map(({ key, icon: Icon, title, sub }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setDeliveryData({ ...deliveryData, deliveryType: key })}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${
+                deliveryData.deliveryType === key
+                  ? 'border-[#1a3a32] bg-[#1a3a32]/5'
+                  : 'border-gray-200 hover:border-[#d4af37]/50'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Icon size={16} className={deliveryData.deliveryType === key ? 'text-[#1a3a32]' : 'text-gray-400'} />
+                <span className={`text-sm font-semibold ${deliveryData.deliveryType === key ? 'text-[#1a3a32]' : 'text-gray-600'} ${lang === 'am' ? 'font-ethiopic' : ''}`}>{title}</span>
+              </div>
+              <p className={`text-xs ${deliveryData.deliveryType === key ? 'text-[#1a3a32]/60' : 'text-gray-400'} ${lang === 'am' ? 'font-ethiopic' : ''}`}>{sub}</p>
+            </button>
+          ))}
+        </div>
+
+        {deliveryData.deliveryType === 'schedule' && (
+          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2">Datum *</label>
+              <input
+                type="date"
+                min={today}
+                value={deliveryData.scheduleDate || ''}
+                onChange={e => setDeliveryData({ ...deliveryData, scheduleDate: e.target.value })}
+                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all ${errors.scheduleDate ? 'border-red-400' : 'border-gray-200'}`}
+              />
+              {errors.scheduleDate && <p className="text-red-500 text-xs mt-1">{errors.scheduleDate}</p>}
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2">Uhrzeit *</label>
+              <select
+                value={deliveryData.scheduleTime || ''}
+                onChange={e => setDeliveryData({ ...deliveryData, scheduleTime: e.target.value })}
+                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all bg-white ${errors.scheduleTime ? 'border-red-400' : 'border-gray-200'}`}
+              >
+                <option value="">Wählen...</option>
+                {TIME_SLOTS.map(s => <option key={s} value={s}>{s} Uhr</option>)}
+              </select>
+              {errors.scheduleTime && <p className="text-red-500 text-xs mt-1">{errors.scheduleTime}</p>}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div>
+        <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+          {t.order_delivery_note}
+        </label>
+        <textarea
+          placeholder="z.B. Klingel defekt, bitte anrufen"
+          value={deliveryData.note || ''}
+          onChange={e => setDeliveryData({ ...deliveryData, note: e.target.value })}
+          rows={2}
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all resize-none"
+        />
+      </div>
+
+      <div className="flex gap-3 pt-2">
+        <button onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
+          <ChevronLeft size={16} /> {t.order_back}
+        </button>
+        <button onClick={handleNext} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+          {t.order_next} <ChevronRight size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Step 3: Payment
+function PaymentForm({ onBack, deliveryData, onSuccess }: { onBack: () => void; deliveryData: any; onSuccess: (orderNum: string) => void }) {
+  const { t, lang } = useLang();
+  const { items, total, clearCart } = useCart();
+  const stripe = useStripe();
+  const elements = useElements();
+  const [payMethod, setPayMethod] = useState<'card' | 'cash'>('card');
+  const [agb, setAgb] = useState(false);
+  const [agbError, setAgbError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showAgb, setShowAgb] = useState(false);
+
+  const grandTotal = total + DELIVERY_FEE;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agb) { setAgbError('Bitte akzeptieren Sie die AGB.'); return; }
+    setLoading(true);
+    await new Promise(r => setTimeout(r, 1500));
+    clearCart();
+    const orderNum = `#HAB-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+    onSuccess(orderNum);
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Order summary */}
+      <div className="bg-[#f5f0e8] rounded-xl p-5">
+        <h3 className="font-semibold text-[#1a3a32] text-sm mb-3">Bestellübersicht</h3>
+        <div className="space-y-1 mb-3">
+          {items.map(item => (
+            <div key={item.id} className="flex justify-between text-xs text-[#1a3a32]/70">
+              <span>{item.quantity}× {item.name}</span>
+              <span>{(item.price * item.quantity).toFixed(2).replace('.', ',')} €</span>
+            </div>
+          ))}
+        </div>
+        <div className="border-t border-[#1a3a32]/10 pt-2 space-y-1">
+          <div className="flex justify-between text-xs text-[#1a3a32]/60">
+            <span>{t.order_subtotal}</span><span>{total.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="flex justify-between text-xs text-[#1a3a32]/60">
+            <span>{t.order_delivery_fee}</span><span>{DELIVERY_FEE.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="flex justify-between font-bold text-[#1a3a32] text-base pt-1">
+            <span>{t.order_total}</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
+          </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
+          <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
+          <p>🕐 {deliveryData.deliveryType === 'asap' ? t.order_asap_desc : `${deliveryData.scheduleDate} um ${deliveryData.scheduleTime} Uhr`}</p>
+        </div>
+      </div>
+
+      {/* Payment method */}
+      <div>
+        <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
+        <div className="space-y-2">
+          {[
+            { key: 'card' as const, label: t.order_pay_card, icon: '💳' },
+            { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
+          ].map(({ key, label, icon }) => (
+            <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === key ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
+              <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => setPayMethod(key)} className="accent-[#1a3a32]" />
+              <span className="text-lg">{icon}</span>
+              <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {payMethod === 'card' && (
+        <div>
+          <div className="border border-gray-200 rounded-xl p-4">
+            <CardElement options={{ style: { base: { fontSize: '14px', color: '#1a3a32', '::placeholder': { color: '#9ca3af' } } } }} />
+          </div>
+          <p className={`text-xs text-[#1a3a32]/50 mt-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_secure}</p>
+        </div>
+      )}
+
+      {payMethod === 'cash' && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <p className={`text-amber-700 text-sm ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_cash_note}</p>
+        </div>
+      )}
+
+      {/* AGB */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={agb} onChange={e => { setAgb(e.target.checked); setAgbError(''); }} className="mt-0.5 w-4 h-4 accent-[#1a3a32]" />
+          <span className={`text-sm text-[#1a3a32]/70 leading-relaxed ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+            {t.order_agb_text}
+          </span>
+        </label>
+        {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
+      </div>
+
+      <div className="flex gap-3">
+        <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
+          <ChevronLeft size={16} /> {t.order_back}
+        </button>
+        <button type="submit" disabled={loading} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
+          {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+          {t.order_submit}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export default function OrderPage() {
+  const { t, lang } = useLang();
+  const [step, setStep] = useState(1);
+  const [deliveryData, setDeliveryData] = useState({ deliveryType: 'asap' });
+  const [orderNum, setOrderNum] = useState('');
+
+  if (orderNum) {
+    return (
+      <div className="min-h-screen bg-[#fdfbf7]">
+        <Navbar />
+        <div className="max-w-lg mx-auto px-4 py-32 text-center">
+          <CheckCircle size={80} className="text-green-500 mx-auto mb-6" />
+          <h1 className={`font-serif text-3xl font-bold text-[#1a3a32] mb-3 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+            {t.order_success_title}
+          </h1>
+          <p className={`text-[#1a3a32]/70 mb-4 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_success_text}</p>
+          <p className="text-[#d4af37] font-bold text-lg mb-8">Bestellnummer: {orderNum}</p>
+          <a href="/" className="btn-premium px-8 py-3 rounded-full text-sm font-bold tracking-widest uppercase inline-block">
+            {t.order_back_home}
+          </a>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#fdfbf7]">
+      <Navbar />
+
+      {/* Hero */}
+      <div className="bg-[#1a3a32] pt-32 pb-12 text-center">
+        <div className="absolute top-0 left-0 right-0 h-1 flex">
+          <div className="flex-1 bg-[#078930]" />
+          <div className="flex-1 bg-[#FCDD09]" />
+          <div className="flex-1 bg-[#DA121A]" />
+        </div>
+        <div className="flex items-center justify-center gap-4 mb-3">
+          <div className="h-px w-12 bg-[#d4af37]" />
+          <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">Online Bestellung</span>
+          <div className="h-px w-12 bg-[#d4af37]" />
+        </div>
+        <h1 className={`font-serif text-4xl md:text-5xl font-bold text-white ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+          {t.order_title}
+        </h1>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 py-12">
+        <StepIndicator current={step} />
+
+        <div className="bg-white rounded-2xl shadow-lg border-l-4 border-[#d4af37] p-8">
+          {step === 1 && <Step1 onNext={() => setStep(2)} />}
+          {step === 2 && (
+            <Step2
+              onNext={() => setStep(3)}
+              onBack={() => setStep(1)}
+              deliveryData={deliveryData}
+              setDeliveryData={setDeliveryData}
+            />
+          )}
+          {step === 3 && (
+            <Elements stripe={stripePromise}>
+              <PaymentForm
+                onBack={() => setStep(2)}
+                deliveryData={deliveryData}
+                onSuccess={(num) => setOrderNum(num)}
+              />
+            </Elements>
+          )}
+        </div>
+      </div>
+
+      {/* Menu below for step 1 */}
+      {step === 1 && (
+        <div className="mt-4">
+          <div className="text-center py-6">
+            <p className="text-[#1a3a32]/60 text-sm">↓ Gerichte aus der Speisekarte auswählen</p>
+          </div>
+          <MenuSection />
+        </div>
+      )}
+
+      <Footer />
+    </div>
+  );
+}
