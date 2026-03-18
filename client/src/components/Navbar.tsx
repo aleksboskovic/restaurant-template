@@ -62,18 +62,26 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isTransparent ? 'bg-transparent' : 'bg-[#fdfbf7]/96 backdrop-blur-md shadow-sm'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500`}
+      style={isTransparent ? {} : {
+        backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
+      }}
     >
-      {/* Ethiopian flag stripe at very top */}
-      <div className="h-[3px] flex w-full">
+      {/* Overlay to keep text readable when scrolled */}
+      {!isTransparent && (
+        <div className="absolute inset-0 bg-[#fdfbf7]/82 backdrop-blur-[2px] pointer-events-none" />
+      )}
+      {/* Ethiopian flag stripe at very top – always on top of overlay */}
+      <div className="relative z-10 h-[3px] flex w-full">
         <div className="flex-1 bg-[#078930]" />
         <div className="flex-1 bg-[#FCDD09]" />
         <div className="flex-1 bg-[#DA121A]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
 
           {/* Logo */}
@@ -181,7 +189,16 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#fdfbf7] border-t border-[#1a3a32]/10 px-6 py-6 space-y-4">
+        <div
+          className="relative z-10 md:hidden border-t border-[#1a3a32]/10 px-6 py-6 space-y-4"
+          style={{
+            backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-[#fdfbf7]/88 backdrop-blur-[2px] pointer-events-none" />
+          <div className="relative z-10 space-y-4">
           {navLinks.map(({ label, action }) => (
             <button
               key={label}
@@ -226,6 +243,7 @@ export default function Navbar() {
               {t.nav_order}
             </Link>
           </div>
+          </div>{/* end z-10 wrapper */}
         </div>
       )}
     </header>
