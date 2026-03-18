@@ -9,6 +9,8 @@ import {
   updateOrderStatus,
   getActiveSpecialEvents,
   getAllSpecialEvents,
+  getOrderHistory,
+  getDayStats,
 } from "./sanity";
 
 const orderItemSchema = z.object({
@@ -67,6 +69,30 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await updateOrderStatus(input.orderId, input.status);
         return { success: true };
+      }),
+
+    /** Get order history (done orders) with optional date filter */
+    getHistory: publicProcedure
+      .input(z.object({
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+        limit: z.number().int().min(1).max(500).optional(),
+        offset: z.number().int().min(0).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const orders = await getOrderHistory(input ?? {});
+        return orders;
+      }),
+
+    /** Get daily statistics for a date range */
+    getDayStats: publicProcedure
+      .input(z.object({
+        dateFrom: z.string(),
+        dateTo: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const stats = await getDayStats(input.dateFrom, input.dateTo);
+        return stats;
       }),
   }),
 

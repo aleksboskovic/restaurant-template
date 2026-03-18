@@ -135,3 +135,60 @@ export async function getAllSpecialEvents(): Promise<SpecialEvent[]> {
   const query = `*[_type == "specialEvent"] | order(validFrom desc)`;
   return (await sanityQuery(query)) as SpecialEvent[];
 }
+
+export interface OrderHistoryFilter {
+  dateFrom?: string; // ISO date string, e.g. '2026-03-01'
+  dateTo?: string;   // ISO date string, e.g. '2026-03-31'
+  search?: string;   // free-text search
+  limit?: number;
+  offset?: number;
+}
+
+export interface DayStats {
+  date: string;
+  orderCount: number;
+  totalRevenue: number;
+  deliveryCount: number;
+  pickupCount: number;
+}
+
+export async function getOrderHistory(filter: OrderHistoryFilter = {}): Promise<SanityOrder[]> {
+  const { dateFrom, dateTo, limit = 100, offset = 0 } = filter;
+
+  let conditions = ['_type == "order"', 'status == "done"'];
+
+  if (dateFrom) {
+    conditions.push(`createdAt >= "${dateFrom}T00:00:00Z"`);
+  }
+  if (dateTo) {
+    conditions.push(`createdAt <= "${dateTo}T23:59:59Z"`);
+  }
+
+  const query = `*[${conditions.join(' && ')}] | order(createdAt desc) [${offset}..${offset + limit - 1}]`;
+  return (await sanityQuery(query)) as SanityOrder[];
+}
+
+export async function getDayStats(dateFrom: string, dateTo: string): Promise<DayStats[]> {
+  const query = `*[_type == "order" && status == "done" && createdAt >= "${dateFrom}T00:00:00Z" && createdAt <= "${dateTo}T23:59:59Z"] {
+    createdAt,
+    totalPrice,
+    orderType
+  }`;
+
+  const orders = (await sanityQuery(query)) as Array<{ createdAt: string; totalPrice: number; orderType: string }>;
+
+  // Group by date
+  const byDate: Record<string, DayStats> = {};
+  for (const o of orders) {
+    const day = o.createdAt.slice(0, 10);
+    if (!byDate[day]) {
+      byDate[day] = { date: day, orderCount: 0, totalRevenue: 0, deliveryCount: 0, pickupCount: 0 };
+    }
+    byDate[day].orderCount++;
+    byDate[day].totalRevenue += o.totalPrice || 0;
+    if (o.orderType === 'delivery') byDate[day].deliveryCount++;
+    else byDate[day].pickupCount++;
+  }
+
+  return Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date));
+}

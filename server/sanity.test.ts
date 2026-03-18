@@ -90,4 +90,47 @@ describe("Sanity Helper Functions (Unit)", () => {
     const { getActiveOrders } = await import('./sanity');
     await expect(getActiveOrders()).rejects.toThrow('Sanity query failed: 401');
   });
+
+  it("getOrderHistory filters by dateFrom and dateTo", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ result: [{ _id: '1', status: 'done', createdAt: '2026-03-18T10:00:00Z' }] }),
+    });
+
+    const { getOrderHistory } = await import('./sanity');
+    const orders = await getOrderHistory({ dateFrom: '2026-03-01', dateTo: '2026-03-31' });
+
+    expect(orders).toHaveLength(1);
+    const url = decodeURIComponent(mockFetch.mock.calls[0][0] as string);
+    expect(url).toContain('createdAt >= "2026-03-01T00:00:00Z"');
+    expect(url).toContain('createdAt <= "2026-03-31T23:59:59Z"');
+    expect(url).toContain('status == "done"');
+  });
+
+  it("getDayStats groups orders by date correctly", async () => {
+    const mockOrders = [
+      { createdAt: '2026-03-18T10:00:00Z', totalPrice: 25.50, orderType: 'delivery' },
+      { createdAt: '2026-03-18T14:00:00Z', totalPrice: 18.00, orderType: 'pickup' },
+      { createdAt: '2026-03-17T12:00:00Z', totalPrice: 32.00, orderType: 'delivery' },
+    ];
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ result: mockOrders }),
+    });
+
+    const { getDayStats } = await import('./sanity');
+    const stats = await getDayStats('2026-03-17', '2026-03-18');
+
+    expect(stats).toHaveLength(2);
+    const march18 = stats.find(s => s.date === '2026-03-18')!;
+    expect(march18.orderCount).toBe(2);
+    expect(march18.totalRevenue).toBeCloseTo(43.50);
+    expect(march18.deliveryCount).toBe(1);
+    expect(march18.pickupCount).toBe(1);
+
+    const march17 = stats.find(s => s.date === '2026-03-17')!;
+    expect(march17.orderCount).toBe(1);
+    expect(march17.totalRevenue).toBeCloseTo(32.00);
+  });
 });

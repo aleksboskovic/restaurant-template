@@ -26,3 +26,7 @@
 - [ ] EmailJS einrichten wenn Domain und E-Mail des Kunden bereit sind
 - [ ] Liefergebühr und Mindestbestellwert definieren und implementieren (aktuell Platzhalter)
 - [ ] Stripe von Test-Modus auf Live-Modus umschalten wenn Kunde bereit ist
+- [x] Bestellverlauf-Tab im Dashboard (erledigte Bestellungen nach Datum)
+- [x] Tagesstatistik: Umsatz und Anzahl Bestellungen
+- [x] Volltextsuche nach Name, Produkt, Adresse, Bestellwert
+- [x] Abmelde-Button im Dashboard
