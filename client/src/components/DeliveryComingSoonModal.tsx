@@ -60,7 +60,7 @@ export default function DeliveryComingSoonModal({ open, onClose }: DeliveryComin
 
         {/* Lieferando CTA */}
         <a
-          href="https://www.lieferando.at/speisekarte/habesha-salzburg"
+          href="https://www.lieferando.at/speisekarte/habesha-athiopische-restaurant-gebirgsjagerplatz"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 w-full bg-[#ff8000] hover:bg-[#e67300] text-white font-bold py-3.5 px-6 rounded-2xl transition-colors mb-3"
