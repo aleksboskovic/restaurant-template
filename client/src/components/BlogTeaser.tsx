@@ -20,7 +20,7 @@ export default function BlogTeaser() {
         style={{ backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/blog-hero-bg_97de065d.jpg')` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#1a1208]/80 to-[#1a1208]/90" />
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
           <p className="text-[#c9a84c] tracking-[0.3em] text-xs uppercase mb-3 font-light">

@@ -122,3 +122,8 @@
 - [x] Präferenz in localStorage speichern (versioniert)
 - [x] Banner in App.tsx global eingebunden
 - [x] Link zu Datenschutzerklärung im Banner
+
+## Klickbarkeit & Verlinkungen
+
+- [x] BlogTeaser-Karten auf Startseite klickbar machen (z-index Fix)
+- [x] Gursha-Sektion in CultureSection mit "Mehr über Gursha erfahren"-Link zum Blogbeitrag verbunden
