@@ -3,23 +3,17 @@ import { Lock, Eye, EyeOff, Utensils } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 const STORAGE_KEY = 'habesha_dashboard_auth';
-const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 Stunden
 
 function isSessionValid(): boolean {
   try {
-    const stored = sessionStorage.getItem(STORAGE_KEY);
-    if (!stored) return false;
-    const { expiry } = JSON.parse(stored);
-    return Date.now() < expiry;
+    return sessionStorage.getItem(STORAGE_KEY) === 'true';
   } catch {
     return false;
   }
 }
 
 function saveSession(): void {
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-    expiry: Date.now() + SESSION_DURATION_MS,
-  }));
+  sessionStorage.setItem(STORAGE_KEY, 'true');
 }
 
 interface PinProtectProps {
@@ -189,7 +183,7 @@ export default function PinProtect({ children }: PinProtectProps) {
           </form>
 
           <p className="text-white/20 text-xs text-center mt-6">
-            Session läuft 8 Stunden · Nur für Restaurantpersonal
+            Nur für Restaurantpersonal
           </p>
         </div>
       </div>
