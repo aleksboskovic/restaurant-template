@@ -1,5 +1,6 @@
 import { useLang } from '@/contexts/LanguageContext';
 import { Link } from 'wouter';
+import { openCookieSettings } from './CookieBanner';
 
 export default function Footer() {
   const { t, lang } = useLang();
@@ -86,6 +87,12 @@ export default function Footer() {
               <Link href="/agb" className="text-white/40 text-xs hover:text-[#d4af37] transition-colors">
                 AGB
               </Link>
+              <button
+                onClick={openCookieSettings}
+                className="text-white/40 text-xs hover:text-[#d4af37] transition-colors cursor-pointer"
+              >
+                Cookie-Einstellungen
+              </button>
             </div>
           </div>
         </div>

@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { X, ChevronDown, ChevronUp, Shield, BarChart2, Megaphone } from 'lucide-react';
 
+// Global event to re-open the cookie banner from anywhere
+export function openCookieSettings() {
+  window.dispatchEvent(new CustomEvent('habesha:open-cookie-settings'));
+}
+
 export type CookieConsent = {
   necessary: true;       // immer true, nicht änderbar
   analytics: boolean;
@@ -30,6 +35,13 @@ function saveCookieConsent(consent: CookieConsent) {
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+
+  // Listen for external trigger (e.g. Footer link)
+  useEffect(() => {
+    const handler = () => setVisible(true);
+    window.addEventListener('habesha:open-cookie-settings', handler);
+    return () => window.removeEventListener('habesha:open-cookie-settings', handler);
+  }, []);
   const [showDetails, setShowDetails] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);

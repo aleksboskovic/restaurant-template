@@ -134,3 +134,8 @@
 - [x] Analytics nur laden wenn Analyse-Cookie-Zustimmung vorhanden (DSGVO-konform)
 - [x] Cookie-Banner: bei Zustimmung GA laden, bei Ablehnung ga-disable Flag setzen
 - [x] Seitenaufrufe (pageviews) werden bei Routenwechsel automatisch getrackt
+
+## Bugfixes & DSGVO
+
+- [x] LiveOrders: doppelter useState-Import war bereits behoben (veralteter Cache-Eintrag)
+- [x] Footer: "Cookie-Einstellungen"-Button eingebaut (öffnet Banner erneut, DSGVO-konform)
