@@ -16,6 +16,7 @@ import Legal from './pages/Legal';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import CookieBanner from './components/CookieBanner';
+import FAQ from './pages/FAQ';
 import { useGoogleAnalytics } from './hooks/useGoogleAnalytics';
 
 // Scroll to top on every route change
@@ -43,6 +44,7 @@ function Router() {
         <Route path="/impressum" component={Legal} />
         <Route path="/datenschutz" component={Legal} />
         <Route path="/agb" component={Legal} />
+        <Route path="/faq" component={FAQ} />
         <Route component={NotFound} />
       </Switch>
     </>

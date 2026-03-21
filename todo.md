@@ -143,3 +143,10 @@
 ## Google Maps
 
 - [x] Marker auf AdvancedMarkerElement migrieren (veraltete API-Warnung behoben)
+
+## FAQ-Seite
+
+- [x] FAQ-Seite (/faq) mit 19 Accordion-Fragen in 5 Kategorien (Dropdown)
+- [x] FAQ-Schema JSON-LD für Google Featured Snippets
+- [x] FAQ-Link in Navbar (Desktop + Mobile)
+- [x] Route in App.tsx registriert
