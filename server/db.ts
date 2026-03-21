@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, appSettings } from "../drizzle/schema";
 import { ENV } from './_core/env';
+import { createHash } from 'crypto';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -87,6 +88,41 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+// ─── Dashboard PIN ───────────────────────────────────────────────────────────
+
+const PIN_KEY = 'dashboard_pin_hash';
+const PIN_SALT = 'habesha-salt-2024';
+
+/** Hash a PIN with SHA-256 (server-side, using Node crypto) */
+export function hashPinServer(pin: string): string {
+  return createHash('sha256').update(pin + PIN_SALT).digest('hex');
+}
+
+/** Get the stored PIN hash from DB, or fall back to env/default */
+export async function getStoredPinHash(): Promise<string> {
+  const db = await getDb();
+  if (db) {
+    try {
+      const rows = await db.select().from(appSettings).where(eq(appSettings.key, PIN_KEY)).limit(1);
+      if (rows.length > 0) return rows[0].value;
+    } catch (e) {
+      console.warn('[PIN] DB read failed, using fallback:', e);
+    }
+  }
+  // Fallback: env variable or default '2468'
+  const fallback = process.env.VITE_DASHBOARD_PIN || '2468';
+  return hashPinServer(fallback);
+}
+
+/** Save a new PIN hash to DB */
+export async function savePinHash(newHash: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  await db.insert(appSettings)
+    .values({ key: PIN_KEY, value: newHash })
+    .onDuplicateKeyUpdate({ set: { value: newHash } });
 }
 
 // TODO: add feature queries here as your schema grows.

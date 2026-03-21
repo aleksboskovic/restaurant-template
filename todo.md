@@ -87,3 +87,10 @@
 - [x] CartContext mit Sanity-Daten kompatibel (war bereits vollständig kompatibel)
 - [x] Speisekarte Bug: Leaves nur aus Sanity anzeigen, Preis korrekt aus Sanity formatiert (19,40 €)
 - [x] Speisekarte Bug: Statische Daten als Fallback entfernt, Sanity ist alleinige Datenquelle
+- [x] Sanity Studio in Website integrieren (/studio Route) — GESTRICHEN: nicht nötig, Studio läuft direkt auf habesha-salzburg.sanity.studio
+
+## PIN-Änderung im Dashboard
+
+- [x] Backend: tRPC-Endpunkt zum PIN ändern (alten PIN prüfen, neuen speichern)
+- [x] Frontend: "PIN ändern"-Dialog im Live-Orders-Dashboard (alten PIN + 2x neuer PIN)
+- [x] Validierung: nur 4-stellige PINs erlaubt, alten PIN muss korrekt sein

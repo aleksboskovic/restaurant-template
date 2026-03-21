@@ -13,7 +13,8 @@ import {
   getOrderHistory,
   getDayStats,
   getMenuItems,
-} from "./sanity";
+} from './sanity';
+import { getStoredPinHash, savePinHash, hashPinServer } from './db';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-02-25.clover',
@@ -140,13 +141,42 @@ export const appRouter = router({
     }),
   }),
 
-  // ─── Menu Items from Sanity ─────────────────────────────────────────────────────
+   // ─── Menu Items from Sanity ──────────────────────────────────────────────
   menu: router({
     /** Get all available menu items from Sanity, sorted by sortOrder */
     getAll: publicProcedure.query(async () => {
       const items = await getMenuItems();
       return items;
     }),
+  }),
+
+  // ─── Dashboard PIN ────────────────────────────────────────────────────
+  pin: router({
+    /** Verify a PIN against the stored hash */
+    verify: publicProcedure
+      .input(z.object({ pin: z.string().min(4).max(8) }))
+      .mutation(async ({ input }) => {
+        const storedHash = await getStoredPinHash();
+        const inputHash = hashPinServer(input.pin);
+        return { valid: inputHash === storedHash };
+      }),
+
+    /** Change the PIN: verify old PIN first, then save new hash */
+    change: publicProcedure
+      .input(z.object({
+        oldPin: z.string().min(4).max(8),
+        newPin: z.string().length(4).regex(/^\d{4}$/, 'PIN muss genau 4 Ziffern sein'),
+      }))
+      .mutation(async ({ input }) => {
+        const storedHash = await getStoredPinHash();
+        const oldHash = hashPinServer(input.oldPin);
+        if (oldHash !== storedHash) {
+          throw new Error('Alter PIN ist falsch.');
+        }
+        const newHash = hashPinServer(input.newPin);
+        await savePinHash(newHash);
+        return { success: true };
+      }),
   }),
 });
 
