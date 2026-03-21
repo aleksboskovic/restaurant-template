@@ -117,8 +117,8 @@
 
 ## Cookie-Banner (DSGVO)
 
-- [ ] CookieBanner-Komponente im Habesha-Design (Zustimmen / Ablehnen / Einstellungen)
-- [ ] Cookie-Kategorien: Notwendig (immer), Analyse (optional), Marketing (optional)
-- [ ] Präferenz in localStorage speichern (1 Jahr gültig)
-- [ ] Banner in App.tsx global einbinden
-- [ ] Link zu Datenschutzerklärung im Banner
+- [x] CookieBanner-Komponente im Habesha-Design (Zustimmen / Ablehnen / Einstellungen)
+- [x] Cookie-Kategorien: Notwendig (immer), Analyse (optional), Marketing (optional)
+- [x] Präferenz in localStorage speichern (versioniert)
+- [x] Banner in App.tsx global eingebunden
+- [x] Link zu Datenschutzerklärung im Banner

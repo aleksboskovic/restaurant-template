@@ -15,6 +15,7 @@ import EventDetail from './pages/EventDetail';
 import Legal from './pages/Legal';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import CookieBanner from './components/CookieBanner';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -55,6 +56,7 @@ function App() {
             <TooltipProvider>
               <Toaster />
               <Router />
+              <CookieBanner />
             </TooltipProvider>
           </CartProvider>
         </LanguageProvider>
