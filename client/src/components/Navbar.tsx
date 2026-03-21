@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { useLang, Lang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Menu, X, ShoppingCart, ChevronDown } from 'lucide-react';
+import DeliveryComingSoonModal from '@/components/DeliveryComingSoonModal';
 
 // CDN URLs für die Hintergrundbilder
 const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
@@ -34,6 +35,7 @@ export default function Navbar() {
   const [activeTheme, setActiveTheme] = useState<NavTheme>('transparent');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [deliveryModalOpen, setDeliveryModalOpen] = useState(false);
   const [location] = useLocation();
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -243,7 +245,7 @@ export default function Navbar() {
             </div>
 
             {/* Cart */}
-            <Link href="/bestellen" className="relative p-1">
+            <button onClick={() => setDeliveryModalOpen(true)} className="relative p-1">
               <ShoppingCart
                 size={22}
                 className={`transition-colors duration-300 hover:text-[#d4af37] ${textColor}`}
@@ -253,7 +255,7 @@ export default function Navbar() {
                   {itemCount}
                 </span>
               )}
-            </Link>
+            </button>
 
             {/* Reserve Button */}
             <Link
@@ -371,17 +373,17 @@ export default function Navbar() {
               >
                 {t.nav_reserve}
               </Link>
-              <Link
-                href="/bestellen"
-                onClick={() => setMobileOpen(false)}
+              <button
+                onClick={() => { setMobileOpen(false); setDeliveryModalOpen(true); }}
                 className="flex-1 text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] hover:bg-[#1a3a32] hover:text-white transition-all"
               >
                 {t.nav_order}
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       )}
+      <DeliveryComingSoonModal open={deliveryModalOpen} onClose={() => setDeliveryModalOpen(false)} />
     </>
   );
 }

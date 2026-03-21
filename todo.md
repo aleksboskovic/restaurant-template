@@ -150,3 +150,7 @@
 - [x] FAQ-Schema JSON-LD für Google Featured Snippets
 - [x] FAQ-Link in Navbar (Desktop + Mobile)
 - [x] Route in App.tsx registriert
+
+## Warenkorb-Deaktivierung
+
+- [x] Warenkorb-Icon und alle "Bestellen"-Buttons deaktivieren: Info-Modal mit Lieferando-Link + Hinweis auf baldige eigene Lieferung
