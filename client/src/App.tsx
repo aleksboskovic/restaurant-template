@@ -16,6 +16,7 @@ import Legal from './pages/Legal';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import CookieBanner from './components/CookieBanner';
+import { useGoogleAnalytics } from './hooks/useGoogleAnalytics';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -27,6 +28,7 @@ function ScrollToTop() {
 }
 function Router() {
   // make sure to consider if you need authentication for certain routes
+  useGoogleAnalytics();
   return (
     <>
       <ScrollToTop />
