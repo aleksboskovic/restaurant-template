@@ -1,19 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Lock, Eye, EyeOff, Utensils } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
-// PIN wird als SHA-256-Hash gespeichert – nie im Klartext
-// Standard-PIN: 2468 (kann in der Umgebungsvariable VITE_DASHBOARD_PIN überschrieben werden)
-const CORRECT_PIN = import.meta.env.VITE_DASHBOARD_PIN || '2468';
 const STORAGE_KEY = 'habesha_dashboard_auth';
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 Stunden
-
-async function hashPin(pin: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(pin + 'habesha-salt-2024');
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 function isSessionValid(): boolean {
   try {
@@ -45,8 +35,34 @@ export default function PinProtect({ children }: PinProtectProps) {
   const [isChecking, setIsChecking] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const verifyMutation = trpc.pin.verify.useMutation({
+    onSuccess: (data) => {
+      if (data.valid) {
+        saveSession();
+        setIsAuthenticated(true);
+        setError('');
+      } else {
+        setError('Falscher PIN. Bitte erneut versuchen.');
+        setIsShaking(true);
+        setPin('');
+        setTimeout(() => {
+          setIsShaking(false);
+          inputRef.current?.focus();
+        }, 600);
+      }
+    },
+    onError: () => {
+      setError('Verbindungsfehler. Bitte erneut versuchen.');
+      setIsShaking(true);
+      setPin('');
+      setTimeout(() => {
+        setIsShaking(false);
+        inputRef.current?.focus();
+      }, 600);
+    },
+  });
+
   useEffect(() => {
-    // Beim Laden prüfen ob eine gültige Session existiert
     if (isSessionValid()) {
       setIsAuthenticated(true);
     }
@@ -65,23 +81,7 @@ export default function PinProtect({ children }: PinProtectProps) {
       setError('Bitte mindestens 4 Ziffern eingeben.');
       return;
     }
-
-    const enteredHash = await hashPin(pin);
-    const correctHash = await hashPin(CORRECT_PIN);
-
-    if (enteredHash === correctHash) {
-      saveSession();
-      setIsAuthenticated(true);
-      setError('');
-    } else {
-      setError('Falscher PIN. Bitte erneut versuchen.');
-      setIsShaking(true);
-      setPin('');
-      setTimeout(() => {
-        setIsShaking(false);
-        inputRef.current?.focus();
-      }, 600);
-    }
+    verifyMutation.mutate({ pin });
   };
 
   if (isChecking) {
@@ -180,11 +180,11 @@ export default function PinProtect({ children }: PinProtectProps) {
 
             <button
               type="submit"
-              disabled={pin.length < 4}
+              disabled={pin.length < 4 || verifyMutation.isPending}
               className="w-full py-3.5 rounded-xl font-bold text-[#1a3a32] text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-              style={{ background: pin.length >= 4 ? '#d4af37' : '#d4af37' }}
+              style={{ background: '#d4af37' }}
             >
-              Einloggen
+              {verifyMutation.isPending ? 'Prüfen...' : 'Einloggen'}
             </button>
           </form>
 
