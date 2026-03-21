@@ -77,3 +77,6 @@
 - [x] Datenschutzerklärung-Seite erstellen (DSGVO-konform, Stripe, Google Analytics)
 - [x] AGB-Seite erstellen (§1-§7, FAGG, Widerrufsrecht, Jugendschutz)
 - [x] Footer-Links zu Impressum, Datenschutz, AGB hinzufügen
+- [x] Adresse überall auf "Gebirgsjägerplatz 1, 5020 Salzburg" korrigieren — Impressum bleibt vorerst Stauffeneggstraße
+- [x] Betreibername "Habtom G." durch "Daniel Yemane" und "Habesha Cafe Bar & Restaurant e.U." in allen 3 Sprachen ersetzt
+- [ ] SPÄTER PRÜFEN: Impressum-Adresse (Stauffeneggstraße 29/10 vs. Gebirgsjägerplatz 1) mit Besitzer klären
