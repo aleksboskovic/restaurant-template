@@ -139,3 +139,7 @@
 
 - [x] LiveOrders: doppelter useState-Import war bereits behoben (veralteter Cache-Eintrag)
 - [x] Footer: "Cookie-Einstellungen"-Button eingebaut (öffnet Banner erneut, DSGVO-konform)
+
+## Google Maps
+
+- [x] Marker auf AdvancedMarkerElement migrieren (veraltete API-Warnung behoben)
