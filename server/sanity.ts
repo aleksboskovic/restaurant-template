@@ -195,11 +195,30 @@ export async function getDayStats(dateFrom: string, dateTo: string): Promise<Day
   return Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date));
 }
 
-// ── MENU ITEMS ────────────────────────────────────────────────────────────────
+// ── MENU ITEMS ────────────────────────────────────────────────────────────────────────────────────
 
+// Raw Sanity document shape (as stored in Sanity)
+interface RawSanityMenuItem {
+  _id: string;
+  _type: string;
+  name?: string;        // German name (primary)
+  name_en?: string;
+  name_am?: string;
+  description?: string; // German description
+  description_en?: string;
+  description_am?: string;
+  price?: number;       // numeric price
+  category?: string;
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  badge?: string;
+  sortOrder?: number;
+  isAvailable?: boolean;
+}
+
+// Normalized shape used throughout the app
 export interface SanityMenuItem {
   _id: string;
-  _type: 'menuItem';
   id: string;
   nameDe: string;
   nameEn: string;
@@ -207,8 +226,8 @@ export interface SanityMenuItem {
   descDe: string;
   descEn: string;
   descAm: string;
-  price: string;
-  priceNum: number;
+  price: string;    // formatted: "19,40 €"
+  priceNum: number; // raw number: 19.4
   category: 'mains' | 'vegan' | 'plates' | 'sides';
   isVegan?: boolean;
   isVegetarian?: boolean;
@@ -217,13 +236,37 @@ export interface SanityMenuItem {
   isAvailable?: boolean;
 }
 
+function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
+  const priceNum = raw.price ?? 0;
+  const priceFormatted = priceNum.toFixed(2).replace('.', ',') + ' €';
+  return {
+    _id: raw._id,
+    id: raw._id,
+    nameDe: raw.name || '',
+    nameEn: raw.name_en || raw.name || '',
+    nameAm: raw.name_am || '',
+    descDe: raw.description || '',
+    descEn: raw.description_en || raw.description || '',
+    descAm: raw.description_am || '',
+    price: priceFormatted,
+    priceNum,
+    category: (raw.category as SanityMenuItem['category']) || 'mains',
+    isVegan: raw.isVegan ?? false,
+    isVegetarian: raw.isVegetarian ?? false,
+    badge: raw.badge || undefined,
+    sortOrder: raw.sortOrder,
+    isAvailable: raw.isAvailable !== false,
+  };
+}
+
 export async function getMenuItems(): Promise<SanityMenuItem[]> {
   const query = `*[_type == "menuItem" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
-  const results = (await sanityQuery(query)) as SanityMenuItem[];
-  return results;
+  const results = (await sanityQuery(query)) as RawSanityMenuItem[];
+  return results.map(normalizeSanityMenuItem);
 }
 
 export async function getMenuItemsByCategory(category: string): Promise<SanityMenuItem[]> {
   const query = `*[_type == "menuItem" && category == "${category}" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
-  return (await sanityQuery(query)) as SanityMenuItem[];
+  const results = (await sanityQuery(query)) as RawSanityMenuItem[];
+  return results.map(normalizeSanityMenuItem);
 }

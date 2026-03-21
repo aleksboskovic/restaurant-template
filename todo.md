@@ -85,3 +85,5 @@
 - [x] MenuSection auf Sanity-Daten umstellen (Design identisch, Fallback auf statische Daten)
 - [x] OrderPage/Bestellsystem auf Sanity-Daten umstellen (menuItems-Abhängigkeit entfernt)
 - [x] CartContext mit Sanity-Daten kompatibel (war bereits vollständig kompatibel)
+- [x] Speisekarte Bug: Leaves nur aus Sanity anzeigen, Preis korrekt aus Sanity formatiert (19,40 €)
+- [x] Speisekarte Bug: Statische Daten als Fallback entfernt, Sanity ist alleinige Datenquelle

@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
-import { menuItems as staticMenuItems, getItemName, getItemDesc } from '@/lib/menuData';
 import { trpc } from '@/lib/trpc';
 import { Plus, Minus, ShoppingCart, Leaf, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
 
 type Tab = 'mains' | 'vegan' | 'plates' | 'sides';
 
-// Unified MenuItem type that works with both Sanity and static data
 interface MenuItem {
   id: string;
   nameDe: string;
@@ -46,8 +44,14 @@ function MenuCard({ item }: { item: MenuItem }) {
   const cartItem = items.find(i => i.id === item.id);
   const qty = cartItem?.quantity || 0;
 
-  const name = getItemName(item, lang);
-  const desc = getItemDesc(item, lang);
+  // Lokalisierter Name und Beschreibung direkt aus Sanity-Feldern
+  const name = lang === 'en' ? (item.nameEn || item.nameDe)
+             : lang === 'am' ? (item.nameAm || item.nameDe)
+             : item.nameDe;
+
+  const desc = lang === 'en' ? (item.descEn || item.descDe)
+             : lang === 'am' ? (item.descAm || item.descDe)
+             : item.descDe;
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#1a3a32]/8 hover:shadow-md hover:border-[#d4af37]/40 transition-all duration-300 flex flex-col">
@@ -115,10 +119,10 @@ export default function MenuSection() {
   const { itemCount, total } = useCart();
   const [activeTab, setActiveTab] = useState<Tab>('mains');
 
-  // Sanity-Daten laden, Fallback auf statische Daten
-  const { data: sanityItems, isLoading } = trpc.menu.getAll.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000, // 5 Minuten cachen
-    retry: 1,
+  // Sanity-Daten laden
+  const { data: sanityItems, isLoading, isError } = trpc.menu.getAll.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
   });
 
   const tabs: { key: Tab; label: string }[] = [
@@ -128,11 +132,7 @@ export default function MenuSection() {
     { key: 'sides', label: t.menu_tab_sides },
   ];
 
-  // Sanity-Daten verwenden wenn vorhanden, sonst statische Daten als Fallback
-  const allItems: MenuItem[] = (sanityItems && sanityItems.length > 0)
-    ? (sanityItems as MenuItem[])
-    : staticMenuItems;
-
+  const allItems: MenuItem[] = (sanityItems as MenuItem[] | undefined) ?? [];
   const items = allItems.filter(item => item.category === activeTab);
 
   return (
@@ -185,8 +185,15 @@ export default function MenuSection() {
           </div>
         )}
 
+        {/* Error State */}
+        {isError && !isLoading && (
+          <div className="text-center py-12 text-[#1a3a32]/50">
+            Speisekarte konnte nicht geladen werden. Bitte versuchen Sie es später erneut.
+          </div>
+        )}
+
         {/* Menu Grid */}
-        {!isLoading && (
+        {!isLoading && !isError && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map((item) => (
               <MenuCard key={item.id} item={item} />
