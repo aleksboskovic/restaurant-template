@@ -103,3 +103,9 @@
 - [x] Blog-Teaser auf Startseite (3 neueste Beiträge)
 - [x] Nav-Reiter "Blog" in der Navbar hinzufügen (Desktop + Mobile)
 - [x] Routen in App.tsx registrieren
+
+## Bugfixes & Navigation
+
+- [x] Google Maps doppelter Load-Fehler auf Mobile beheben
+- [x] Navbar + Footer in Blog-Übersichtsseite (/blog) einbauen
+- [x] Navbar + Footer in Blog-Einzelartikel (/blog/:slug) einbauen

@@ -1,6 +1,9 @@
 import { useParams, Link } from 'wouter';
 import { getBlogPostBySlug, getLatestBlogPosts, type Section } from '@/data/blogPosts';
 import { Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import FloatingButtons from '@/components/FloatingButtons';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -75,6 +78,7 @@ export default function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-[#1a1208]">
+      <Navbar />
       {/* Hero image */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
@@ -157,6 +161,8 @@ export default function BlogPostPage() {
           </div>
         )}
       </div>
+      <Footer />
+      <FloatingButtons />
     </div>
   );
 }

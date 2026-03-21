@@ -1,6 +1,9 @@
 import { Link } from 'wouter';
 import { blogPosts } from '@/data/blogPosts';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import FloatingButtons from '@/components/FloatingButtons';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -23,8 +26,9 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-[#1a1208]">
+      <Navbar />
       {/* Hero */}
-      <div className="relative py-24 px-4 text-center overflow-hidden">
+      <div className="relative pt-36 pb-24 px-4 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-[#1a1208]" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <p className="text-[#c9a84c] tracking-[0.3em] text-sm uppercase mb-4 font-light">
@@ -94,6 +98,8 @@ export default function Blog() {
           ))}
         </div>
       </div>
+      <Footer />
+      <FloatingButtons />
     </div>
   );
 }
