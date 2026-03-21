@@ -45,3 +45,35 @@
 - [x] Stripe-Kartenzahlung auf Mobil und Desktop reparieren (Manus Sandbox-Keys korrekt konfiguriert)
 - [x] Öffnungszeiten verifiziert: Mi–Fr 11–14 & 17–22, Sa–So 13–22, Di 17–22, Mo geschlossen
 - [x] Hero-Text auf Mobil unsichtbar behoben: mobiles Menü hat jetzt max-height + dunklen Hintergrund bei transparent-Theme
+
+## Nächste Schritte (bereit zum Starten)
+
+- [ ] restaurant.config.ts einbauen (zentrale Konfigurationsdatei für White-Label)
+- [ ] SEO: Meta-Tags, Open Graph, Schema.org für alle Seiten
+- [ ] Analytics einrichten (Manus Analytics + Google Analytics vorbereiten)
+- [ ] Impressum-Seite erstellen (rechtlich notwendig AT/DE)
+- [ ] Datenschutzerklärung-Seite erstellen (rechtlich notwendig AT/DE)
+- [ ] Ausgewählte Bilder auf der Website ersetzen/aktualisieren
+- [ ] Dashboard-PIN personalisieren (Standard 2468 ersetzen)
+- [ ] GitHub-Export als White-Label-Vorlage vorbereiten
+
+## Wartet auf Bestätigung vom Restaurantbesitzer
+
+- [ ] Speisekarte: von statisch (menuData.ts) auf Sanity umstellen (Schema, Import aller Gerichte DE/EN/AM, Code-Anpassung)
+- [ ] Bestellsystem an Sanity-Speisekarte koppeln (Warenkorb liest Gerichte aus Sanity)
+- [ ] Design der Speisekarte bleibt exakt gleich – nur Datenquelle ändert sich
+- [ ] Blog-Sektion einrichten: eigener Reiter /blog, von Homepage-Sektionen aus verlinkbar
+- [ ] 4–6 strategische Blogbeiträge erstellen (SEO-optimiert, mit Metadaten):
+  - Thema 1: Äthiopischer Kaffee & Kaffeezeremonie
+  - Thema 2: Vegane & vegetarische äthiopische Küche
+  - Thema 3: Äthiopische Lieferanten & Zutaten
+  - Thema 4: Äthiopische Tradition & Kultur
+  - Thema 5: Habesha – Geschichte & Konzept
+- [ ] Homepage-Sektionen (Kaffee, Vegan etc.) klickbar machen → führen zum jeweiligen Blogeintrag
+- [ ] Blog-Beiträge in Sanity verwalten (CMS-Integration)
+- [x] E-Mail-Feld im Checkout als Pflichtfeld setzen (FAGG-Pflicht AT)
+- [ ] Bestellbestätigungs-E-Mail Template einbauen (Selam & Hallo [Name], Bestelldetails, MwSt, Lieferhinweis)
+- [x] Impressum-Seite erstellen (Daniel Yemane, FN 632525 i, ATU80437047)
+- [x] Datenschutzerklärung-Seite erstellen (DSGVO-konform, Stripe, Google Analytics)
+- [x] AGB-Seite erstellen (§1-§7, FAGG, Widerrufsrecht, Jugendschutz)
+- [x] Footer-Links zu Impressum, Datenschutz, AGB hinzufügen

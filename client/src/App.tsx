@@ -12,6 +12,7 @@ import OrderPage from './pages/OrderPage';
 import LiveOrders from './pages/LiveOrders';
 import NotFound from './pages/NotFound';
 import EventDetail from './pages/EventDetail';
+import Legal from './pages/Legal';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -32,6 +33,9 @@ function Router() {
         <Route path="/bestellen" component={OrderPage} />
         <Route path="/live-orders" component={LiveOrders} />
         <Route path="/events/:id" component={EventDetail} />
+        <Route path="/impressum" component={Legal} />
+        <Route path="/datenschutz" component={Legal} />
+        <Route path="/agb" component={Legal} />
         <Route component={NotFound} />
       </Switch>
     </>

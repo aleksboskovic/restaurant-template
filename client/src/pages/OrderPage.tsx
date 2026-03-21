@@ -161,7 +161,8 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
     if (!deliveryData.firstname) e.firstname = 'Pflichtfeld';
     if (!deliveryData.lastname) e.lastname = 'Pflichtfeld';
     if (!deliveryData.phone) e.phone = 'Pflichtfeld';
-    if (!deliveryData.email || !/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail';
+    if (!deliveryData.email) e.email = 'Pflichtfeld';
+    else if (!/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail-Adresse';
     if (!deliveryData.street) e.street = 'Pflichtfeld';
     if (!deliveryData.city) e.city = 'Pflichtfeld';
     if (deliveryData.deliveryType === 'schedule') {
@@ -192,6 +193,7 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
         placeholder={placeholder}
         value={deliveryData[field] || ''}
         onChange={e => setDeliveryData({ ...deliveryData, [field]: e.target.value })}
+        required
         className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all ${errors[field] ? 'border-red-400' : 'border-gray-200'}`}
       />
       {errors[field] && <p className="text-red-500 text-xs mt-1">{errors[field]}</p>}
