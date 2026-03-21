@@ -29,7 +29,11 @@ export default function Blog() {
       <Navbar />
       {/* Hero */}
       <div className="relative pt-36 pb-24 px-4 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-[#1a1208]" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/blog-hero-bg_97de065d.jpg')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[#1a1208]" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <p className="text-[#c9a84c] tracking-[0.3em] text-sm uppercase mb-4 font-light">
             Habesha Magazin

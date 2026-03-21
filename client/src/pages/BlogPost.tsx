@@ -81,10 +81,16 @@ export default function BlogPostPage() {
       <Navbar />
       {/* Hero image */}
       <div className="relative h-72 md:h-96 overflow-hidden">
+        {/* Background texture */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/blog-hero-bg_97de065d.jpg')` }}
+        />
+        {/* Post-specific image blended on top */}
         <img
           src={post.image}
           alt={post.imageAlt}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1208] via-black/40 to-black/20" />
       </div>

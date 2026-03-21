@@ -109,3 +109,16 @@
 - [x] Google Maps doppelter Load-Fehler auf Mobile beheben
 - [x] Navbar + Footer in Blog-Übersichtsseite (/blog) einbauen
 - [x] Navbar + Footer in Blog-Einzelartikel (/blog/:slug) einbauen
+
+## Blog Hintergrundbild
+
+- [ ] KI-Wasserzeichen aus Blog-Hintergrundbild entfernen
+- [ ] Bild als Hintergrund für Blog-Übersicht, Artikel-Seiten und Teaser einsetzen
+
+## Cookie-Banner (DSGVO)
+
+- [ ] CookieBanner-Komponente im Habesha-Design (Zustimmen / Ablehnen / Einstellungen)
+- [ ] Cookie-Kategorien: Notwendig (immer), Analyse (optional), Marketing (optional)
+- [ ] Präferenz in localStorage speichern (1 Jahr gültig)
+- [ ] Banner in App.tsx global einbinden
+- [ ] Link zu Datenschutzerklärung im Banner
