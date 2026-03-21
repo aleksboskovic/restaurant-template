@@ -4,8 +4,7 @@ import { useCart } from '@/contexts/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MenuSection from '@/components/MenuSection';
-import { getItemName } from '@/lib/menuData';
-import { menuItems } from '@/lib/menuData';
+// menuData wird nicht mehr benötigt - Warenkorb enthält alle nötigen Daten
 import { trpc } from '@/lib/trpc';
 import {
   ShoppingCart, Truck, CreditCard, CheckCircle, Clock, Calendar,
@@ -77,8 +76,8 @@ function Step1({ onNext }: { onNext: () => void }) {
       ) : (
         <div className="space-y-3 mb-6">
           {items.map(item => {
-            const menuItem = menuItems.find(m => m.id === item.id);
-            const displayName = menuItem ? getItemName(menuItem, lang) : item.name;
+            // Namen aus Warenkorb-Daten holen (enthält DE/EN/AM)
+            const displayName = lang === 'en' ? (item.nameEn || item.name) : lang === 'am' ? (item.nameAm || item.name) : item.name;
             return (
               <div key={item.id} className="flex items-center gap-4 bg-white rounded-xl p-4 border border-[#1a3a32]/8">
                 <div className="flex-1">
@@ -91,8 +90,8 @@ function Step1({ onNext }: { onNext: () => void }) {
                   </button>
                   <span className="text-[#1a3a32] font-bold text-sm w-5 text-center">{item.quantity}</span>
                   <button onClick={() => {
-                    const mi = menuItems.find(m => m.id === item.id);
-                    if (mi) addItem({ id: mi.id, name: mi.nameDe, nameEn: mi.nameEn, nameAm: mi.nameAm, price: mi.priceNum });
+                    // Daten direkt aus Warenkorb-Item
+                    addItem({ id: item.id, name: item.name, nameEn: item.nameEn, nameAm: item.nameAm, price: item.price });
                   }} className="w-7 h-7 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/80 transition-colors">
                     <Plus size={12} />
                   </button>

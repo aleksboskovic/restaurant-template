@@ -1,11 +1,29 @@
 import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
-import { menuItems, getMenuByCategory, getItemName, getItemDesc, MenuItem } from '@/lib/menuData';
-import { Plus, Minus, ShoppingCart, Leaf } from 'lucide-react';
+import { menuItems as staticMenuItems, getItemName, getItemDesc } from '@/lib/menuData';
+import { trpc } from '@/lib/trpc';
+import { Plus, Minus, ShoppingCart, Leaf, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
 
 type Tab = 'mains' | 'vegan' | 'plates' | 'sides';
+
+// Unified MenuItem type that works with both Sanity and static data
+interface MenuItem {
+  id: string;
+  nameDe: string;
+  nameEn: string;
+  nameAm: string;
+  descDe: string;
+  descEn: string;
+  descAm: string;
+  price: string;
+  priceNum: number;
+  category: 'mains' | 'vegan' | 'plates' | 'sides';
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  badge?: string;
+}
 
 function VeganBadge({ isVegan, isVegetarian }: { isVegan?: boolean; isVegetarian?: boolean }) {
   if (isVegan) return (
@@ -97,6 +115,12 @@ export default function MenuSection() {
   const { itemCount, total } = useCart();
   const [activeTab, setActiveTab] = useState<Tab>('mains');
 
+  // Sanity-Daten laden, Fallback auf statische Daten
+  const { data: sanityItems, isLoading } = trpc.menu.getAll.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000, // 5 Minuten cachen
+    retry: 1,
+  });
+
   const tabs: { key: Tab; label: string }[] = [
     { key: 'mains', label: t.menu_tab_mains },
     { key: 'vegan', label: t.menu_tab_vegan },
@@ -104,7 +128,12 @@ export default function MenuSection() {
     { key: 'sides', label: t.menu_tab_sides },
   ];
 
-  const items = getMenuByCategory(activeTab);
+  // Sanity-Daten verwenden wenn vorhanden, sonst statische Daten als Fallback
+  const allItems: MenuItem[] = (sanityItems && sanityItems.length > 0)
+    ? (sanityItems as MenuItem[])
+    : staticMenuItems;
+
+  const items = allItems.filter(item => item.category === activeTab);
 
   return (
     <section id="menu" className="py-24 bg-transparent">
@@ -149,12 +178,26 @@ export default function MenuSection() {
           ))}
         </div>
 
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="animate-spin text-[#1a3a32]" size={32} />
+          </div>
+        )}
+
         {/* Menu Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((item) => (
-            <MenuCard key={item.id} item={item} />
-          ))}
-        </div>
+        {!isLoading && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {items.map((item) => (
+              <MenuCard key={item.id} item={item} />
+            ))}
+            {items.length === 0 && (
+              <div className="col-span-3 text-center py-12 text-[#1a3a32]/50">
+                Keine Gerichte in dieser Kategorie verfügbar.
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Floating Cart Bar */}
         {itemCount > 0 && (

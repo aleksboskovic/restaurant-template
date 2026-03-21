@@ -194,3 +194,36 @@ export async function getDayStats(dateFrom: string, dateTo: string): Promise<Day
 
   return Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date));
 }
+
+// ── MENU ITEMS ────────────────────────────────────────────────────────────────
+
+export interface SanityMenuItem {
+  _id: string;
+  _type: 'menuItem';
+  id: string;
+  nameDe: string;
+  nameEn: string;
+  nameAm: string;
+  descDe: string;
+  descEn: string;
+  descAm: string;
+  price: string;
+  priceNum: number;
+  category: 'mains' | 'vegan' | 'plates' | 'sides';
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  badge?: string;
+  sortOrder?: number;
+  isAvailable?: boolean;
+}
+
+export async function getMenuItems(): Promise<SanityMenuItem[]> {
+  const query = `*[_type == "menuItem" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
+  const results = (await sanityQuery(query)) as SanityMenuItem[];
+  return results;
+}
+
+export async function getMenuItemsByCategory(category: string): Promise<SanityMenuItem[]> {
+  const query = `*[_type == "menuItem" && category == "${category}" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
+  return (await sanityQuery(query)) as SanityMenuItem[];
+}

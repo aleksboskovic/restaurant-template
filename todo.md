@@ -59,9 +59,9 @@
 
 ## Wartet auf Bestätigung vom Restaurantbesitzer
 
-- [ ] Speisekarte: von statisch (menuData.ts) auf Sanity umstellen (Schema, Import aller Gerichte DE/EN/AM, Code-Anpassung)
-- [ ] Bestellsystem an Sanity-Speisekarte koppeln (Warenkorb liest Gerichte aus Sanity)
-- [ ] Design der Speisekarte bleibt exakt gleich – nur Datenquelle ändert sich
+- [x] Speisekarte: von statisch (menuData.ts) auf Sanity umstellen (Schema, Import aller Gerichte DE/EN/AM, Code-Anpassung)
+- [x] Bestellsystem an Sanity-Speisekarte koppeln (Warenkorb liest Gerichte aus Sanity)
+- [x] Design der Speisekarte bleibt exakt gleich – nur Datenquelle ändert sich
 - [ ] Blog-Sektion einrichten: eigener Reiter /blog, von Homepage-Sektionen aus verlinkbar
 - [ ] 4–6 strategische Blogbeiträge erstellen (SEO-optimiert, mit Metadaten):
   - Thema 1: Äthiopischer Kaffee & Kaffeezeremonie
@@ -80,3 +80,8 @@
 - [x] Adresse überall auf "Gebirgsjägerplatz 1, 5020 Salzburg" korrigieren — Impressum bleibt vorerst Stauffeneggstraße
 - [x] Betreibername "Habtom G." durch "Daniel Yemane" und "Habesha Cafe Bar & Restaurant e.U." in allen 3 Sprachen ersetzt
 - [ ] SPÄTER PRÜFEN: Impressum-Adresse (Stauffeneggstraße 29/10 vs. Gebirgsjägerplatz 1) mit Besitzer klären
+- [x] Sanity-Schema für menuItem erstellen und deployen (getMenuItems in server/sanity.ts)
+- [x] tRPC-Endpunkt für Speisekarte aus Sanity erstellen (menu.getAll in routers.ts)
+- [x] MenuSection auf Sanity-Daten umstellen (Design identisch, Fallback auf statische Daten)
+- [x] OrderPage/Bestellsystem auf Sanity-Daten umstellen (menuItems-Abhängigkeit entfernt)
+- [x] CartContext mit Sanity-Daten kompatibel (war bereits vollständig kompatibel)

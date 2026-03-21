@@ -12,6 +12,7 @@ import {
   getAllSpecialEvents,
   getOrderHistory,
   getDayStats,
+  getMenuItems,
 } from "./sanity";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -139,18 +140,12 @@ export const appRouter = router({
     }),
   }),
 
-  // ─── Menu Items from Sanity ─────────────────────────────────────────────────
+  // ─── Menu Items from Sanity ─────────────────────────────────────────────────────
   menu: router({
-    /** Get all menu items from Sanity */
+    /** Get all available menu items from Sanity, sorted by sortOrder */
     getAll: publicProcedure.query(async () => {
-      const SANITY_TOKEN = process.env.SANITY_API_TOKEN || '';
-      const query = encodeURIComponent('*[_type == "menuItem"] | order(category asc, name asc)');
-      const res = await fetch(
-        `https://yp5xha26.api.sanity.io/v2021-06-07/data/query/production?query=${query}`,
-        { headers: { Authorization: `Bearer ${SANITY_TOKEN}` } }
-      );
-      const data = await res.json() as { result: unknown[] };
-      return data.result;
+      const items = await getMenuItems();
+      return items;
     }),
   }),
 });
