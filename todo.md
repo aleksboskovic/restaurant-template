@@ -94,3 +94,12 @@
 - [x] Backend: tRPC-Endpunkt zum PIN ändern (alten PIN prüfen, neuen speichern)
 - [x] Frontend: "PIN ändern"-Dialog im Live-Orders-Dashboard (alten PIN + 2x neuer PIN)
 - [x] Validierung: nur 4-stellige PINs erlaubt, alten PIN muss korrekt sein
+
+## Blog-Sektion
+
+- [x] Blog-Inhalte als statische Datei (blogPosts.ts) vorbereiten (9 Beiträge, 10.03.–22.03.2026)
+- [x] Blog-Übersichtsseite (/blog) mit Karten, Datum, Teaser-Text
+- [x] Einzelartikel-Seite (/blog/:slug) mit vollem Inhalt
+- [x] Blog-Teaser auf Startseite (3 neueste Beiträge)
+- [x] Nav-Reiter "Blog" in der Navbar hinzufügen (Desktop + Mobile)
+- [x] Routen in App.tsx registrieren

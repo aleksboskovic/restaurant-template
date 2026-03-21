@@ -13,6 +13,8 @@ import LiveOrders from './pages/LiveOrders';
 import NotFound from './pages/NotFound';
 import EventDetail from './pages/EventDetail';
 import Legal from './pages/Legal';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -33,6 +35,8 @@ function Router() {
         <Route path="/bestellen" component={OrderPage} />
         <Route path="/live-orders" component={LiveOrders} />
         <Route path="/events/:id" component={EventDetail} />
+        <Route path="/blog/:slug" component={BlogPost} />
+        <Route path="/blog" component={Blog} />
         <Route path="/impressum" component={Legal} />
         <Route path="/datenschutz" component={Legal} />
         <Route path="/agb" component={Legal} />

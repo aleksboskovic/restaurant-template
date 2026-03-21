@@ -194,6 +194,13 @@ export default function Navbar() {
                 <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#d4af37] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
               </button>
             ))}
+            <Link
+              href="/blog"
+              className={`relative text-xs font-semibold tracking-[0.12em] uppercase px-3 py-2 transition-colors duration-300 hover:text-[#d4af37] group ${textColorMuted}`}
+            >
+              Blog
+              <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#d4af37] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+            </Link>
           </nav>
 
           {/* Right side */}
@@ -306,6 +313,17 @@ export default function Navbar() {
                 {label}
               </button>
             ))}
+            <Link
+              href="/blog"
+              onClick={() => setMobileOpen(false)}
+              className={`block w-full text-left text-sm font-semibold tracking-wide uppercase transition-colors py-2.5 border-b hover:text-[#d4af37] ${
+                isDark || isTransparent
+                  ? 'text-white border-white/10'
+                  : 'text-[#1a3a32] border-[#1a3a32]/8'
+              }`}
+            >
+              Blog
+            </Link>
 
             {/* Language switcher mobile */}
             <div className="flex items-center gap-2 pt-2">
