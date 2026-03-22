@@ -569,6 +569,117 @@ export const blogPosts: BlogPost[] = [
       },
     ],
   },
+
+  // 11 — 22.03.2026 — Tej
+  {
+    slug: 'tej-aethiopischer-honigwein',
+    title: 'Tej: Der süße Geschmack Äthiopiens – Mehr als nur Honigwein',
+    metaDescription: 'Was ist Tej? Entdecke Äthiopiens traditionellen Honig-Wein – fermentiert aus Honig, Wasser und Gesho-Zweigen. Im Habesha Restaurant Salzburg erleben.',
+    keywords: ['Tej Honigwein', 'Honig Wein Äthiopien', 'äthiopischer Wein Salzburg', 'Berele Glas', 'Gesho Honigwein', 'Habesha Restaurant Salzburg'],
+    date: '2026-03-22',
+    category: 'Kultur & Getränke',
+    readingTime: 4,
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/tej_blog_94372d5b.jpg',
+    imageAlt: 'Tej – äthiopischer Honigwein in traditionellen Berele-Glasflaschen',
+    teaser: 'Tej ist Äthiopiens ältestes Nationalgetränk – ein fermentierter Honig-Wein, der seit Jahrtausenden bei Festen und Feierlichkeiten getrunken wird. Süß, leicht bitter, unverwechselbar.',
+    content: [
+      {
+        type: 'paragraph',
+        text: 'In der faszinierenden Welt der äthiopischen Kulinarik gibt es ein Getränk, das so alt ist wie die Legenden des Landes selbst: Tej. Oft einfach als „äthiopischer Honigwein" bezeichnet, ist Tej weit mehr als nur ein alkoholisches Getränk – es ist ein kulturelles Symbol, ein Zeichen der Gastfreundschaft und ein fester Bestandteil von Feierlichkeiten.',
+      },
+      {
+        type: 'heading',
+        text: 'Was ist Tej genau?',
+      },
+      {
+        type: 'paragraph',
+        text: 'Tej ist ein fermentierter Wein, der traditionell aus drei Hauptzutaten hergestellt wird: Honig, Wasser und den Blättern des Gesho-Strauchs (Rhamnus prinoides) – einer Hopfenart, die ihm seine charakteristische bittere Note verleiht. Je nach Fermentationsdauer kann Tej von süß und alkoholarm bis hin zu trocken und sehr stark reichen.',
+      },
+      {
+        type: 'heading',
+        text: 'Honig-Wein: Ein Shorttail-Keyword mit Geschichte',
+      },
+      {
+        type: 'paragraph',
+        text: '„Tej" ist ein sehr spezifischer Begriff, nach dem vielleicht nicht jeder sucht. Doch wer nach „Honig Wein" sucht, meint oft genau dieses uralte Getränk. Indem wir Begriffe wie „Honig Wein" verwenden, erreichen wir auch jene, die noch nie von Tej gehört haben – und entdecken lassen, was Äthiopiens Nationalgetränk so besonders macht.',
+      },
+      {
+        type: 'heading',
+        text: 'Tej und das äthiopische Festmahl',
+      },
+      {
+        type: 'paragraph',
+        text: 'Kein äthiopisches Fest ist vollständig ohne Tej. Er wird aus charakteristischen, langhalsigen Glasflaschen – den sogenannten Berele – getrunken. Wenn Sie das nächste Mal ein traditionelles äthiopisches Gericht wie Doro Wat probieren, bestellen Sie unbedingt ein Glas Tej dazu. Die Süße des Honigs balanciert die Schärfe der Gewürze perfekt aus und lässt Sie tief in die Aromen Äthiopiens eintauchen.',
+      },
+      {
+        type: 'cta',
+        text: 'Neugierig auf Tej? Besuchen Sie uns im Habesha Restaurant Salzburg und erleben Sie den Geschmack Äthiopiens!',
+      },
+    ],
+  },
+
+  // 12 — 22.03.2026 — Niter Kibbeh
+  {
+    slug: 'niter-kibbeh-goldenes-geheimnis',
+    title: 'Niter Kibbeh: Das goldene Geheimnis der äthiopischen Küche',
+    metaDescription: 'Was ist Niter Kibbeh? Das gewürzte Butterschmalz ist die Seele der äthiopischen Küche – Herzstück von Doro Wat, Kitfo und Injera. Alles über Nitir Qibe im Habesha Salzburg.',
+    keywords: ['Niter Kibbeh', 'Nitir Qibe', 'gewürztes Butterschmalz', 'äthiopisches Ghee', 'Doro Wat Zutat', 'äthiopische Küche Salzburg'],
+    date: '2026-03-22',
+    category: 'Kultur & Zutaten',
+    readingTime: 5,
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/kaffezeremonie_blog_34bc8619.jpg',
+    imageAlt: 'Goldenes gewürztes Butterschmalz – Niter Kibbeh, das Herzstück der äthiopischen Küche',
+    teaser: 'Niter Kibbeh ist mehr als Butterschmalz – es ist das goldene Herzstück der äthiopischen Küche. Gewürzt mit Knoblauch, Ingwer, Kardamom und Besobila verwandelt es jedes Gericht in ein Festmahl.',
+    content: [
+      {
+        type: 'paragraph',
+        text: 'Wenn Sie jemals die Ehre hatten, ein traditionelles äthiopisches Gericht zu probieren, haben Sie sich vielleicht gefragt, was ihm diesen unvergleichlichen, tiefen und komplexen Geschmack verleiht. Die Antwort liegt oft in einer unscheinbaren, aber essenziellen Zutat: Niter Kibbeh (auch Nitir Qibe).',
+      },
+      {
+        type: 'heading',
+        text: 'Was ist Niter Kibbeh?',
+      },
+      {
+        type: 'paragraph',
+        text: 'Niter Kibbeh ist viel mehr als nur Butterschmalz (Ghee). Es ist eine gewürzte, geklärte Butter, die das Herzstück vieler äthiopischer Eintöpfe (Wats) bildet. Die Butter wird langsam geschmolzen und dann mit einer Vielzahl aromatischer Gewürze und Kräuter infundiert – ein aufwendiger und liebevoller Prozess.',
+      },
+      {
+        type: 'heading',
+        text: 'Die Magie der Gewürze',
+      },
+      {
+        type: 'list',
+        items: [
+          'Knoblauch & Ingwer – aromatische Basis',
+          'Zwiebeln – für Süße und Tiefe',
+          'Besobila (äthiopisches Basilikum) – leicht minzig und blumig',
+          'Korerima (äthiopischer Kardamom) – unverzichtbar für das authentische Aroma',
+          'Nelken, Zimt, Bockshornklee – für Wärme und Komplexität',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Verwendung in der äthiopischen Küche',
+      },
+      {
+        type: 'paragraph',
+        text: 'Niter Kibbeh ist nicht nur ein Fett zum Braten – es ist ein Geschmacksträger. Es bildet die unverzichtbare Basis für das Nationalgericht Doro Wat (Hühnchen-Eintopf) und Kitfo (rohes Rinderhackfleisch). Selbst das traditionelle Fladenbrot Injera wird manchmal mit Niter Kibbeh und Berbere-Gewürz bestrichen als Snack genossen.',
+      },
+      {
+        type: 'heading',
+        text: 'Ein Hauch von Gold',
+      },
+      {
+        type: 'paragraph',
+        text: 'In Äthiopien ist Niter Kibbeh ein Zeichen von Wohlstand und kulinarischem Können. Es ist das „goldene Geheimnis", das gewöhnliche Zutaten in ein Festmahl verwandelt. Probieren Sie es selbst aus – und Sie werden verstehen, warum dieses gewürzte Butterschmalz der wahre Geist der äthiopischen Küche ist.',
+      },
+      {
+        type: 'cta',
+        text: 'Entdecken Sie den Geschmack von Niter Kibbeh in unseren authentischen Gerichten – besuchen Sie uns im Habesha Restaurant Salzburg!',
+      },
+    ],
+  },
+
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {

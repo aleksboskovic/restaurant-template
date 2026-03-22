@@ -224,3 +224,14 @@
 - [x] Neuen SEO-Blog-Beitrag "Äthiopische Kaffeezeremonie Salzburg" in blogPosts.ts angelegt
 - [x] SEO-Metadaten: Fokus-Keywords, Meta-Description, Slug gesetzt
 - [x] Bild hochgeladen und Blog-Teaser erscheint automatisch als neuester Beitrag
+
+## Blog: Tej & Niter Kibbeh + Mehr-erfahren-Pfeile
+
+- [x] Neuen Blog-Beitrag "Tej – Äthiopischer Honigwein" in blogPosts.ts anlegen (SEO-optimiert)
+- [x] Neuen Blog-Beitrag "Niter Kibbeh – Gewürztes Butterschmalz" in blogPosts.ts anlegen (SEO-optimiert)
+- [x] CoffeeCeremonySection: Kaffee-Bild (Cappuccinos) durch echtes Kaffeezeremonie-Bild ersetzen
+- [x] CoffeeCeremonySection: Tej-Bild durch echtes Tej-Bild ersetzen
+- [x] CoffeeCeremonySection: Kaffee-Block mit "Mehr erfahren"-Pfeil → /blog/aethiopische-kaffeezeremonie-salzburg
+- [x] CoffeeCeremonySection: Tej-Karte mit "Mehr erfahren"-Pfeil → /blog/tej-aethiopischer-honigwein
+- [x] CoffeeCeremonySection: Berbere-Karte mit "Mehr erfahren"-Pfeil → /blog/berbere-gewuerz-geheimnis-habesha-kueche
+- [x] CoffeeCeremonySection: Niter Kibbeh-Karte mit "Mehr erfahren"-Pfeil → /blog/niter-kibbeh-goldenes-geheimnis
