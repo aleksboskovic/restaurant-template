@@ -202,7 +202,6 @@ function AllergenLegend() {
           <span className="text-[#1a3a32]/70 text-[11px] leading-tight">Halal-zertifiziert</span>
         </div>
       </div>
-      <p className="text-[#1a3a32]/40 text-[10px] mt-3 italic">* Buchstabencodes nur in Verbindung mit dieser Legende zulässig.</p>
     </div>
   );
 }
