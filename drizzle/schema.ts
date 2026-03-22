@@ -25,4 +25,11 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+// App settings (key-value store for PIN etc.)
+export const appSettings = mysqlTable('app_settings', {
+  key: varchar('key', { length: 64 }).primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export type AppSetting = typeof appSettings.$inferSelect;

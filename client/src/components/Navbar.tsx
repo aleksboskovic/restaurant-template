@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLang, Lang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import { trpc } from '@/lib/trpc';
 import { Menu, X, ShoppingCart, ChevronDown } from 'lucide-react';
+import OrdersClosedModal from '@/components/OrdersClosedModal';
 
 // CDN URLs für die Hintergrundbilder
 const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
@@ -34,6 +36,17 @@ export default function Navbar() {
   const [activeTheme, setActiveTheme] = useState<NavTheme>('transparent');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [ordersClosedModalOpen, setOrdersClosedModalOpen] = useState(false);
+  const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
+
+  const handleOrderClick = () => {
+    if (!ordersEnabled) {
+      setOrdersClosedModalOpen(true);
+    } else {
+      window.location.href = '/bestellen';
+    }
+  };
   const [location] = useLocation();
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -194,6 +207,20 @@ export default function Navbar() {
                 <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#d4af37] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
               </button>
             ))}
+            <Link
+              href="/blog"
+              className={`relative text-xs font-semibold tracking-[0.12em] uppercase px-3 py-2 transition-colors duration-300 hover:text-[#d4af37] group ${textColorMuted}`}
+            >
+              Blog
+              <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#d4af37] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+            </Link>
+            <Link
+              href="/faq"
+              className={`relative text-xs font-semibold tracking-[0.12em] uppercase px-3 py-2 transition-colors duration-300 hover:text-[#d4af37] group ${textColorMuted}`}
+            >
+              FAQ
+              <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#d4af37] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+            </Link>
           </nav>
 
           {/* Right side */}
@@ -229,7 +256,7 @@ export default function Navbar() {
             </div>
 
             {/* Cart */}
-            <Link href="/bestellen" className="relative p-1">
+            <button onClick={handleOrderClick} className="relative p-1">
               <ShoppingCart
                 size={22}
                 className={`transition-colors duration-300 hover:text-[#d4af37] ${textColor}`}
@@ -239,12 +266,12 @@ export default function Navbar() {
                   {itemCount}
                 </span>
               )}
-            </Link>
+            </button>
 
-            {/* Reserve Button */}
+            {/* Reserve Button — links to contact/reservation page */}
             <Link
               href="/reservierung"
-              className={`hidden md:block text-xs font-semibold tracking-widest uppercase px-5 py-2.5 rounded-full transition-all duration-300 shadow-sm ${reserveBtnClass}`}
+              className={`hidden md:flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-5 py-2.5 rounded-full transition-all duration-300 shadow-sm ${reserveBtnClass}`}
             >
               {t.nav_reserve}
             </Link>
@@ -306,6 +333,28 @@ export default function Navbar() {
                 {label}
               </button>
             ))}
+            <Link
+              href="/blog"
+              onClick={() => setMobileOpen(false)}
+              className={`block w-full text-left text-sm font-semibold tracking-wide uppercase transition-colors py-2.5 border-b hover:text-[#d4af37] ${
+                isDark || isTransparent
+                  ? 'text-white border-white/10'
+                  : 'text-[#1a3a32] border-[#1a3a32]/8'
+              }`}
+            >
+              Blog
+            </Link>
+            <Link
+              href="/faq"
+              onClick={() => setMobileOpen(false)}
+              className={`block w-full text-left text-sm font-semibold tracking-wide uppercase transition-colors py-2.5 border-b hover:text-[#d4af37] ${
+                isDark || isTransparent
+                  ? 'text-white border-white/10'
+                  : 'text-[#1a3a32] border-[#1a3a32]/8'
+              }`}
+            >
+              FAQ
+            </Link>
 
             {/* Language switcher mobile */}
             <div className="flex items-center gap-2 pt-2">
@@ -335,17 +384,17 @@ export default function Navbar() {
               >
                 {t.nav_reserve}
               </Link>
-              <Link
-                href="/bestellen"
-                onClick={() => setMobileOpen(false)}
+              <button
+                onClick={() => { setMobileOpen(false); handleOrderClick(); }}
                 className="flex-1 text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] hover:bg-[#1a3a32] hover:text-white transition-all"
               >
                 {t.nav_order}
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       )}
+      <OrdersClosedModal open={ordersClosedModalOpen} onClose={() => setOrdersClosedModalOpen(false)} />
     </>
   );
 }

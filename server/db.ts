@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, appSettings } from "../drizzle/schema";
 import { ENV } from './_core/env';
+import { createHash } from 'crypto';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -89,4 +90,71 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ─── Dashboard PIN ───────────────────────────────────────────────────────────
+
+const PIN_KEY = 'dashboard_pin_hash';
+const PIN_SALT = 'habesha-salt-2024';
+
+/** Hash a PIN with SHA-256 (server-side, using Node crypto) */
+export function hashPinServer(pin: string): string {
+  return createHash('sha256').update(pin + PIN_SALT).digest('hex');
+}
+
+/** Get the stored PIN hash from DB, or fall back to env/default */
+export async function getStoredPinHash(): Promise<string> {
+  const db = await getDb();
+  if (db) {
+    try {
+      const rows = await db.select().from(appSettings).where(eq(appSettings.key, PIN_KEY)).limit(1);
+      if (rows.length > 0) return rows[0].value;
+    } catch (e) {
+      console.warn('[PIN] DB read failed, using fallback:', e);
+    }
+  }
+  // Fallback: env variable or default '2468'
+  const fallback = process.env.VITE_DASHBOARD_PIN || '2468';
+  return hashPinServer(fallback);
+}
+
+/** Save a new PIN hash to DB */
+export async function savePinHash(newHash: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  await db.insert(appSettings)
+    .values({ key: PIN_KEY, value: newHash })
+    .onDuplicateKeyUpdate({ set: { value: newHash } });
+}
+
+// ─── Orders Enabled Flag ─────────────────────────────────────────────────────
+
+const ORDERS_ENABLED_KEY = 'orders_enabled';
+
+/**
+ * Returns true if orders are currently enabled.
+ * Defaults to TRUE if the key has never been set.
+ */
+export async function getOrdersEnabled(): Promise<boolean> {
+  const db = await getDb();
+  if (db) {
+    try {
+      const rows = await db.select().from(appSettings).where(eq(appSettings.key, ORDERS_ENABLED_KEY)).limit(1);
+      if (rows.length > 0) return rows[0].value === 'true';
+    } catch (e) {
+      console.warn('[OrdersEnabled] DB read failed, defaulting to true:', e);
+    }
+  }
+  return true; // default: orders are open
+}
+
+/**
+ * Persistently set the orders_enabled flag.
+ * This survives server restarts, browser refreshes, and deploys.
+ */
+export async function setOrdersEnabled(enabled: boolean): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  await db.insert(appSettings)
+    .values({ key: ORDERS_ENABLED_KEY, value: enabled ? 'true' : 'false' })
+    .onDuplicateKeyUpdate({ set: { value: enabled ? 'true' : 'false' } });
+}
+

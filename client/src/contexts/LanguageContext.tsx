@@ -371,7 +371,7 @@ const translations: Record<Lang, Translations> = {
     fact_did_you_know: 'Wussten Sie schon?',
 
     agb_title: 'AGB für Online-Bestellung',
-    agb_content: `1. BESTELLUNG\nDurch Abschluss der Online-Bestellung geben Sie eine verbindliche Bestellung auf. Wir bestätigen Ihre Bestellung per E-Mail oder telefonisch.\n\n2. LIEFERUNG\nWir liefern innerhalb von 5020 Salzburg. Die Lieferzeit beträgt ca. 45–60 Minuten.\n\n3. MINDESTBESTELLWERT\nDer Mindestbestellwert wird bei der Bestellung angezeigt.\n\n4. ZAHLUNG\nDie Zahlung erfolgt per Kreditkarte (Stripe) oder bar bei Lieferung.\n\n5. STORNIERUNG\nEine Stornierung ist bis 15 Minuten nach Bestelleingang möglich. Bitte rufen Sie uns an: 0660 7324766.\n\n6. ALLERGENE\nBitte informieren Sie uns bei Allergien im Kommentarfeld.\n\n7. BETREIBER\nHabtom G.\nÄthiopisches Restaurant Habesha\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
+    agb_content: `1. BESTELLUNG\nDurch Abschluss der Online-Bestellung geben Sie eine verbindliche Bestellung auf. Wir bestätigen Ihre Bestellung per E-Mail oder telefonisch.\n\n2. LIEFERUNG\nWir liefern innerhalb von 5020 Salzburg. Die Lieferzeit beträgt ca. 45–60 Minuten.\n\n3. MINDESTBESTELLWERT\nDer Mindestbestellwert wird bei der Bestellung angezeigt.\n\n4. ZAHLUNG\nDie Zahlung erfolgt per Kreditkarte (Stripe) oder bar bei Lieferung.\n\n5. STORNIERUNG\nEine Stornierung ist bis 15 Minuten nach Bestelleingang möglich. Bitte rufen Sie uns an: 0660 7324766.\n\n6. ALLERGENE\nBitte informieren Sie uns bei Allergien im Kommentarfeld.\n\n7. BETREIBER\nDaniel Yemane\nHabesha Cafe Bar & Restaurant e.U.\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
   },
 
   en: {
@@ -548,7 +548,7 @@ const translations: Record<Lang, Translations> = {
     fact_did_you_know: 'Did you know?',
 
     agb_title: 'Terms & Conditions for Online Orders',
-    agb_content: `1. ORDER\nBy completing the online order, you place a binding order. We will confirm your order by email or phone.\n\n2. DELIVERY\nWe deliver within 5020 Salzburg. Delivery time is approx. 45–60 minutes.\n\n3. MINIMUM ORDER\nThe minimum order value is displayed during checkout.\n\n4. PAYMENT\nPayment is by credit card (Stripe) or cash on delivery.\n\n5. CANCELLATION\nCancellation is possible up to 15 minutes after order placement. Please call: 0660 7324766.\n\n6. ALLERGENS\nPlease inform us of any allergies in the comment field.\n\n7. OPERATOR\nHabtom G.\nEthiopian Restaurant Habesha\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
+    agb_content: `1. ORDER\nBy completing the online order, you place a binding order. We will confirm your order by email or phone.\n\n2. DELIVERY\nWe deliver within 5020 Salzburg. Delivery time is approx. 45–60 minutes.\n\n3. MINIMUM ORDER\nThe minimum order value is displayed during checkout.\n\n4. PAYMENT\nPayment is by credit card (Stripe) or cash on delivery.\n\n5. CANCELLATION\nCancellation is possible up to 15 minutes after order placement. Please call: 0660 7324766.\n\n6. ALLERGENS\nPlease inform us of any allergies in the comment field.\n\n7. OPERATOR\nDaniel Yemane\nHabesha Cafe Bar & Restaurant e.U.\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
   },
 
   am: {
@@ -725,7 +725,7 @@ const translations: Record<Lang, Translations> = {
     fact_did_you_know: 'ያውቁ ነበር?',
 
     agb_title: 'ለኦንላይን ትዕዛዝ ሁኔታዎች',
-    agb_content: `1. ትዕዛዝ\nኦንላይን ትዕዛዙን ሲጨርሱ አስገዳጅ ትዕዛዝ ይሰጣሉ።\n\n2. ማድረስ\nበ5020 ሳልዝበርግ ውስጥ እናደርሳለን። የማድረስ ጊዜ ወደ 45–60 ደቂቃ ነው።\n\n3. ዝቅተኛ ትዕዛዝ\nዝቅተኛ የትዕዛዝ ዋጋ በክፍያ ጊዜ ይታያል።\n\n4. ክፍያ\nክፍያ በክሬዲት ካርድ (Stripe) ወይም ሲደርስ ጥሬ ገንዘብ ነው።\n\n5. ሰርዞ ማቆም\nትዕዛዝ ከተሰጠ ከ15 ደቂቃ ውስጥ መሰረዝ ይቻላል። ይደውሉ: 0660 7324766\n\n6. አለርጂዎች\nስለ አለርጂዎች በማስታወሻ ሳጥን ያሳውቁን።\n\n7. ኦፕሬተር\nHabtom G.\nሀበሻ የኢትዮጵያ ምግብ ቤት\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
+    agb_content: `1. ትዕዛዝ\nኦንላይን ትዕዛዙን ሲጨርሱ አስገዳጅ ትዕዛዝ ይሰጣሉ።\n\n2. ማድረስ\nበ5020 ሳልዝበርግ ውስጥ እናደርሳለን። የማድረስ ጊዜ ወደ 45–60 ደቂቃ ነው።\n\n3. ዝቅተኛ ትዕዛዝ\nዝቅተኛ የትዕዛዝ ዋጋ በክፍያ ጊዜ ይታያል።\n\n4. ክፍያ\nክፍያ በክሬዲት ካርድ (Stripe) ወይም ሲደርስ ጥሬ ገንዘብ ነው።\n\n5. ሰርዞ ማቆም\nትዕዛዝ ከተሰጠ ከ15 ደቂቃ ውስጥ መሰረዝ ይቻላል። ይደውሉ: 0660 7324766\n\n6. አለርጂዎች\nስለ አለርጂዎች በማስታወሻ ሳጥን ያሳውቁን።\n\n7. ኦፕሬተር\nDaniel Yemane\nHabesha Cafe Bar & Restaurant e.U.\nGebirgsjägerplatz 1, 5020 Salzburg\nTel: 0660 7324766`,
   },
 };
 

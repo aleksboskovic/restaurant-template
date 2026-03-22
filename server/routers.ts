@@ -12,7 +12,10 @@ import {
   getAllSpecialEvents,
   getOrderHistory,
   getDayStats,
-} from "./sanity";
+  getMenuItems,
+} from './sanity';
+import { getStoredPinHash, savePinHash, hashPinServer, getOrdersEnabled, setOrdersEnabled } from './db';
+import { notifyOwner } from './_core/notification';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-02-25.clover',
@@ -139,19 +142,90 @@ export const appRouter = router({
     }),
   }),
 
-  // ─── Menu Items from Sanity ─────────────────────────────────────────────────
+   // ─── Menu Items from Sanity ──────────────────────────────────────────────
   menu: router({
-    /** Get all menu items from Sanity */
+    /** Get all available menu items from Sanity, sorted by sortOrder */
     getAll: publicProcedure.query(async () => {
-      const SANITY_TOKEN = process.env.SANITY_API_TOKEN || '';
-      const query = encodeURIComponent('*[_type == "menuItem"] | order(category asc, name asc)');
-      const res = await fetch(
-        `https://yp5xha26.api.sanity.io/v2021-06-07/data/query/production?query=${query}`,
-        { headers: { Authorization: `Bearer ${SANITY_TOKEN}` } }
-      );
-      const data = await res.json() as { result: unknown[] };
-      return data.result;
+      const items = await getMenuItems();
+      return items;
     }),
+  }),
+
+  // ─── Orders Enabled ──────────────────────────────────────────────────────
+  orderSettings: router({
+    /** Get whether orders are currently enabled (DB-persisted) */
+    getEnabled: publicProcedure.query(async () => {
+      const enabled = await getOrdersEnabled();
+      return { enabled };
+    }),
+
+    /** Set orders enabled/disabled — persists in DB until manually changed */
+    setEnabled: publicProcedure
+      .input(z.object({ enabled: z.boolean() }))
+      .mutation(async ({ input }) => {
+        await setOrdersEnabled(input.enabled);
+        return { success: true, enabled: input.enabled };
+      }),
+  }),
+
+  // ─── Contact Form ──────────────────────────────────────────────────────
+  contact: router({
+    /** Send a contact message — notifies the owner via Manus notification */
+    send: publicProcedure
+      .input(z.object({
+        name: z.string().min(1).max(100),
+        email: z.string().email(),
+        phone: z.string().optional(),
+        subject: z.string().min(1).max(200),
+        message: z.string().min(1).max(5000),
+      }))
+      .mutation(async ({ input }) => {
+        const content = [
+          `Name: ${input.name}`,
+          `E-Mail: ${input.email}`,
+          input.phone ? `Telefon: ${input.phone}` : null,
+          `Betreff: ${input.subject}`,
+          ``,
+          `Nachricht:`,
+          input.message,
+        ].filter(Boolean).join('\n');
+
+        await notifyOwner({
+          title: `📩 Neue Kontaktanfrage: ${input.subject}`,
+          content,
+        });
+
+        return { success: true };
+      }),
+  }),
+
+  // ─── Dashboard PIN ────────────────────────────────────────────────────
+  pin: router({
+    /** Verify a PIN against the stored hash */
+    verify: publicProcedure
+      .input(z.object({ pin: z.string().min(4).max(8) }))
+      .mutation(async ({ input }) => {
+        const storedHash = await getStoredPinHash();
+        const inputHash = hashPinServer(input.pin);
+        return { valid: inputHash === storedHash };
+      }),
+
+    /** Change the PIN: verify old PIN first, then save new hash */
+    change: publicProcedure
+      .input(z.object({
+        oldPin: z.string().min(4).max(8),
+        newPin: z.string().length(4).regex(/^\d{4}$/, 'PIN muss genau 4 Ziffern sein'),
+      }))
+      .mutation(async ({ input }) => {
+        const storedHash = await getStoredPinHash();
+        const oldHash = hashPinServer(input.oldPin);
+        if (oldHash !== storedHash) {
+          throw new Error('Alter PIN ist falsch.');
+        }
+        const newHash = hashPinServer(input.newPin);
+        await savePinHash(newHash);
+        return { success: true };
+      }),
   }),
 });
 

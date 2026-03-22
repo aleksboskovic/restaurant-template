@@ -10,6 +10,8 @@ import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import FactCard from '@/components/FactCard';
 import SpecialEventBanner from '@/components/SpecialEventBanner';
+import SpecialEventPopup from '@/components/SpecialEventPopup';
+import BlogTeaser from '@/components/BlogTeaser';
 
 const MANUSCRIPT_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
 const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
@@ -19,7 +21,7 @@ export default function Home() {
     <div className="min-h-screen">
       <Navbar />
       <SpecialEventBanner />
-      {/* Banner-Spacer: Platz für den fixed Banner unter der Navbar */}
+      <SpecialEventPopup />
       <HeroSection />
 
       {/* CultureSection: Textilmuster-Hintergrund */}
@@ -71,6 +73,8 @@ export default function Home() {
 
       {/* Fakt 3: Äthiopischer Kalender – im Footer-Bereich */}
       <FactCard factKey={3} variant="dark" />
+
+      <BlogTeaser />
 
       <ContactSection />
       <Footer />

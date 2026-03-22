@@ -1,28 +1,27 @@
 import { useState, useMemo } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
-import { getItemName as getStaticItemName, getItemDesc as getStaticItemDesc } from '@/lib/menuData';
+import { trpc } from '@/lib/trpc';
 import { Plus, Minus, ShoppingCart, Leaf, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
-import { trpc } from '@/lib/trpc';
+import OrdersClosedModal from '@/components/OrdersClosedModal';
 
 type Tab = 'mains' | 'vegan' | 'plates' | 'sides';
 
-// Sanity MenuItem interface
-interface SanityMenuItem {
-  _id: string;
-  name: string;
-  name_en?: string;
-  name_am?: string;
-  description?: string;
-  description_en?: string;
-  description_am?: string;
-  price: number;
-  category: string;
+interface MenuItem {
+  id: string;
+  nameDe: string;
+  nameEn: string;
+  nameAm: string;
+  descDe: string;
+  descEn: string;
+  descAm: string;
+  price: string;
+  priceNum: number;
+  category: 'mains' | 'vegan' | 'plates' | 'sides';
   isVegan?: boolean;
   isVegetarian?: boolean;
   badge?: string;
-  isAvailable?: boolean;
 }
 
 function VeganBadge({ isVegan, isVegetarian }: { isVegan?: boolean; isVegetarian?: boolean }) {
@@ -40,25 +39,20 @@ function VeganBadge({ isVegan, isVegetarian }: { isVegan?: boolean; isVegetarian
   return null;
 }
 
-function MenuCard({ item }: { item: SanityMenuItem }) {
+function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () => void }) {
   const { lang } = useLang();
   const { items, addItem, removeItem } = useCart();
   const cartItem = items.find(i => i.id === item._id);
   const qty = cartItem?.quantity || 0;
 
-  const name = useMemo(() => {
-    if (lang === 'am' && item.name_am) return item.name_am;
-    if (lang === 'en' && item.name_en) return item.name_en;
-    return item.name;
-  }, [item, lang]);
+  // Lokalisierter Name und Beschreibung direkt aus Sanity-Feldern
+  const name = lang === 'en' ? (item.nameEn || item.nameDe)
+             : lang === 'am' ? (item.nameAm || item.nameDe)
+             : item.nameDe;
 
-  const desc = useMemo(() => {
-    if (lang === 'am' && item.description_am) return item.description_am;
-    if (lang === 'en' && item.description_en) return item.description_en;
-    return item.description;
-  }, [item, lang]);
-
-  if (item.isAvailable === false) return null;
+  const desc = lang === 'en' ? (item.descEn || item.descDe)
+             : lang === 'am' ? (item.descAm || item.descDe)
+             : item.descDe;
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#1a3a32]/8 hover:shadow-md hover:border-[#d4af37]/40 transition-all duration-300 flex flex-col">
@@ -139,6 +133,15 @@ export default function MenuSection() {
   const { t, lang } = useLang();
   const { itemCount, total } = useCart();
   const [activeTab, setActiveTab] = useState<Tab>('mains');
+  const [ordersClosedModalOpen, setOrdersClosedModalOpen] = useState(false);
+  const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
+
+  // Sanity-Daten laden
+  const { data: sanityItems, isLoading, isError } = trpc.menu.getAll.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 
   const { data: menuItemsData, isLoading } = trpc.menu.getAll.useQuery();
 
@@ -149,10 +152,8 @@ export default function MenuSection() {
     { key: 'sides', label: t.menu_tab_sides },
   ];
 
-  const filteredItems = useMemo(() => {
-    if (!menuItemsData) return [];
-    return (menuItemsData as SanityMenuItem[]).filter(item => item.category === activeTab);
-  }, [menuItemsData, activeTab]);
+  const allItems: MenuItem[] = (sanityItems as MenuItem[] | undefined) ?? [];
+  const items = allItems.filter(item => item.category === activeTab);
 
   return (
     <section id="menu" className="py-24 bg-transparent">
@@ -197,66 +198,70 @@ export default function MenuSection() {
           ))}
         </div>
 
-        {/* Menu Grid / Loading */}
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-10 h-10 text-[#d4af37] animate-spin" />
-            <p className="text-[#1a3a32]/60 text-sm">Speisekarte wird geladen...</p>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="animate-spin text-[#1a3a32]" size={32} />
           </div>
-        ) : (
+        )}
+
+        {/* Error State */}
+        {isError && !isLoading && (
+          <div className="text-center py-12 text-[#1a3a32]/50">
+            Speisekarte konnte nicht geladen werden. Bitte versuchen Sie es später erneut.
+          </div>
+        )}
+
+        {/* Menu Grid */}
+        {!isLoading && !isError && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredItems.map((item) => (
-              <MenuCard key={item._id} item={item} />
+            {items.map((item) => (
+              <MenuCard key={item.id} item={item} />
             ))}
+            {items.length === 0 && (
+              <div className="col-span-3 text-center py-12 text-[#1a3a32]/50">
+                Keine Gerichte in dieser Kategorie verfügbar.
+              </div>
+            )}
           </div>
         )}
 
         {/* Floating Cart Bar */}
         {itemCount > 0 && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-md px-4">
-            <Link
-              href="/bestellen"
-              className="flex items-center justify-between bg-[#1a3a32] text-white px-6 py-4 rounded-2xl shadow-2xl hover:bg-[#1a3a32]/90 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="bg-[#d4af37] text-[#1a3a32] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                  {itemCount}
+            {ordersEnabled ? (
+              <Link
+                href="/bestellen"
+                className="flex items-center justify-between bg-[#1a3a32] text-white px-6 py-4 rounded-2xl shadow-2xl hover:bg-[#1a3a32]/90 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-[#d4af37] text-[#1a3a32] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                    {itemCount}
+                  </div>
+                  <span className="text-sm font-semibold">Warenkorb ansehen</span>
                 </div>
-                <span className="text-sm font-semibold">Warenkorb ansehen</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">{total.toFixed(2).replace('.', ',')} €</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold">{total.toFixed(2).replace('.', ',')} €</span>
+                  <ShoppingCart size={18} />
+                </div>
+              </Link>
+            ) : (
+              <button
+                onClick={() => setOrdersClosedModalOpen(true)}
+                className="w-full flex items-center justify-between bg-[#1a3a32] text-white px-6 py-4 rounded-2xl shadow-2xl hover:bg-[#1a3a32]/90 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                    {itemCount}
+                  </div>
+                  <span className="text-sm font-semibold">Bestellungen pausiert</span>
+                </div>
                 <ShoppingCart size={18} />
-              </div>
-            </Link>
+              </button>
+            )}
           </div>
         )}
-      </div>
-    </section>
-  );
-}
-
-
-        {/* Floating Cart Bar */}
-        {itemCount > 0 && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-md px-4">
-            <Link
-              href="/bestellen"
-              className="flex items-center justify-between bg-[#1a3a32] text-white px-6 py-4 rounded-2xl shadow-2xl hover:bg-[#1a3a32]/90 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="bg-[#d4af37] text-[#1a3a32] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                  {itemCount}
-                </div>
-                <span className="text-sm font-semibold">Warenkorb ansehen</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">{total.toFixed(2).replace('.', ',')} €</span>
-                <ShoppingCart size={18} />
-              </div>
-            </Link>
-          </div>
-        )}
+        <OrdersClosedModal open={ordersClosedModalOpen} onClose={() => setOrdersClosedModalOpen(false)} />
       </div>
     </section>
   );

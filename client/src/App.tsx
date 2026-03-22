@@ -7,11 +7,17 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
 import Home from "./pages/Home";
-import ReservationPage from "./pages/ReservationPage";
+import ContactPage from './pages/ContactPage';
 import OrderPage from './pages/OrderPage';
 import LiveOrders from './pages/LiveOrders';
 import NotFound from './pages/NotFound';
 import EventDetail from './pages/EventDetail';
+import Legal from './pages/Legal';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import CookieBanner from './components/CookieBanner';
+import FAQ from './pages/FAQ';
+import { useGoogleAnalytics } from './hooks/useGoogleAnalytics';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -23,15 +29,23 @@ function ScrollToTop() {
 }
 function Router() {
   // make sure to consider if you need authentication for certain routes
+  useGoogleAnalytics();
   return (
     <>
       <ScrollToTop />
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/reservierung" component={ReservationPage} />
+        <Route path="/reservierung" component={ContactPage} />
+        <Route path="/kontakt" component={ContactPage} />
         <Route path="/bestellen" component={OrderPage} />
         <Route path="/live-orders" component={LiveOrders} />
         <Route path="/events/:id" component={EventDetail} />
+        <Route path="/blog/:slug" component={BlogPost} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/impressum" component={Legal} />
+        <Route path="/datenschutz" component={Legal} />
+        <Route path="/agb" component={Legal} />
+        <Route path="/faq" component={FAQ} />
         <Route component={NotFound} />
       </Switch>
     </>
@@ -47,6 +61,7 @@ function App() {
             <TooltipProvider>
               <Toaster />
               <Router />
+              <CookieBanner />
             </TooltipProvider>
           </CartProvider>
         </LanguageProvider>

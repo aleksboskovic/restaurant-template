@@ -1,31 +1,10 @@
-import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { Link } from 'wouter';
-import { X } from 'lucide-react';
-
-function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
-        <div className="sticky top-0 bg-white border-b border-[#1a3a32]/10 px-6 py-4 flex items-center justify-between">
-          <h2 className="font-serif text-xl font-bold text-[#1a3a32]">{title}</h2>
-          <button onClick={onClose} className="text-[#1a3a32]/60 hover:text-[#1a3a32] transition-colors">
-            <X size={20} />
-          </button>
-        </div>
-        <div className="px-6 py-6 text-[#1a3a32]/80 text-sm leading-relaxed space-y-4">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { openCookieSettings } from './CookieBanner';
 
 export default function Footer() {
   const { t, lang } = useLang();
-  const [showImprint, setShowImprint] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
+
 
   return (
     <>
@@ -57,6 +36,7 @@ export default function Footer() {
                   { label: t.nav_menu, href: '/#menu' },
                   { label: t.nav_reserve, href: '/reservierung' },
                   { label: t.nav_order, href: '/bestellen' },
+                  { label: 'Kontakt', href: '/kontakt' },
                 ].map(({ label, href }) => (
                   <li key={href}>
                     <Link
@@ -79,6 +59,11 @@ export default function Footer() {
                     0660 7324766
                   </a>
                 </p>
+                <p>
+                  <a href="mailto:restaurant@habesha-salzburg.at" className="hover:text-[#d4af37] transition-colors">
+                    restaurant@habesha-salzburg.at
+                  </a>
+                </p>
                 <p className={`${lang === 'am' ? 'font-ethiopic' : ''} text-xs leading-relaxed`}>
                   Mi–Fr: 11–14 & 17–22 Uhr<br />
                   Sa–So: 13–22 Uhr<br />
@@ -94,65 +79,27 @@ export default function Footer() {
               {t.footer_copyright}
             </p>
             <div className="flex items-center gap-6">
-              <button
-                onClick={() => setShowImprint(true)}
-                className={`text-white/40 text-xs hover:text-[#d4af37] transition-colors ${lang === 'am' ? 'font-ethiopic' : ''}`}
-              >
+              <Link href="/impressum" className={`text-white/40 text-xs hover:text-[#d4af37] transition-colors ${lang === 'am' ? 'font-ethiopic' : ''}`}>
                 {t.footer_imprint}
-              </button>
-              <button
-                onClick={() => setShowPrivacy(true)}
-                className={`text-white/40 text-xs hover:text-[#d4af37] transition-colors ${lang === 'am' ? 'font-ethiopic' : ''}`}
-              >
+              </Link>
+              <Link href="/datenschutz" className={`text-white/40 text-xs hover:text-[#d4af37] transition-colors ${lang === 'am' ? 'font-ethiopic' : ''}`}>
                 {t.footer_privacy}
+              </Link>
+              <Link href="/agb" className="text-white/40 text-xs hover:text-[#d4af37] transition-colors">
+                AGB
+              </Link>
+              <button
+                onClick={openCookieSettings}
+                className="text-white/40 text-xs hover:text-[#d4af37] transition-colors cursor-pointer"
+              >
+                Cookie-Einstellungen
               </button>
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Impressum Modal */}
-      {showImprint && (
-        <Modal title={t.imprint_title} onClose={() => setShowImprint(false)}>
-          <p><strong>Angaben gemäß § 5 ECG (E-Commerce-Gesetz)</strong></p>
-          <p>
-            <strong>Unternehmensbezeichnung:</strong> Habesha Äthiopisches Restaurant<br />
-            <strong>Inhaber:</strong> Habtom G.<br />
-            <strong>Adresse:</strong> Gebirgsjägerplatz 1, 5020 Salzburg, Österreich<br />
-            <strong>Telefon:</strong> 0660 7324766<br />
-            <strong>Unternehmensgegenstand:</strong> Gastronomie
-          </p>
-          <p>
-            <strong>Haftungshinweis:</strong> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
-          </p>
-        </Modal>
-      )}
 
-      {/* Datenschutz Modal */}
-      {showPrivacy && (
-        <Modal title={t.privacy_title} onClose={() => setShowPrivacy(false)}>
-          <p><strong>Datenschutzerklärung</strong></p>
-          <p>
-            Der Schutz Ihrer persönlichen Daten ist uns ein besonderes Anliegen. Wir verarbeiten Ihre Daten daher ausschließlich auf Grundlage der gesetzlichen Bestimmungen (DSGVO, TKG 2003).
-          </p>
-          <p>
-            <strong>Kontaktformular / Reservierungsformular:</strong><br />
-            Die von Ihnen eingegebenen Daten (Name, Telefon, E-Mail, Datum, Uhrzeit, Personenanzahl) werden ausschließlich zur Bearbeitung Ihrer Anfrage verwendet und nicht an Dritte weitergegeben.
-          </p>
-          <p>
-            <strong>Google Maps:</strong><br />
-            Diese Website verwendet Google Maps zur Darstellung einer interaktiven Karte. Bei der Nutzung von Google Maps werden Daten an Google LLC übertragen. Weitere Informationen finden Sie in der Datenschutzerklärung von Google.
-          </p>
-          <p>
-            <strong>Stripe:</strong><br />
-            Für die Zahlungsabwicklung verwenden wir Stripe. Ihre Zahlungsdaten werden verschlüsselt übertragen und von Stripe verarbeitet. Wir speichern keine Kreditkartendaten.
-          </p>
-          <p>
-            <strong>Ihre Rechte:</strong><br />
-            Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer Daten. Wenden Sie sich dazu an: 0660 7324766
-          </p>
-        </Modal>
-      )}
     </>
   );
 }

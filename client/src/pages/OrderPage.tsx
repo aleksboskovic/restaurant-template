@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MenuSection from '@/components/MenuSection';
-import { getItemName } from '@/lib/menuData';
-import { menuItems } from '@/lib/menuData';
+import OrdersClosedModal from '@/components/OrdersClosedModal';
+// menuData wird nicht mehr benötigt - Warenkorb enthält alle nötigen Daten
 import { trpc } from '@/lib/trpc';
 import {
   ShoppingCart, Truck, CreditCard, CheckCircle, Clock, Calendar,
@@ -77,8 +77,8 @@ function Step1({ onNext }: { onNext: () => void }) {
       ) : (
         <div className="space-y-3 mb-6">
           {items.map(item => {
-            const menuItem = menuItems.find(m => m.id === item.id);
-            const displayName = menuItem ? getItemName(menuItem, lang) : item.name;
+            // Namen aus Warenkorb-Daten holen (enthält DE/EN/AM)
+            const displayName = lang === 'en' ? (item.nameEn || item.name) : lang === 'am' ? (item.nameAm || item.name) : item.name;
             return (
               <div key={item.id} className="flex items-center gap-4 bg-white rounded-xl p-4 border border-[#1a3a32]/8">
                 <div className="flex-1">
@@ -91,8 +91,8 @@ function Step1({ onNext }: { onNext: () => void }) {
                   </button>
                   <span className="text-[#1a3a32] font-bold text-sm w-5 text-center">{item.quantity}</span>
                   <button onClick={() => {
-                    const mi = menuItems.find(m => m.id === item.id);
-                    if (mi) addItem({ id: mi.id, name: mi.nameDe, nameEn: mi.nameEn, nameAm: mi.nameAm, price: mi.priceNum });
+                    // Daten direkt aus Warenkorb-Item
+                    addItem({ id: item.id, name: item.name, nameEn: item.nameEn, nameAm: item.nameAm, price: item.price });
                   }} className="w-7 h-7 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/80 transition-colors">
                     <Plus size={12} />
                   </button>
@@ -161,7 +161,8 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
     if (!deliveryData.firstname) e.firstname = 'Pflichtfeld';
     if (!deliveryData.lastname) e.lastname = 'Pflichtfeld';
     if (!deliveryData.phone) e.phone = 'Pflichtfeld';
-    if (!deliveryData.email || !/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail';
+    if (!deliveryData.email) e.email = 'Pflichtfeld';
+    else if (!/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail-Adresse';
     if (!deliveryData.street) e.street = 'Pflichtfeld';
     if (!deliveryData.city) e.city = 'Pflichtfeld';
     if (deliveryData.deliveryType === 'schedule') {
@@ -192,6 +193,7 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
         placeholder={placeholder}
         value={deliveryData[field] || ''}
         onChange={e => setDeliveryData({ ...deliveryData, [field]: e.target.value })}
+        required
         className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all ${errors[field] ? 'border-red-400' : 'border-gray-200'}`}
       />
       {errors[field] && <p className="text-red-500 text-xs mt-1">{errors[field]}</p>}
@@ -868,6 +870,36 @@ export default function OrderPage() {
   const [step, setStep] = useState(1);
   const [deliveryData, setDeliveryData] = useState({ deliveryType: 'asap' });
   const [orderNum, setOrderNum] = useState('');
+
+  const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
+
+  // If orders are disabled, show a full-page block
+  if (orderSettingsData !== undefined && !ordersEnabled) {
+    return (
+      <div className="min-h-screen bg-[#fdfbf7]">
+        <Navbar />
+        <div className="max-w-lg mx-auto px-4 py-40 text-center">
+          <div className="text-6xl mb-6">🔒</div>
+          <h1 className="font-serif text-3xl font-bold text-[#1a3a32] mb-4">Bestellungen pausiert</h1>
+          <p className="text-[#1a3a32]/65 text-base leading-relaxed mb-8">
+            Wir nehmen gerade keine Online-Bestellungen an.<br />
+            Bitte rufen Sie uns an oder versuchen Sie es später erneut.
+          </p>
+          <a
+            href="tel:+436607324766"
+            className="inline-flex items-center gap-2 bg-[#1a3a32] text-white font-bold py-3.5 px-8 rounded-2xl hover:bg-[#1a3a32]/90 transition-colors text-sm"
+          >
+            +43 660 732 47 66
+          </a>
+          <div className="mt-6">
+            <a href="/" className="text-[#1a3a32]/50 text-sm hover:text-[#1a3a32] transition-colors">← Zurück zur Startseite</a>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (orderNum) {
     return (

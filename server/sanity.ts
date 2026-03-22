@@ -127,15 +127,54 @@ export async function updateOrderStatus(orderId: string, status: 'new' | 'in_pro
   }]);
 }
 
+function buildSanityImageUrl(asset: { _ref?: string } | null | undefined): string | undefined {
+  if (!asset?._ref) return undefined;
+  // Ref format: image-<id>-<dimensions>-<format>
+  const ref = asset._ref;
+  const parts = ref.replace('image-', '').split('-');
+  const format = parts.pop();
+  const id = parts.join('-');
+  return `https://cdn.sanity.io/images/${SANITY_PROJECT_ID}/${SANITY_DATASET}/${id}.${format}`;
+}
+
 export async function getActiveSpecialEvents(): Promise<SpecialEvent[]> {
   const now = new Date().toISOString();
-  const query = `*[_type == "specialEvent" && validFrom <= "${now}" && validUntil >= "${now}"]`;
-  return (await sanityQuery(query)) as SpecialEvent[];
+  // Include both currently active AND upcoming events (not yet expired)
+  const query = `*[_type == "specialEvent" && validUntil >= "${now}"] | order(validFrom asc) {
+    _id,
+    title,
+    description,
+    description_en,
+    description_am,
+    validFrom,
+    validUntil,
+    isActive,
+    "imageAsset": image.asset
+  }`;
+  const raw = (await sanityQuery(query)) as Array<SpecialEvent & { imageAsset?: { _ref?: string } }>;
+  return raw.map(e => ({
+    ...e,
+    imageUrl: buildSanityImageUrl(e.imageAsset),
+  }));
 }
 
 export async function getAllSpecialEvents(): Promise<SpecialEvent[]> {
-  const query = `*[_type == "specialEvent"] | order(validFrom desc)`;
-  return (await sanityQuery(query)) as SpecialEvent[];
+  const query = `*[_type == "specialEvent"] | order(validFrom desc) {
+    _id,
+    title,
+    description,
+    description_en,
+    description_am,
+    validFrom,
+    validUntil,
+    isActive,
+    "imageAsset": image.asset
+  }`;
+  const raw = (await sanityQuery(query)) as Array<SpecialEvent & { imageAsset?: { _ref?: string } }>;
+  return raw.map(e => ({
+    ...e,
+    imageUrl: buildSanityImageUrl(e.imageAsset),
+  }));
 }
 
 export interface OrderHistoryFilter {
@@ -193,4 +232,80 @@ export async function getDayStats(dateFrom: string, dateTo: string): Promise<Day
   }
 
   return Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date));
+}
+
+// ── MENU ITEMS ────────────────────────────────────────────────────────────────────────────────────
+
+// Raw Sanity document shape (as stored in Sanity)
+interface RawSanityMenuItem {
+  _id: string;
+  _type: string;
+  name?: string;        // German name (primary)
+  name_en?: string;
+  name_am?: string;
+  description?: string; // German description
+  description_en?: string;
+  description_am?: string;
+  price?: number;       // numeric price
+  category?: string;
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  badge?: string;
+  sortOrder?: number;
+  isAvailable?: boolean;
+}
+
+// Normalized shape used throughout the app
+export interface SanityMenuItem {
+  _id: string;
+  id: string;
+  nameDe: string;
+  nameEn: string;
+  nameAm: string;
+  descDe: string;
+  descEn: string;
+  descAm: string;
+  price: string;    // formatted: "19,40 €"
+  priceNum: number; // raw number: 19.4
+  category: 'mains' | 'vegan' | 'plates' | 'sides';
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  badge?: string;
+  sortOrder?: number;
+  isAvailable?: boolean;
+}
+
+function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
+  const priceNum = raw.price ?? 0;
+  const priceFormatted = priceNum.toFixed(2).replace('.', ',') + ' €';
+  return {
+    _id: raw._id,
+    id: raw._id,
+    nameDe: raw.name || '',
+    nameEn: raw.name_en || raw.name || '',
+    nameAm: raw.name_am || '',
+    descDe: raw.description || '',
+    descEn: raw.description_en || raw.description || '',
+    descAm: raw.description_am || '',
+    price: priceFormatted,
+    priceNum,
+    category: (raw.category as SanityMenuItem['category']) || 'mains',
+    isVegan: raw.isVegan ?? false,
+    isVegetarian: raw.isVegetarian ?? false,
+    badge: raw.badge || undefined,
+    sortOrder: raw.sortOrder,
+    isAvailable: raw.isAvailable !== false,
+  };
+}
+
+export async function getMenuItems(): Promise<SanityMenuItem[]> {
+  const query = `*[_type == "menuItem" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
+  const results = (await sanityQuery(query)) as RawSanityMenuItem[];
+  return results.map(normalizeSanityMenuItem);
+}
+
+export async function getMenuItemsByCategory(category: string): Promise<SanityMenuItem[]> {
+  const query = `*[_type == "menuItem" && category == "${category}" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
+  const results = (await sanityQuery(query)) as RawSanityMenuItem[];
+  return results.map(normalizeSanityMenuItem);
 }

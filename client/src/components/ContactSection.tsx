@@ -92,7 +92,7 @@ export default function ContactSection() {
 
             {/* Action buttons */}
             <div className="flex flex-wrap gap-3 pt-4">
-              {/* Tisch Reservieren – replaces Quandoo */}
+              {/* Tisch Reservieren – links to reservation/contact page */}
               <Link
                 href="/reservierung"
                 className="flex items-center gap-2 bg-[#d4af37] text-[#1a3a32] text-xs font-bold px-5 py-2.5 rounded-full hover:bg-[#d4af37]/90 transition-colors tracking-wide uppercase"
@@ -122,18 +122,19 @@ export default function ContactSection() {
                       const pos = results[0].geometry.location;
                       map.setCenter(pos);
                       map.setZoom(16);
-                      new google.maps.Marker({
+                      // Custom gold pin element
+                      const pinEl = document.createElement('div');
+                      pinEl.style.cssText = [
+                        'width:28px', 'height:28px', 'border-radius:50%',
+                        'background:#d4af37', 'border:3px solid #1a3a32',
+                        'box-shadow:0 2px 8px rgba(0,0,0,0.4)',
+                        'cursor:pointer',
+                      ].join(';');
+                      new google.maps.marker.AdvancedMarkerElement({
                         map,
                         position: pos,
                         title: 'Habesha Äthiopisches Restaurant',
-                        icon: {
-                          path: google.maps.SymbolPath.CIRCLE,
-                          scale: 10,
-                          fillColor: '#d4af37',
-                          fillOpacity: 1,
-                          strokeColor: '#1a3a32',
-                          strokeWeight: 3,
-                        },
+                        content: pinEl,
                       });
                     }
                   }
