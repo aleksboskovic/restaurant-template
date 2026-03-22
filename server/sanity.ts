@@ -246,7 +246,8 @@ interface RawSanityMenuItem {
   description?: string; // German description
   description_en?: string;
   description_am?: string;
-  price?: number;       // numeric price
+  price?: number;       // numeric price (Abholung)
+  priceDelivery?: number; // optional delivery price
   category?: string;
   isVegan?: boolean;
   isVegetarian?: boolean;
@@ -267,8 +268,10 @@ export interface SanityMenuItem {
   descDe: string;
   descEn: string;
   descAm: string;
-  price: string;    // formatted: "19,40 €"
-  priceNum: number; // raw number: 19.4
+  price: string;         // formatted: "19,40 €" (Abholung)
+  priceNum: number;       // raw number: 19.4 (Abholung)
+  priceDelivery: string;  // formatted delivery price (falls gleich = same as price)
+  priceDeliveryNum: number; // raw delivery price
   category: 'mains' | 'vegan' | 'plates' | 'sides';
   isVegan?: boolean;
   isVegetarian?: boolean;
@@ -282,6 +285,9 @@ export interface SanityMenuItem {
 function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
   const priceNum = raw.price ?? 0;
   const priceFormatted = priceNum.toFixed(2).replace('.', ',') + ' €';
+  // If no delivery price set, fall back to pickup price
+  const priceDeliveryNum = raw.priceDelivery ?? priceNum;
+  const priceDeliveryFormatted = priceDeliveryNum.toFixed(2).replace('.', ',') + ' €';
   return {
     _id: raw._id,
     id: raw._id,
@@ -293,6 +299,8 @@ function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
     descAm: raw.description_am || '',
     price: priceFormatted,
     priceNum,
+    priceDelivery: priceDeliveryFormatted,
+    priceDeliveryNum,
     category: (raw.category as SanityMenuItem['category']) || 'mains',
     isVegan: raw.isVegan ?? false,
     isVegetarian: raw.isVegetarian ?? false,
@@ -305,7 +313,13 @@ function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
 }
 
 export async function getMenuItems(): Promise<SanityMenuItem[]> {
-  const query = `*[_type == "menuItem" && isAvailable != false] | order(sortOrder asc, _createdAt asc)`;
+  const query = `*[_type == "menuItem" && isAvailable != false] | order(sortOrder asc, _createdAt asc) {
+    _id, _type, name, name_en, name_am,
+    description, description_en, description_am,
+    price, priceDelivery,
+    category, isVegan, isVegetarian, badge, sortOrder, isAvailable,
+    allergens, isHalal
+  }`;
   const results = (await sanityQuery(query)) as RawSanityMenuItem[];
   return results.map(normalizeSanityMenuItem);
 }

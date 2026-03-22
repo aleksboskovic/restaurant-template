@@ -235,3 +235,18 @@
 - [x] CoffeeCeremonySection: Tej-Karte mit "Mehr erfahren"-Pfeil → /blog/tej-aethiopischer-honigwein
 - [x] CoffeeCeremonySection: Berbere-Karte mit "Mehr erfahren"-Pfeil → /blog/berbere-gewuerz-geheimnis-habesha-kueche
 - [x] CoffeeCeremonySection: Niter Kibbeh-Karte mit "Mehr erfahren"-Pfeil → /blog/niter-kibbeh-goldenes-geheimnis
+
+## Abholung / Zustellung Switch
+
+- [x] Sanity-Query: priceDelivery-Feld (Preis Lieferung) in getMenuItems abfragen
+- [x] tRPC-Typen: priceDelivery optional in MenuItem-Typ ergänzen
+- [x] OrderTypeContext: globaler State (pickup/delivery), persistiert in localStorage
+- [x] MenuSection: Switch-Button neben Kategorien (Abholung / Zustellung)
+- [x] MenuSection: Preis je nach OrderType anzeigen (priceDelivery wenn delivery, sonst price)
+- [x] CartContext: OrderType berücksichtigen (Warenkorb-Preise korrekt)
+- [x] Warenkorb-Sidebar / FloatingCart: Switch-Button anzeigen + Preise korrekt
+- [x] OrderPage/Checkout: OrderType anzeigen, korrekte Preise bis Stripe-PaymentIntent
+- [x] Stripe PaymentIntent: amount basierend auf OrderType berechnen
+- [x] Letzter Bestell-Button umbenennen zu "Kostenpflichtig bestellen"
+- [x] E-Mail bei /Reservierung auf restaurant@habesha-salzburg.at ändern
+- [x] Zentrale restaurantConfig.ts anlegen (Kontakt, Öffnungszeiten, Liefergebiet, Mindestbestellwert)

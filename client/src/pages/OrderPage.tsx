@@ -1,29 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import { useOrderType } from '@/contexts/OrderTypeContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MenuSection from '@/components/MenuSection';
 import OrdersClosedModal from '@/components/OrdersClosedModal';
-// menuData wird nicht mehr benötigt - Warenkorb enthält alle nötigen Daten
+import OrderTypeSwitch from '@/components/OrderTypeSwitch';
 import { trpc } from '@/lib/trpc';
 import {
-  ShoppingCart, Truck, CreditCard, CheckCircle, Clock, Calendar,
-  ChevronRight, ChevronLeft, Minus, Plus, X, AlertCircle
+  ShoppingCart, Truck, CreditCard, CheckCircle, Clock,
+  ChevronRight, ChevronLeft, Minus, Plus, X, AlertCircle, Package
 } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
-const DELIVERY_FEE = 3.50;
 const MIN_ORDER = 12.00;
-
-const TIME_SLOTS = [
-  '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-  '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
-  '19:00', '19:30', '20:00', '20:30', '21:00', '21:30',
-];
 
 function StepIndicator({ current }: { current: number }) {
   const { t } = useLang();
@@ -63,11 +57,33 @@ function StepIndicator({ current }: { current: number }) {
 // Step 1: Cart view
 function Step1({ onNext }: { onNext: () => void }) {
   const { t, lang } = useLang();
-  const { items, addItem, removeItem, updateQuantity, total } = useCart();
+  const { items, addItem, removeItem, updateQuantity, getTotalForType } = useCart();
+  const { orderType, isDelivery } = useOrderType();
+
+  const total = getTotalForType(orderType);
   const belowMin = total < MIN_ORDER;
 
   return (
     <div>
+      {/* OrderType Switch inside cart */}
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="text-sm font-bold text-[#1a3a32] tracking-wide uppercase">Bestellart</h3>
+        <OrderTypeSwitch size="sm" />
+      </div>
+
+      {isDelivery && (
+        <div className="flex items-center gap-2 bg-[#1a3a32]/5 border border-[#1a3a32]/15 rounded-xl px-3 py-2 mb-4 text-xs text-[#1a3a32]/70">
+          <Truck size={13} />
+          <span>Zustellpreise – keine Lieferkosten</span>
+        </div>
+      )}
+      {!isDelivery && (
+        <div className="flex items-center gap-2 bg-[#d4af37]/10 border border-[#d4af37]/30 rounded-xl px-3 py-2 mb-4 text-xs text-[#1a3a32]/70">
+          <Package size={13} />
+          <span>Abholpreise</span>
+        </div>
+      )}
+
       {items.length === 0 ? (
         <div className="text-center py-16">
           <ShoppingCart size={48} className="text-gray-300 mx-auto mb-4" />
@@ -77,13 +93,13 @@ function Step1({ onNext }: { onNext: () => void }) {
       ) : (
         <div className="space-y-3 mb-6">
           {items.map(item => {
-            // Namen aus Warenkorb-Daten holen (enthält DE/EN/AM)
             const displayName = lang === 'en' ? (item.nameEn || item.name) : lang === 'am' ? (item.nameAm || item.name) : item.name;
+            const activePrice = isDelivery ? (item.priceDelivery ?? item.price) : (item.pricePickup ?? item.price);
             return (
               <div key={item.id} className="flex items-center gap-4 bg-white rounded-xl p-4 border border-[#1a3a32]/8">
                 <div className="flex-1">
                   <p className={`text-sm font-semibold text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{displayName}</p>
-                  <p className="text-[#d4af37] text-xs font-bold">{(item.price * item.quantity).toFixed(2).replace('.', ',')} €</p>
+                  <p className="text-[#d4af37] text-xs font-bold">{(activePrice * item.quantity).toFixed(2).replace('.', ',')} €</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => removeItem(item.id)} className="w-7 h-7 rounded-full border border-[#1a3a32]/20 flex items-center justify-center hover:bg-[#1a3a32] hover:text-white transition-colors">
@@ -91,8 +107,15 @@ function Step1({ onNext }: { onNext: () => void }) {
                   </button>
                   <span className="text-[#1a3a32] font-bold text-sm w-5 text-center">{item.quantity}</span>
                   <button onClick={() => {
-                    // Daten direkt aus Warenkorb-Item
-                    addItem({ id: item.id, name: item.name, nameEn: item.nameEn, nameAm: item.nameAm, price: item.price });
+                    addItem({
+                      id: item.id,
+                      name: item.name,
+                      nameEn: item.nameEn,
+                      nameAm: item.nameAm,
+                      price: activePrice,
+                      pricePickup: item.pricePickup ?? item.price,
+                      priceDelivery: item.priceDelivery ?? item.price,
+                    });
                   }} className="w-7 h-7 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/80 transition-colors">
                     <Plus size={12} />
                   </button>
@@ -114,12 +137,12 @@ function Step1({ onNext }: { onNext: () => void }) {
             <span>{total.toFixed(2).replace('.', ',')} €</span>
           </div>
           <div className="flex justify-between text-sm text-[#1a3a32]/70">
-            <span className={lang === 'am' ? 'font-ethiopic' : ''}>{t.order_delivery_fee}</span>
-            <span>{DELIVERY_FEE.toFixed(2).replace('.', ',')} €</span>
+            <span>{isDelivery ? 'Lieferkosten' : 'Abholung'}</span>
+            <span className="text-green-600 font-semibold">Kostenlos</span>
           </div>
           <div className="border-t border-[#1a3a32]/10 pt-2 flex justify-between font-bold text-[#1a3a32]">
             <span className={lang === 'am' ? 'font-ethiopic' : ''}>{t.order_total}</span>
-            <span>{(total + DELIVERY_FEE).toFixed(2).replace('.', ',')} €</span>
+            <span>{total.toFixed(2).replace('.', ',')} €</span>
           </div>
         </div>
       )}
@@ -145,7 +168,7 @@ function Step1({ onNext }: { onNext: () => void }) {
   );
 }
 
-// Step 2: Delivery details
+// Step 2: Delivery/Pickup details
 function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
   onNext: () => void;
   onBack: () => void;
@@ -153,8 +176,8 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
   setDeliveryData: (d: any) => void;
 }) {
   const { t, lang } = useLang();
+  const { isDelivery } = useOrderType();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const today = new Date().toISOString().split('T')[0];
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -163,8 +186,11 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
     if (!deliveryData.phone) e.phone = 'Pflichtfeld';
     if (!deliveryData.email) e.email = 'Pflichtfeld';
     else if (!/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail-Adresse';
-    if (!deliveryData.street) e.street = 'Pflichtfeld';
-    if (!deliveryData.city) e.city = 'Pflichtfeld';
+    // Address only required for delivery
+    if (isDelivery) {
+      if (!deliveryData.street) e.street = 'Pflichtfeld';
+      if (!deliveryData.city) e.city = 'Pflichtfeld';
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -192,30 +218,43 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
 
   return (
     <div className="space-y-5">
+      {/* Order type reminder */}
+      <div className="flex items-center justify-between bg-[#f5f0e8] rounded-xl px-4 py-3">
+        <span className="text-sm font-semibold text-[#1a3a32]">
+          {isDelivery ? '🚚 Zustellung' : '🏠 Abholung'}
+        </span>
+        <OrderTypeSwitch size="sm" />
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-4">
         {inp('firstname', 'Max', 'text', t.order_firstname)}
         {inp('lastname', 'Mustermann', 'text', t.order_lastname)}
       </div>
       {inp('phone', '+43 ...', 'tel', t.res_phone)}
       {inp('email', 'max@beispiel.at', 'email', t.res_email)}
-      {inp('street', 'Hauptstraße 1', 'text', t.order_street)}
-      {inp('city', 'Salzburg', 'text', t.order_city)}
-      {/* PLZ wird intern auf 5020 validiert, aber nicht separat angezeigt */}
-      <input type="hidden" value={deliveryData.zip || ''} />
-      <div>
-        <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
-          {t.order_floor}
-        </label>
-        <input
-          type="text"
-          placeholder="z.B. 2. OG / Tür 5"
-          value={deliveryData.floor || ''}
-          onChange={e => setDeliveryData({ ...deliveryData, floor: e.target.value })}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
-        />
-      </div>
 
-      {/* Lieferzeit: immer so bald wie möglich */}
+      {/* Address only for delivery */}
+      {isDelivery && (
+        <>
+          {inp('street', 'Hauptstraße 1', 'text', t.order_street)}
+          {inp('city', 'Salzburg', 'text', t.order_city)}
+          <input type="hidden" value={deliveryData.zip || ''} />
+          <div>
+            <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+              {t.order_floor}
+            </label>
+            <input
+              type="text"
+              placeholder="z.B. 2. OG / Tür 5"
+              value={deliveryData.floor || ''}
+              onChange={e => setDeliveryData({ ...deliveryData, floor: e.target.value })}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+            />
+          </div>
+        </>
+      )}
+
+      {/* Time info */}
       <div className="flex items-center gap-3 p-4 rounded-xl bg-[#1a3a32]/5 border border-[#1a3a32]/15">
         <Clock size={16} className="text-[#1a3a32] flex-shrink-0" />
         <div>
@@ -249,24 +288,23 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
   );
 }
 
-// Step 3: Payment
-// Wrapper-Komponente: lädt PaymentIntent und gibt clientSecret an Elements weiter
+// Step 3: Payment wrapper
 function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; deliveryData: any; onSuccess: (orderNum: string) => void }) {
-  const { items, total } = useCart();
-  const grandTotal = total + DELIVERY_FEE;
+  const { getTotalForType } = useCart();
+  const { orderType } = useOrderType();
+  const grandTotal = getTotalForType(orderType);
   const [payMethod, setPayMethod] = useState<'card' | 'cash'>('card');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [intentLoading, setIntentLoading] = useState(false);
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const createPaymentIntent = trpc.orders.createPaymentIntent.useMutation();
 
   const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
   const customerEmail = deliveryData.email || 'keine@email.at';
 
-  // PaymentIntent laden wenn Kartenzahlung gewählt
   const loadPaymentIntent = async () => {
-    if (clientSecret) return; // bereits geladen
+    if (clientSecret) return;
     setIntentLoading(true);
     try {
       const result = await createPaymentIntent.mutateAsync({
@@ -290,14 +328,12 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
     }
   };
 
-  // PaymentIntent beim ersten Render laden (Karte ist Standard)
   const [initialized, setInitialized] = useState(false);
   if (!initialized) {
     setInitialized(true);
     loadPaymentIntent();
   }
 
-  // Kartenzahlung: CardPaymentInner MUSS innerhalb <Elements> sein
   if (payMethod === 'card') {
     if (intentLoading || !clientSecret) {
       return (
@@ -338,7 +374,6 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
     );
   }
 
-  // Barzahlung: kein Stripe nötig
   return (
     <PaymentFormShell
       onBack={onBack}
@@ -355,7 +390,7 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
   );
 }
 
-// Gemeinsame Formular-Shell (ohne Stripe-Hooks – sicher außerhalb Elements)
+// Shared form shell
 function PaymentFormShell({
   onBack, deliveryData, onSuccess, payMethod, onPayMethodChange, grandTotal, loadingIntent, children
 }: {
@@ -369,7 +404,9 @@ function PaymentFormShell({
   children?: React.ReactNode;
 }) {
   const { t, lang } = useLang();
-  const { items, total, clearCart } = useCart();
+  const { items, getTotalForType, clearCart } = useCart();
+  const { orderType, isDelivery } = useOrderType();
+  const subtotal = getTotalForType(orderType);
   const [agb, setAgb] = useState(false);
   const [agbError, setAgbError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -384,19 +421,20 @@ function PaymentFormShell({
     if (!agb) { setAgbError('Bitte akzeptieren Sie die AGB.'); return; }
     setLoading(true);
     setSubmitError('');
-    const deliveryAddress = deliveryData.street
+    const deliveryAddress = isDelivery && deliveryData.street
       ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
       : undefined;
-    const deliveryTime = 'asap'; // immer so bald wie möglich
-    void (deliveryData.deliveryType === 'asap'
-      ? 'So schnell wie möglich (~45–60 Min.)'
-      : 'asap');
-    const orderItems = items.map(item => ({ dishName: item.name, quantity: item.quantity, price: item.price }));
+    const orderItems = items.map(item => ({
+      dishName: item.name,
+      quantity: item.quantity,
+      price: isDelivery ? (item.priceDelivery ?? item.price) : (item.pricePickup ?? item.price),
+    }));
     try {
       const { orderNum } = await createOrder.mutateAsync({
         customerName, phone: deliveryData.phone || '–', email: customerEmail,
-        items: orderItems, totalPrice: grandTotal, orderType: 'delivery',
-        deliveryAddress, deliveryTime, paymentMethod: 'cash', notes: deliveryData.notes || undefined,
+        items: orderItems, totalPrice: grandTotal, orderType,
+        deliveryAddress, deliveryTime: 'asap', paymentMethod: 'cash',
+        notes: deliveryData.notes || undefined,
       });
       clearCart();
       onSuccess(`#${orderNum}`);
@@ -409,33 +447,48 @@ function PaymentFormShell({
 
   return (
     <form onSubmit={payMethod === 'cash' ? handleCashSubmit : (e) => e.preventDefault()} className="space-y-6">
+      {/* Order type reminder */}
+      <div className="flex items-center justify-between bg-[#f5f0e8] rounded-xl px-4 py-3">
+        <span className="text-sm font-semibold text-[#1a3a32]">
+          {isDelivery ? '🚚 Zustellung' : '🏠 Abholung'}
+        </span>
+        <OrderTypeSwitch size="sm" />
+      </div>
+
       {/* Order summary */}
       <div className="bg-[#f5f0e8] rounded-xl p-5">
         <h3 className="font-semibold text-[#1a3a32] text-sm mb-3">Bestellübersicht</h3>
         <div className="space-y-1 mb-3">
-          {items.map(item => (
-            <div key={item.id} className="flex justify-between text-xs text-[#1a3a32]/70">
-              <span>{item.quantity}× {item.name}</span>
-              <span>{(item.price * item.quantity).toFixed(2).replace('.', ',')} €</span>
-            </div>
-          ))}
+          {items.map(item => {
+            const activePrice = isDelivery ? (item.priceDelivery ?? item.price) : (item.pricePickup ?? item.price);
+            return (
+              <div key={item.id} className="flex justify-between text-xs text-[#1a3a32]/70">
+                <span>{item.quantity}× {item.name}</span>
+                <span>{(activePrice * item.quantity).toFixed(2).replace('.', ',')} €</span>
+              </div>
+            );
+          })}
         </div>
         <div className="border-t border-[#1a3a32]/10 pt-2 space-y-1">
           <div className="flex justify-between text-xs text-[#1a3a32]/60">
-            <span>{t.order_subtotal}</span><span>{total.toFixed(2).replace('.', ',')} €</span>
+            <span>{t.order_subtotal}</span><span>{subtotal.toFixed(2).replace('.', ',')} €</span>
           </div>
-          <div className="flex justify-between text-xs text-[#1a3a32]/60">
-            <span>{t.order_delivery_fee}</span><span>{DELIVERY_FEE.toFixed(2).replace('.', ',')} €</span>
+          <div className="flex justify-between text-xs text-green-600 font-medium">
+            <span>{isDelivery ? 'Lieferkosten' : 'Abholung'}</span>
+            <span>Kostenlos</span>
           </div>
           <div className="flex justify-between font-bold text-[#1a3a32] text-base pt-1">
             <span>{t.order_total}</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
           </div>
         </div>
-        <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
-          <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
-          <p>🕐 {t.order_asap_desc}</p>
-        </div>
+        {isDelivery && deliveryData.street && (
+          <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
+            <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
+          </div>
+        )}
+        <p className="text-xs text-[#1a3a32]/50 mt-1">🕐 {t.order_asap_desc}</p>
       </div>
+
       {/* Payment method selector */}
       <div>
         <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
@@ -452,8 +505,9 @@ function PaymentFormShell({
           ))}
         </div>
       </div>
-      {/* Slot für Stripe Payment Element oder Barzahlungshinweis */}
+
       {children}
+
       {/* AGB */}
       <div>
         <label className="flex items-start gap-3 cursor-pointer">
@@ -462,26 +516,32 @@ function PaymentFormShell({
         </label>
         {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
       </div>
+
       {submitError && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
           <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
           <p className="text-red-600 text-sm">{submitError}</p>
         </div>
       )}
+
       <div className="flex gap-3">
         <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
           <ChevronLeft size={16} /> {t.order_back}
         </button>
-        <button type="submit" disabled={loading || (payMethod === 'card' && !!loadingIntent)} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
+        <button
+          type="submit"
+          disabled={loading || (payMethod === 'card' && !!loadingIntent)}
+          className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2"
+        >
           {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
-          {t.order_submit}
+          Kostenpflichtig bestellen
         </button>
       </div>
     </form>
   );
 }
 
-// CardPaymentInner – nur innerhalb <Elements> aufgerufen, daher useStripe/useElements sicher
+// CardPaymentInner – only called inside <Elements>
 function CardPaymentInner({
   onBack, deliveryData, onSuccess, onPayMethodChange, paymentIntentId, grandTotal
 }: {
@@ -493,7 +553,8 @@ function CardPaymentInner({
   grandTotal: number;
 }) {
   const { t, lang } = useLang();
-  const { items, clearCart } = useCart();
+  const { items, getTotalForType, clearCart } = useCart();
+  const { orderType, isDelivery } = useOrderType();
   const stripe = useStripe();
   const elements = useElements();
   const [agb, setAgb] = useState(false);
@@ -501,6 +562,7 @@ function CardPaymentInner({
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const createOrder = trpc.orders.create.useMutation();
+  const subtotal = getTotalForType(orderType);
 
   const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
   const customerEmail = deliveryData.email || 'keine@email.at';
@@ -511,14 +573,14 @@ function CardPaymentInner({
     if (!stripe || !elements) { return; }
     setLoading(true);
     setSubmitError('');
-    const deliveryAddress = deliveryData.street
+    const deliveryAddress = isDelivery && deliveryData.street
       ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
       : undefined;
-    const deliveryTime = 'asap'; // immer so bald wie möglich
-    void (deliveryData.deliveryType === 'asap'
-      ? 'So schnell wie möglich (~45–60 Min.)'
-      : 'asap');
-    const orderItems = items.map(item => ({ dishName: item.name, quantity: item.quantity, price: item.price }));
+    const orderItems = items.map(item => ({
+      dishName: item.name,
+      quantity: item.quantity,
+      price: isDelivery ? (item.priceDelivery ?? item.price) : (item.pricePickup ?? item.price),
+    }));
     try {
       const { error: stripeError } = await stripe.confirmPayment({
         elements,
@@ -532,8 +594,8 @@ function CardPaymentInner({
       }
       const { orderNum } = await createOrder.mutateAsync({
         customerName, phone: deliveryData.phone || '–', email: customerEmail,
-        items: orderItems, totalPrice: grandTotal, orderType: 'delivery',
-        deliveryAddress, deliveryTime, paymentMethod: 'card',
+        items: orderItems, totalPrice: grandTotal, orderType,
+        deliveryAddress, deliveryTime: 'asap', paymentMethod: 'card',
         notes: deliveryData.notes || undefined, stripePaymentIntentId: paymentIntentId || undefined,
       });
       clearCart();
@@ -547,13 +609,43 @@ function CardPaymentInner({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Order summary – compact */}
-      <div className="bg-[#f5f0e8] rounded-xl p-4 text-xs text-[#1a3a32]/70">
-        <div className="flex justify-between font-bold text-[#1a3a32] text-sm mb-1">
-          <span>Gesamt</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
-        </div>
-        <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
+      {/* Order type reminder */}
+      <div className="flex items-center justify-between bg-[#f5f0e8] rounded-xl px-4 py-3">
+        <span className="text-sm font-semibold text-[#1a3a32]">
+          {isDelivery ? '🚚 Zustellung' : '🏠 Abholung'}
+        </span>
+        <OrderTypeSwitch size="sm" />
       </div>
+
+      {/* Order summary compact */}
+      <div className="bg-[#f5f0e8] rounded-xl p-4 text-xs text-[#1a3a32]/70">
+        <div className="space-y-1 mb-2">
+          {items.map(item => {
+            const activePrice = isDelivery ? (item.priceDelivery ?? item.price) : (item.pricePickup ?? item.price);
+            return (
+              <div key={item.id} className="flex justify-between">
+                <span>{item.quantity}× {item.name}</span>
+                <span>{(activePrice * item.quantity).toFixed(2).replace('.', ',')} €</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="border-t border-[#1a3a32]/10 pt-2 space-y-0.5">
+          <div className="flex justify-between">
+            <span>{t.order_subtotal}</span><span>{subtotal.toFixed(2).replace('.', ',')} €</span>
+          </div>
+          <div className="flex justify-between text-green-600 font-medium">
+            <span>{isDelivery ? 'Lieferkosten' : 'Abholung'}</span><span>Kostenlos</span>
+          </div>
+          <div className="flex justify-between font-bold text-[#1a3a32] text-sm pt-1">
+            <span>Gesamt</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
+          </div>
+        </div>
+        {isDelivery && deliveryData.street && (
+          <p className="mt-2">📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
+        )}
+      </div>
+
       {/* Payment method selector */}
       <div>
         <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
@@ -570,11 +662,13 @@ function CardPaymentInner({
           ))}
         </div>
       </div>
+
       {/* Stripe Payment Element */}
       <div className="border border-gray-200 rounded-xl p-4">
         <PaymentElement options={{ layout: 'tabs', wallets: { googlePay: 'auto', applePay: 'auto' } }} />
       </div>
       <p className={`text-xs text-[#1a3a32]/50 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_secure}</p>
+
       {/* AGB */}
       <div>
         <label className="flex items-start gap-3 cursor-pointer">
@@ -583,211 +677,6 @@ function CardPaymentInner({
         </label>
         {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
       </div>
-      {submitError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
-          <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
-          <p className="text-red-600 text-sm">{submitError}</p>
-        </div>
-      )}
-      <div className="flex gap-3">
-        <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
-          <ChevronLeft size={16} /> {t.order_back}
-        </button>
-        <button type="submit" disabled={loading} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
-          {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
-          {t.order_submit}
-        </button>
-      </div>
-    </form>
-  );
-}
-
-// Dummy PaymentForm – wird nicht mehr direkt verwendet, aber Typ-Kompatibilität sicherstellen
-function PaymentForm({
-  onBack, deliveryData, onSuccess, payMethod, onPayMethodChange, paymentIntentId, grandTotal, loadingIntent
-}: {
-  onBack: () => void;
-  deliveryData: any;
-  onSuccess: (orderNum: string) => void;
-  payMethod: 'card' | 'cash';
-  onPayMethodChange: (m: 'card' | 'cash') => void;
-  paymentIntentId: string | null;
-  grandTotal: number;
-  loadingIntent?: boolean;
-}) {
-  const { t, lang } = useLang();
-  const { items, total, clearCart } = useCart();
-  const stripe = useStripe();
-  const elements = useElements();
-  const [agb, setAgb] = useState(false);
-  const [agbError, setAgbError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showAgb, setShowAgb] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-  const createOrder = trpc.orders.create.useMutation();
-
-  const customerName = `${deliveryData.firstname || ''} ${deliveryData.lastname || ''}`.trim() || 'Gast';
-  const customerEmail = deliveryData.email || 'keine@email.at';
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!agb) { setAgbError('Bitte akzeptieren Sie die AGB.'); return; }
-    setLoading(true);
-    setSubmitError('');
-
-    const deliveryAddress = deliveryData.street
-      ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
-      : undefined;
-    const deliveryTime = 'asap'; // immer so bald wie möglich
-    void (deliveryData.deliveryType === 'asap'
-      ? 'So schnell wie möglich (~45–60 Min.)'
-      : 'asap');
-    const orderItems = items.map(item => ({
-      dishName: item.name,
-      quantity: item.quantity,
-      price: item.price,
-    }));
-
-    try {
-      let stripePaymentIntentId: string | undefined;
-
-      if (payMethod === 'card') {
-        if (!stripe || !elements) {
-          setSubmitError('Stripe ist nicht geladen. Bitte Seite neu laden.');
-          setLoading(false);
-          return;
-        }
-
-        // Payment Element bestätigen
-        const { error: stripeError } = await stripe.confirmPayment({
-          elements,
-          confirmParams: {
-            payment_method_data: {
-              billing_details: { name: customerName, email: customerEmail },
-            },
-          },
-          redirect: 'if_required',
-        });
-
-        if (stripeError) {
-          setSubmitError(stripeError.message || 'Zahlung fehlgeschlagen. Bitte versuche es erneut.');
-          setLoading(false);
-          return;
-        }
-
-        stripePaymentIntentId = paymentIntentId || undefined;
-      }
-
-      // Bestellung in Sanity speichern
-      const { orderNum } = await createOrder.mutateAsync({
-        customerName,
-        phone: deliveryData.phone || '–',
-        email: customerEmail,
-        items: orderItems,
-        totalPrice: grandTotal,
-        orderType: 'delivery',
-        deliveryAddress,
-        deliveryTime,
-        paymentMethod: payMethod,
-        notes: deliveryData.notes || undefined,
-        stripePaymentIntentId,
-      });
-
-      clearCart();
-      onSuccess(`#${orderNum}`);
-    } catch (err) {
-      console.error('Bestellfehler:', err);
-      setSubmitError('Bestellung konnte nicht gespeichert werden. Bitte versuche es erneut.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Order summary */}
-      <div className="bg-[#f5f0e8] rounded-xl p-5">
-        <h3 className="font-semibold text-[#1a3a32] text-sm mb-3">Bestellübersicht</h3>
-        <div className="space-y-1 mb-3">
-          {items.map(item => (
-            <div key={item.id} className="flex justify-between text-xs text-[#1a3a32]/70">
-              <span>{item.quantity}× {item.name}</span>
-              <span>{(item.price * item.quantity).toFixed(2).replace('.', ',')} €</span>
-            </div>
-          ))}
-        </div>
-        <div className="border-t border-[#1a3a32]/10 pt-2 space-y-1">
-          <div className="flex justify-between text-xs text-[#1a3a32]/60">
-            <span>{t.order_subtotal}</span><span>{total.toFixed(2).replace('.', ',')} €</span>
-          </div>
-          <div className="flex justify-between text-xs text-[#1a3a32]/60">
-            <span>{t.order_delivery_fee}</span><span>{DELIVERY_FEE.toFixed(2).replace('.', ',')} €</span>
-          </div>
-          <div className="flex justify-between font-bold text-[#1a3a32] text-base pt-1">
-            <span>{t.order_total}</span><span>{grandTotal.toFixed(2).replace('.', ',')} €</span>
-          </div>
-        </div>
-        <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
-          <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
-          <p>🕐 {t.order_asap_desc}</p>
-        </div>
-      </div>
-
-      {/* Payment method selector */}
-      <div>
-        <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3">Zahlungsmethode</label>
-        <div className="space-y-2">
-          {[
-            { key: 'card' as const, label: t.order_pay_card, icon: '💳' },
-            { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
-          ].map(({ key, label, icon }) => (
-            <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === key ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
-              <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
-              <span className="text-lg">{icon}</span>
-              <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Stripe Payment Element (Karte, Google Pay, Apple Pay) */}
-      {payMethod === 'card' && (
-        <div>
-          {loadingIntent ? (
-            <div className="border border-gray-200 rounded-xl p-6 flex items-center justify-center gap-2 text-[#1a3a32]/50">
-              <span className="w-4 h-4 border-2 border-[#1a3a32]/20 border-t-[#1a3a32] rounded-full animate-spin" />
-              <span className="text-sm">Zahlungsoptionen werden geladen...</span>
-            </div>
-          ) : (
-            <div className="border border-gray-200 rounded-xl p-4">
-              <PaymentElement
-                options={{
-                  layout: 'tabs',
-                  wallets: { googlePay: 'auto', applePay: 'auto' },
-                }}
-              />
-            </div>
-          )}
-          <p className={`text-xs text-[#1a3a32]/50 mt-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_secure}</p>
-        </div>
-      )}
-
-      {payMethod === 'cash' && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <p className={`text-amber-700 text-sm ${lang === 'am' ? 'font-ethiopic' : ''}`}>{t.order_pay_cash_note}</p>
-        </div>
-      )}
-
-      {/* AGB */}
-      <div>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input type="checkbox" checked={agb} onChange={e => { setAgb(e.target.checked); setAgbError(''); }} className="mt-0.5 w-4 h-4 accent-[#1a3a32]" />
-          <span className={`text-sm text-[#1a3a32]/70 leading-relaxed ${lang === 'am' ? 'font-ethiopic' : ''}`}>
-            {t.order_agb_text}
-          </span>
-        </label>
-        {agbError && <p className="text-red-500 text-xs mt-1">{agbError}</p>}
-      </div>
 
       {submitError && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
@@ -800,9 +689,13 @@ function PaymentForm({
         <button type="button" onClick={onBack} className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-bold hover:bg-[#1a3a32] hover:text-white transition-all">
           <ChevronLeft size={16} /> {t.order_back}
         </button>
-        <button type="submit" disabled={loading || (payMethod === 'card' && !!loadingIntent)} className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex-1 btn-premium py-3 rounded-xl text-sm font-bold tracking-widest uppercase disabled:opacity-60 flex items-center justify-center gap-2"
+        >
           {loading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
-          {t.order_submit}
+          Kostenpflichtig bestellen
         </button>
       </div>
     </form>
@@ -818,7 +711,6 @@ export default function OrderPage() {
   const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
   const ordersEnabled = orderSettingsData?.enabled ?? true;
 
-  // If orders are disabled, show a full-page block
   if (orderSettingsData !== undefined && !ordersEnabled) {
     return (
       <div className="min-h-screen bg-[#fdfbf7]">
@@ -861,11 +753,9 @@ export default function OrderPage() {
               ? 'We would love to hear your feedback after your meal – by email, WhatsApp, or leave us a review.'
               : 'Wir würden uns freuen, nach dem Essen Ihr Feedback zu erhalten – per E-Mail, WhatsApp oder als Bewertung.'}
           </p>
-
-          {/* Review Links */}
           <div className="flex items-center justify-center gap-3 mb-10">
             <a
-              href="https://www.google.com/search?q=HABESHA+%C3%84THIOPISCHE+RESTAURANT+Salzburg&ludocid=&hl=de#lrd=0x477696c5c5c5c5c5:0x1,1"
+              href="https://www.google.com/search?q=HABESHA+%C3%84THIOPISCHE+RESTAURANT+Salzburg"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] text-sm font-semibold hover:bg-[#1a3a32] hover:text-white transition-all"
@@ -884,13 +774,9 @@ export default function OrderPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#34e0a1] text-[#00aa6c] text-sm font-semibold hover:bg-[#00aa6c] hover:text-white transition-all"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-              </svg>
               TripAdvisor
             </a>
           </div>
-
           <a href="/" className="btn-premium px-8 py-3 rounded-full text-sm font-bold tracking-widest uppercase inline-block">
             {t.order_back_home}
           </a>

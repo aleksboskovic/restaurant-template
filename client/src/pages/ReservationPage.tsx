@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
+import { trpc } from '@/lib/trpc';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Calendar, Clock, Users, Phone, Mail, User, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
@@ -48,13 +49,29 @@ export default function ReservationPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const sendReservation = trpc.contact.send.useMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setStatus('loading');
-    // Simulate form submission (EmailJS will be added when email is ready)
-    await new Promise(r => setTimeout(r, 1500));
-    setStatus('success');
+    try {
+      await sendReservation.mutateAsync({
+        name: `${form.name}`,
+        email: form.email,
+        phone: form.phone || undefined,
+        subject: `🗓️ Neue Reservierungsanfrage – ${form.date} um ${form.time} Uhr (${form.persons} Personen)`,
+        message: [
+          `Datum: ${form.date}`,
+          `Uhrzeit: ${form.time} Uhr`,
+          `Personen: ${form.persons}`,
+          form.wishes ? `Besondere Wünsche: ${form.wishes}` : null,
+        ].filter(Boolean).join('\n'),
+      });
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
   };
 
   const today = new Date().toISOString().split('T')[0];

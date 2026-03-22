@@ -125,8 +125,8 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="font-semibold text-[#1a3a32] text-sm">E-Mail</p>
-                <a href="mailto:info@habesha-restaurant.at" className="text-[#1a3a32]/60 text-sm hover:text-[#d4af37] transition-colors">
-                  info@habesha-restaurant.at
+                <a href="mailto:restaurant@habesha-salzburg.at" className="text-[#1a3a32]/60 text-sm hover:text-[#d4af37] transition-colors">
+                  restaurant@habesha-salzburg.at
                 </a>
               </div>
             </div>

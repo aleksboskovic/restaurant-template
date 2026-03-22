@@ -5,7 +5,8 @@ import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import { CartProvider } from "./contexts/CartContext";
+import { CartProvider } from './contexts/CartContext';
+import { OrderTypeProvider } from './contexts/OrderTypeContext';
 import Home from "./pages/Home";
 import ContactPage from './pages/ContactPage';
 import OrderPage from './pages/OrderPage';
@@ -58,11 +59,13 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <LanguageProvider>
           <CartProvider>
+            <OrderTypeProvider>
             <TooltipProvider>
               <Toaster />
               <Router />
               <CookieBanner />
             </TooltipProvider>
+            </OrderTypeProvider>
           </CartProvider>
         </LanguageProvider>
       </ThemeProvider>

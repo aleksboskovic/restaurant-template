@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import { useOrderType } from '@/contexts/OrderTypeContext';
 import { trpc } from '@/lib/trpc';
 import { Plus, Minus, ShoppingCart, Leaf, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
 import OrdersClosedModal from '@/components/OrdersClosedModal';
+import OrderTypeSwitch from '@/components/OrderTypeSwitch';
 
 type Tab = 'mains' | 'vegan' | 'plates' | 'sides';
 
@@ -19,6 +21,8 @@ interface MenuItem {
   descAm: string;
   price: string;
   priceNum: number;
+  priceDelivery: string;
+  priceDeliveryNum: number;
   category: 'mains' | 'vegan' | 'plates' | 'sides';
   isVegan?: boolean;
   isVegetarian?: boolean;
@@ -88,6 +92,7 @@ function AllergenBadges({ allergens }: { allergens?: string[] }) {
 function MenuCard({ item }: { item: MenuItem }) {
   const { lang } = useLang();
   const { items, addItem, removeItem } = useCart();
+  const { isDelivery } = useOrderType();
   const cartItem = items.find(i => i.id === item._id);
   const qty = cartItem?.quantity || 0;
 
@@ -98,6 +103,23 @@ function MenuCard({ item }: { item: MenuItem }) {
   const desc = lang === 'en' ? (item.descEn || item.descDe)
              : lang === 'am' ? (item.descAm || item.descDe)
              : item.descDe;
+
+  // Active price based on order type
+  const activePrice = isDelivery ? item.priceDeliveryNum : item.priceNum;
+  const activePriceFormatted = isDelivery ? item.priceDelivery : item.price;
+  const hasDeliveryDiff = item.priceDeliveryNum !== item.priceNum;
+
+  const handleAdd = () => {
+    addItem({
+      id: item._id,
+      name: item.nameDe,
+      nameEn: item.nameEn || item.nameDe,
+      nameAm: item.nameAm || item.nameDe,
+      price: activePrice,
+      priceDelivery: item.priceDeliveryNum,
+      pricePickup: item.priceNum,
+    });
+  };
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#1a3a32]/8 hover:shadow-md hover:border-[#d4af37]/40 transition-all duration-300 flex flex-col">
@@ -121,9 +143,18 @@ function MenuCard({ item }: { item: MenuItem }) {
             <p className="text-[#d4af37] text-xs font-ethiopic mt-0.5">{item.nameAm}</p>
           )}
         </div>
-        <span className="text-[#1a3a32] font-bold text-sm whitespace-nowrap">
-          {item.priceNum.toFixed(2).replace('.', ',')} €
-        </span>
+        {/* Price display */}
+        <div className="text-right flex-shrink-0">
+          <span className="text-[#1a3a32] font-bold text-sm whitespace-nowrap">
+            {activePriceFormatted}
+          </span>
+          {/* Show original price crossed out if delivery price differs */}
+          {isDelivery && hasDeliveryDiff && (
+            <p className="text-[#1a3a32]/40 text-[10px] line-through leading-none mt-0.5">
+              {item.price}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Description */}
@@ -138,13 +169,7 @@ function MenuCard({ item }: { item: MenuItem }) {
       <div className="flex items-center justify-between mt-auto pt-3">
         {qty === 0 ? (
           <button
-            onClick={() => addItem({
-              id: item._id,
-              name: item.nameDe,
-              nameEn: item.nameEn || item.nameDe,
-              nameAm: item.nameAm || item.nameDe,
-              price: item.priceNum,
-            })}
+            onClick={handleAdd}
             className="flex items-center gap-2 bg-[#1a3a32] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#1a3a32]/90 transition-colors"
           >
             <Plus size={14} />
@@ -160,13 +185,7 @@ function MenuCard({ item }: { item: MenuItem }) {
             </button>
             <span className="text-[#1a3a32] font-bold text-sm w-4 text-center">{qty}</span>
             <button
-              onClick={() => addItem({
-                id: item._id,
-                name: item.nameDe,
-                nameEn: item.nameEn || item.nameDe,
-                nameAm: item.nameAm || item.nameDe,
-                price: item.priceNum,
-              })}
+              onClick={handleAdd}
               className="w-8 h-8 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/90 transition-colors"
             >
               <Plus size={14} />
@@ -209,6 +228,7 @@ function AllergenLegend() {
 export default function MenuSection() {
   const { t, lang } = useLang();
   const { itemCount, total } = useCart();
+  const { orderType, isDelivery } = useOrderType();
   const [activeTab, setActiveTab] = useState<Tab>('mains');
   const [ordersClosedModalOpen, setOrdersClosedModalOpen] = useState(false);
 
@@ -256,22 +276,38 @@ export default function MenuSection() {
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {tabs.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key)}
-              className={`px-5 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-300 ${
-                activeTab === key
-                  ? 'menu-tab-active'
-                  : 'bg-white text-[#1a3a32] hover:bg-[#1a3a32]/10 border border-[#1a3a32]/20'
-              } ${lang === 'am' ? 'font-ethiopic' : ''}`}
-            >
-              {label}
-            </button>
-          ))}
+        {/* Tabs + OrderTypeSwitch in same row */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10">
+          {/* Category tabs */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {tabs.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-300 ${
+                  activeTab === key
+                    ? 'menu-tab-active'
+                    : 'bg-white text-[#1a3a32] hover:bg-[#1a3a32]/10 border border-[#1a3a32]/20'
+                } ${lang === 'am' ? 'font-ethiopic' : ''}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Abholung / Zustellung Switch */}
+          <div className="flex-shrink-0">
+            <OrderTypeSwitch size="md" />
+          </div>
         </div>
+
+        {/* Active order type info banner */}
+        {isDelivery && (
+          <div className="flex items-center gap-2 bg-[#1a3a32]/5 border border-[#1a3a32]/15 rounded-xl px-4 py-2.5 mb-6 text-sm text-[#1a3a32]/70">
+            <span className="text-base">🚚</span>
+            <span>Zustellpreise werden angezeigt. Kein Mindestbestellwert, keine Lieferkosten.</span>
+          </div>
+        )}
 
         {/* Loading State */}
         {isLoading && (
@@ -316,7 +352,12 @@ export default function MenuSection() {
                   <div className="bg-[#d4af37] text-[#1a3a32] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
                     {itemCount}
                   </div>
-                  <span className="text-sm font-semibold">Warenkorb ansehen</span>
+                  <div>
+                    <span className="text-sm font-semibold">Warenkorb ansehen</span>
+                    <span className="ml-2 text-xs text-white/60">
+                      ({orderType === 'delivery' ? 'Zustellung' : 'Abholung'})
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold">{total.toFixed(2).replace('.', ',')} €</span>

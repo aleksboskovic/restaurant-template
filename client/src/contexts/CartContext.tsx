@@ -5,7 +5,9 @@ export interface CartItem {
   name: string;
   nameEn: string;
   nameAm: string;
-  price: number;
+  price: number;        // active price (depends on orderType at time of adding)
+  pricePickup: number;  // always the pickup price
+  priceDelivery: number; // always the delivery price
   quantity: number;
 }
 
@@ -15,6 +17,8 @@ interface CartContextType {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  /** Recalculate total based on given orderType */
+  getTotalForType: (type: 'pickup' | 'delivery') => number;
   total: number;
   itemCount: number;
 }
@@ -39,9 +43,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems(prev => {
       const existing = prev.find(i => i.id === item.id);
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+        // Update prices in case orderType changed
+        return prev.map(i => i.id === item.id
+          ? {
+              ...i,
+              quantity: i.quantity + 1,
+              price: item.price,
+              pricePickup: item.pricePickup ?? item.price,
+              priceDelivery: item.priceDelivery ?? item.price,
+            }
+          : i
+        );
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, {
+        ...item,
+        pricePickup: item.pricePickup ?? item.price,
+        priceDelivery: item.priceDelivery ?? item.price,
+        quantity: 1,
+      }];
     });
   };
 
@@ -65,11 +84,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => setItems([]);
 
+  const getTotalForType = (type: 'pickup' | 'delivery') => {
+    return items.reduce((sum, item) => {
+      const price = type === 'delivery' ? (item.priceDelivery ?? item.price) : (item.pricePickup ?? item.price);
+      return sum + price * item.quantity;
+    }, 0);
+  };
+
+  // Default total uses the stored price (set at time of adding)
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, total, itemCount }}>
+    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, getTotalForType, total, itemCount }}>
       {children}
     </CartContext.Provider>
   );
