@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { useLang } from '@/contexts/LanguageContext';
 import { trpc } from '@/lib/trpc';
 import Navbar from '@/components/Navbar';
@@ -76,8 +77,32 @@ export default function ReservationPage() {
 
   const today = new Date().toISOString().split('T')[0];
 
+  const reservationSchema = {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "HABESHA – Äthiopisches Restaurant Salzburg",
+    "url": "https://www.habesha-salzburg.at/reservierung",
+    "telephone": "+436607324766",
+    "acceptsReservations": "True",
+    "hasMap": "https://maps.google.com/?q=HABESHA+Schallmooser+Hauptstra%C3%9Fe+34+Salzburg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Schallmooser Hauptstraße 34",
+      "addressLocality": "Salzburg",
+      "postalCode": "5020",
+      "addressCountry": "AT"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
+      <SEOHead
+        title="Tisch reservieren"
+        description="Tisch im äthiopischen Restaurant HABESHA Salzburg reservieren. Kaffeezeremonie, Injera & authentische Küche erleben. Jetzt online buchen. Reserve a table Ethiopian restaurant Salzburg."
+        canonical="https://www.habesha-salzburg.at/reservierung"
+        keywords="Tisch reservieren äthiopisches Restaurant Salzburg, reserve table Ethiopian restaurant Salzburg, Reservierung HABESHA, Kaffeezeremonie buchen Salzburg, Äthiopien Erlebnis Salzburg"
+        structuredData={reservationSchema}
+      />
       <Navbar />
 
       {/* Hero */}

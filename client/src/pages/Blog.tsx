@@ -1,4 +1,5 @@
 import { Link } from 'wouter';
+import SEOHead from '@/components/SEOHead';
 import { blogPosts } from '@/data/blogPosts';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -26,6 +27,12 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-[#1a1208]">
+      <SEOHead
+        title="Blog – Äthiopische Küche & Kultur"
+        description="Wissenswertes über äthiopische Küche, Gewürze & Kaffeezeremonie. Berbere, Injera, Teff, Niter Kibbeh – entdecken Sie Äthiopien in Salzburg. Ethiopian food blog."
+        canonical="https://www.habesha-salzburg.at/blog"
+        keywords="äthiopische Küche Blog, Ethiopian food blog, Injera Rezept, Berbere Gewürz, Kaffeezeremonie Äthiopien, Teff glutenfrei, Niter Kibbeh, äthiopische Kultur Salzburg, African food blog"
+      />
       <Navbar />
       {/* Hero */}
       <div className="relative pt-36 pb-24 px-4 text-center overflow-hidden">

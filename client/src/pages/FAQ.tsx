@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SEOHead from '@/components/SEOHead';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
@@ -174,6 +175,12 @@ export default function FAQ() {
 
   return (
     <div className="min-h-screen bg-[#0d1f1a]">
+      <SEOHead
+        title="FAQ – Häufige Fragen"
+        description="Antworten auf häufige Fragen zu HABESHA Salzburg: Öffnungszeiten, Reservierung, Lieferung, Halal, vegane Gerichte, glutenfrei & Kaffeezeremonie. Ethiopian restaurant FAQ."
+        canonical="https://www.habesha-salzburg.at/faq"
+        keywords="FAQ äthiopisches Restaurant Salzburg, Halal Restaurant Fragen, glutenfrei Salzburg FAQ, veganes Restaurant Salzburg FAQ, Öffnungszeiten HABESHA, Reservierung Salzburg, Ethiopian food FAQ"
+      />
       <Navbar />
 
       {/* Hero */}

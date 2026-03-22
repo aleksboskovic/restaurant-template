@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { trpc } from '@/lib/trpc';
 import { useLang } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
@@ -51,8 +52,35 @@ export default function ContactPage() {
 
   const isPlaceholder = message === PLACEHOLDER_MESSAGE;
 
+  const contactSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Kontakt – HABESHA Äthiopisches Restaurant Salzburg",
+    "url": "https://www.habesha-salzburg.at/kontakt",
+    "mainEntity": {
+      "@type": "Restaurant",
+      "name": "HABESHA – Äthiopisches Restaurant Salzburg",
+      "telephone": "+436607324766",
+      "email": "restaurant@habesha-salzburg.at",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Schallmooser Hauptstraße 34",
+        "addressLocality": "Salzburg",
+        "postalCode": "5020",
+        "addressCountry": "AT"
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
+      <SEOHead
+        title="Kontakt & Anfahrt"
+        description="HABESHA Restaurant Salzburg: Schallmooser Hauptstraße 34, Tel: +43 660 732 47 66. Öffnungszeiten, Anfahrt & Kontaktformular. Ethiopian restaurant contact Salzburg."
+        canonical="https://www.habesha-salzburg.at/kontakt"
+        keywords="Kontakt HABESHA Salzburg, äthiopisches Restaurant Salzburg Adresse, Ethiopian restaurant Salzburg contact, Anfahrt HABESHA, Schallmooser Hauptstraße Restaurant, Öffnungszeiten HABESHA"
+        structuredData={contactSchema}
+      />
       <Navbar />
 
       {/* Hero */}

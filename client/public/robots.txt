@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.habesha-salzburg.at/sitemap.xml
+
+# Kein Crawling von Admin/Dashboard-Bereichen
+Disallow: /dashboard
+Disallow: /api/
+
+# Kein Crawling von Legal-Seiten (noindex bereits gesetzt)
+# Datenschutz, Impressum und AGB werden trotzdem gecrawlt für Vollständigkeit

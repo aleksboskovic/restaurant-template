@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -22,8 +23,25 @@ export default function Legal() {
     { key: 'agb', label: 'AGB' },
   ];
 
+  const seoTitles: Record<LegalSection, string> = {
+    impressum: 'Impressum',
+    datenschutz: 'Datenschutzerklärung',
+    agb: 'Allgemeine Geschäftsbedingungen',
+  };
+  const seoCanonicals: Record<LegalSection, string> = {
+    impressum: 'https://www.habesha-salzburg.at/impressum',
+    datenschutz: 'https://www.habesha-salzburg.at/datenschutz',
+    agb: 'https://www.habesha-salzburg.at/agb',
+  };
+
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
+      <SEOHead
+        title={seoTitles[section]}
+        description={`${seoTitles[section]} – HABESHA Äthiopisches Restaurant Salzburg, Schallmooser Hauptstraße 34, 5020 Salzburg.`}
+        canonical={seoCanonicals[section]}
+        noIndex={true}
+      />
       <Navbar />
       <div className="pt-24 pb-20 px-4">
         <div className="max-w-3xl mx-auto">

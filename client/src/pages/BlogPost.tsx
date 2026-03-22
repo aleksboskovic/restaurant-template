@@ -1,4 +1,5 @@
 import { useParams, Link } from 'wouter';
+import SEOHead from '@/components/SEOHead';
 import { getBlogPostBySlug, getLatestBlogPosts, type Section } from '@/data/blogPosts';
 import { Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -74,8 +75,47 @@ export default function BlogPostPage() {
     );
   }
 
+  // Build Article schema for this blog post
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.metaDescription,
+    "image": post.image,
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": { "@type": "Organization", "name": "HABESHA – Äthiopisches Restaurant Salzburg" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "HABESHA – Äthiopisches Restaurant Salzburg",
+      "logo": { "@type": "ImageObject", "url": "https://www.habesha-salzburg.at/logo.png" }
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.habesha-salzburg.at/blog/${post.slug}` },
+    "keywords": `${post.category}, äthiopische Küche, Ethiopian food Salzburg, HABESHA Salzburg, ${post.title}`
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://www.habesha-salzburg.at/" },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.habesha-salzburg.at/blog" },
+      { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://www.habesha-salzburg.at/blog/${post.slug}` }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-[#1a1208]">
+      <SEOHead
+        title={post.title}
+        description={post.metaDescription}
+        canonical={`https://www.habesha-salzburg.at/blog/${post.slug}`}
+        ogImage={post.image}
+        ogImageAlt={post.imageAlt}
+        ogType="article"
+        keywords={`${post.category}, äthiopische Küche Salzburg, Ethiopian food Salzburg, HABESHA Salzburg, äthiopisches Restaurant Salzburg`}
+        structuredData={[articleSchema, breadcrumbSchema]}
+      />
       <Navbar />
       {/* Hero image */}
       <div className="relative h-72 md:h-96 overflow-hidden">

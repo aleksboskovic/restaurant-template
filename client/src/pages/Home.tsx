@@ -1,3 +1,4 @@
+import SEOHead from '@/components/SEOHead';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import CultureSection from '@/components/CultureSection';
@@ -16,9 +17,54 @@ import BlogTeaser from '@/components/BlogTeaser';
 const MANUSCRIPT_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
 const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
 
+const HOME_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": ["Restaurant", "FoodEstablishment"],
+  "@id": "https://www.habesha-salzburg.at/#restaurant",
+  "name": "HABESHA – Äthiopisches Restaurant Salzburg",
+  "alternateName": ["Habesha Salzburg", "Ethiopian Restaurant Salzburg", "African Restaurant Salzburg"],
+  "description": "Authentisches äthiopisches und eritreisches Restaurant in Salzburg. Halal, vegan, vegetarisch & glutenfrei. Injera aus Teff, Tibs, Kitfo, Wot und äthiopische Kaffeezeremonie. Ethiopian food Salzburg – online bestellen oder Tisch reservieren.",
+  "url": "https://www.habesha-salzburg.at",
+  "telephone": "+436607324766",
+  "email": "restaurant@habesha-salzburg.at",
+  "servesCuisine": ["Ethiopian", "Eritrean", "African", "Äthiopisch", "Halal", "Vegan", "Glutenfrei"],
+  "priceRange": "€€",
+  "hasMenu": "https://www.habesha-salzburg.at/speisekarte",
+  "acceptsReservations": "True",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Schallmooser Hauptstraße 34",
+    "addressLocality": "Salzburg",
+    "postalCode": "5020",
+    "addressCountry": "AT"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": 47.8095, "longitude": 13.0555 },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Tuesday", "opens": "17:00", "closes": "22:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Wednesday","Thursday","Friday"], "opens": "11:00", "closes": "22:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "13:00", "closes": "22:00" }
+  ],
+  "amenityFeature": [
+    { "@type": "LocationFeatureSpecification", "name": "Halal", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Vegan Options", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Gluten-Free Options", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Delivery", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Coffee Ceremony", "value": true }
+  ]
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="HABESHA – Äthiopisches Restaurant Salzburg"
+        description="Authentische äthiopische Küche in Salzburg. Halal, vegan & glutenfrei. Injera, Tibs, Kitfo – jetzt online bestellen oder Tisch reservieren. Ethiopian food Salzburg."
+        canonical="https://www.habesha-salzburg.at/"
+        keywords="äthiopisches Restaurant Salzburg, Ethiopian restaurant Salzburg, halal Restaurant Salzburg, veganes Restaurant Salzburg, glutenfreies Restaurant Salzburg, Injera Salzburg, Kaffeezeremonie Salzburg, African food Salzburg, Zöliakie Restaurant Salzburg, äthiopische Küche, Ethiopian food, äthiopisches Essen"
+        ogType="restaurant"
+        ogImageAlt="HABESHA – Äthiopisches Restaurant Salzburg – Injera mit Wot-Gerichten"
+        structuredData={HOME_SCHEMA}
+      />
       <Navbar />
       <SpecialEventBanner />
       <SpecialEventPopup />

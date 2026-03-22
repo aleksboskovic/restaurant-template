@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { useOrderType } from '@/contexts/OrderTypeContext';
@@ -788,6 +789,13 @@ export default function OrderPage() {
 
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
+      <SEOHead
+        title="Online Bestellen"
+        description="Äthiopisches Essen online bestellen in Salzburg. Abholung oder kostenlose Zustellung. Injera, Tibs, Kitfo & mehr. Halal, vegan & glutenfrei. Ethiopian food delivery Salzburg."
+        canonical="https://www.habesha-salzburg.at/bestellen"
+        keywords="äthiopisches Essen online bestellen Salzburg, Ethiopian food delivery Salzburg, Injera bestellen Salzburg, Abholung Äthiopien Salzburg, kostenlose Lieferung Salzburg, halal Essen bestellen Salzburg"
+        noIndex={false}
+      />
       <Navbar />
 
       {/* Hero */}
