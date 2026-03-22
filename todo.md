@@ -180,3 +180,10 @@
 - [x] Alten Ticker-Streifen oben entfernen
 - [x] Pop-up mit einem Klick wegdrückbar (X-Button), mobile + desktop optimiert
 - [x] Mehrere aktive Events als Carousel/Slides im Pop-up
+
+## Event-Anzeige Fixes
+
+- [x] Sanity-Bildfeld-Namen debuggen (bannerImage vs. image vs. photo)
+- [x] GESCHLOSSEN-Banner als Ticker-Streifen direkt unter Navbar (wie alter Oster-Banner)
+- [x] FASIKA Pop-up: Bild korrekt laden, klickbar für Vollansicht
+- [x] Beide Events gleichzeitig anzeigen (Ticker + Pop-up)

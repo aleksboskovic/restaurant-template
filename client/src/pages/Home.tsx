@@ -9,6 +9,7 @@ import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import FactCard from '@/components/FactCard';
+import SpecialEventBanner from '@/components/SpecialEventBanner';
 import SpecialEventPopup from '@/components/SpecialEventPopup';
 import BlogTeaser from '@/components/BlogTeaser';
 
@@ -19,6 +20,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <SpecialEventBanner />
       <SpecialEventPopup />
       <HeroSection />
 

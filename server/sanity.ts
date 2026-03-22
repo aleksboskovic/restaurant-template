@@ -148,7 +148,7 @@ export async function getActiveSpecialEvents(): Promise<SpecialEvent[]> {
     validFrom,
     validUntil,
     isActive,
-    "imageAsset": bannerImage.asset
+    "imageAsset": image.asset
   }`;
   const raw = (await sanityQuery(query)) as Array<SpecialEvent & { imageAsset?: { _ref?: string } }>;
   return raw.map(e => ({
@@ -167,7 +167,7 @@ export async function getAllSpecialEvents(): Promise<SpecialEvent[]> {
     validFrom,
     validUntil,
     isActive,
-    "imageAsset": bannerImage.asset
+    "imageAsset": image.asset
   }`;
   const raw = (await sanityQuery(query)) as Array<SpecialEvent & { imageAsset?: { _ref?: string } }>;
   return raw.map(e => ({
