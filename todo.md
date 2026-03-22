@@ -56,3 +56,6 @@
 ## Favicon
 - [x] Favicon aus HABESHA-Foto generieren (favicon.ico, apple-touch-icon, android icons)
 - [x] Favicon in index.html einbinden + site.webmanifest erstellt
+
+## Footer Credit
+- [x] "Created by QuantumCreativity" Link im Footer einbauen (https://www.quantumcreativity.one), auf jeder Seite sichtbar

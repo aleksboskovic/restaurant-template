@@ -96,6 +96,23 @@ export default function Footer() {
               </button>
             </div>
           </div>
+
+          {/* QuantumCreativity credit */}
+          <div className="mt-4 pt-4 border-t border-white/5 flex justify-center">
+            <a
+              href="https://www.quantumcreativity.one"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-1.5 text-white/25 text-[11px] tracking-widest uppercase hover:text-[#d4af37]/70 transition-colors duration-300"
+            >
+              <span className="inline-block w-3 h-px bg-white/20 group-hover:bg-[#d4af37]/50 transition-colors duration-300" />
+              Created by
+              <span className="font-medium text-white/35 group-hover:text-[#d4af37] transition-colors duration-300">
+                QuantumCreativity
+              </span>
+              <span className="inline-block w-3 h-px bg-white/20 group-hover:bg-[#d4af37]/50 transition-colors duration-300" />
+            </a>
+          </div>
         </div>
       </footer>
 
