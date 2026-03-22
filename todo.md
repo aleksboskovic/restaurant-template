@@ -187,3 +187,7 @@
 - [x] GESCHLOSSEN-Banner als Ticker-Streifen direkt unter Navbar (wie alter Oster-Banner)
 - [x] FASIKA Pop-up: Bild korrekt laden, klickbar für Vollansicht
 - [x] Beide Events gleichzeitig anzeigen (Ticker + Pop-up)
+
+## FASIKA Pop-up Fix
+
+- [x] Pop-up auch für zukünftige Events anzeigen (validUntil >= jetzt, egal ob validFrom noch nicht erreicht)

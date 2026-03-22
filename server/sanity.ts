@@ -139,7 +139,8 @@ function buildSanityImageUrl(asset: { _ref?: string } | null | undefined): strin
 
 export async function getActiveSpecialEvents(): Promise<SpecialEvent[]> {
   const now = new Date().toISOString();
-  const query = `*[_type == "specialEvent" && validFrom <= "${now}" && validUntil >= "${now}"] {
+  // Include both currently active AND upcoming events (not yet expired)
+  const query = `*[_type == "specialEvent" && validUntil >= "${now}"] | order(validFrom asc) {
     _id,
     title,
     description,
