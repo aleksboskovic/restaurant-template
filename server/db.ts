@@ -125,4 +125,36 @@ export async function savePinHash(newHash: string): Promise<void> {
     .onDuplicateKeyUpdate({ set: { value: newHash } });
 }
 
-// TODO: add feature queries here as your schema grows.
+// ─── Orders Enabled Flag ─────────────────────────────────────────────────────
+
+const ORDERS_ENABLED_KEY = 'orders_enabled';
+
+/**
+ * Returns true if orders are currently enabled.
+ * Defaults to TRUE if the key has never been set.
+ */
+export async function getOrdersEnabled(): Promise<boolean> {
+  const db = await getDb();
+  if (db) {
+    try {
+      const rows = await db.select().from(appSettings).where(eq(appSettings.key, ORDERS_ENABLED_KEY)).limit(1);
+      if (rows.length > 0) return rows[0].value === 'true';
+    } catch (e) {
+      console.warn('[OrdersEnabled] DB read failed, defaulting to true:', e);
+    }
+  }
+  return true; // default: orders are open
+}
+
+/**
+ * Persistently set the orders_enabled flag.
+ * This survives server restarts, browser refreshes, and deploys.
+ */
+export async function setOrdersEnabled(enabled: boolean): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  await db.insert(appSettings)
+    .values({ key: ORDERS_ENABLED_KEY, value: enabled ? 'true' : 'false' })
+    .onDuplicateKeyUpdate({ set: { value: enabled ? 'true' : 'false' } });
+}
+

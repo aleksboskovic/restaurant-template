@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
+import { useCart } from '@/contexts/CartContext';
 import { trpc } from '@/lib/trpc';
-import { ShoppingCart, Leaf, Loader2 } from 'lucide-react';
-import DeliveryComingSoonModal from '@/components/DeliveryComingSoonModal';
+import { Plus, Minus, ShoppingCart, Leaf, Loader2 } from 'lucide-react';
+import { Link } from 'wouter';
+import OrdersClosedModal from '@/components/OrdersClosedModal';
 
 type Tab = 'mains' | 'vegan' | 'plates' | 'sides';
 
@@ -37,8 +39,11 @@ function VeganBadge({ isVegan, isVegetarian }: { isVegan?: boolean; isVegetarian
   return null;
 }
 
-function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick: () => void }) {
+function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () => void }) {
   const { lang } = useLang();
+  const { items, addItem, removeItem } = useCart();
+  const cartItem = items.find(i => i.id === item.id);
+  const qty = cartItem?.quantity || 0;
 
   // Lokalisierter Name und Beschreibung direkt aus Sanity-Feldern
   const name = lang === 'en' ? (item.nameEn || item.nameDe)
@@ -78,15 +83,33 @@ function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick: () => 
         {desc}
       </p>
 
-      {/* Order button */}
+      {/* Add to cart */}
       <div className="flex items-center justify-between mt-auto">
-        <button
-          onClick={onOrderClick}
-          className="flex items-center gap-2 bg-[#1a3a32] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#d4af37] hover:text-[#1a3a32] transition-colors"
-        >
-          <ShoppingCart size={14} />
-          <span>Bestellen</span>
-        </button>
+        {qty === 0 ? (
+          <button
+            onClick={() => addItem({ id: item.id, name: item.nameDe, nameEn: item.nameEn, nameAm: item.nameAm, price: item.priceNum })}
+            className="flex items-center gap-2 bg-[#1a3a32] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#1a3a32]/90 transition-colors"
+          >
+            <Plus size={14} />
+            <span>Hinzufügen</span>
+          </button>
+        ) : (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => removeItem(item.id)}
+              className="w-8 h-8 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] flex items-center justify-center hover:bg-[#1a3a32] hover:text-white transition-colors"
+            >
+              <Minus size={14} />
+            </button>
+            <span className="text-[#1a3a32] font-bold text-sm w-4 text-center">{qty}</span>
+            <button
+              onClick={() => addItem({ id: item.id, name: item.nameDe, nameEn: item.nameEn, nameAm: item.nameAm, price: item.priceNum })}
+              className="w-8 h-8 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/90 transition-colors"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -94,8 +117,11 @@ function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick: () => 
 
 export default function MenuSection() {
   const { t, lang } = useLang();
+  const { itemCount, total } = useCart();
   const [activeTab, setActiveTab] = useState<Tab>('mains');
-  const [deliveryModalOpen, setDeliveryModalOpen] = useState(false);
+  const [ordersClosedModalOpen, setOrdersClosedModalOpen] = useState(false);
+  const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
 
   // Sanity-Daten laden
   const { data: sanityItems, isLoading, isError } = trpc.menu.getAll.useQuery(undefined, {
@@ -174,7 +200,7 @@ export default function MenuSection() {
         {!isLoading && !isError && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map((item) => (
-              <MenuCard key={item.id} item={item} onOrderClick={() => setDeliveryModalOpen(true)} />
+              <MenuCard key={item.id} item={item} />
             ))}
             {items.length === 0 && (
               <div className="col-span-3 text-center py-12 text-[#1a3a32]/50">
@@ -184,17 +210,42 @@ export default function MenuSection() {
           </div>
         )}
 
-        {/* Lieferando CTA Bar */}
-        <div className="mt-10 flex justify-center">
-          <button
-            onClick={() => setDeliveryModalOpen(true)}
-            className="flex items-center gap-3 bg-[#1a3a32] text-white px-8 py-4 rounded-2xl shadow-lg hover:bg-[#d4af37] hover:text-[#1a3a32] transition-all font-semibold text-sm"
-          >
-            <ShoppingCart size={18} />
-            <span>Jetzt bestellen</span>
-          </button>
-        </div>
-        <DeliveryComingSoonModal open={deliveryModalOpen} onClose={() => setDeliveryModalOpen(false)} />
+        {/* Floating Cart Bar */}
+        {itemCount > 0 && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-md px-4">
+            {ordersEnabled ? (
+              <Link
+                href="/bestellen"
+                className="flex items-center justify-between bg-[#1a3a32] text-white px-6 py-4 rounded-2xl shadow-2xl hover:bg-[#1a3a32]/90 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-[#d4af37] text-[#1a3a32] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                    {itemCount}
+                  </div>
+                  <span className="text-sm font-semibold">Warenkorb ansehen</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold">{total.toFixed(2).replace('.', ',')} €</span>
+                  <ShoppingCart size={18} />
+                </div>
+              </Link>
+            ) : (
+              <button
+                onClick={() => setOrdersClosedModalOpen(true)}
+                className="w-full flex items-center justify-between bg-[#1a3a32] text-white px-6 py-4 rounded-2xl shadow-2xl hover:bg-[#1a3a32]/90 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                    {itemCount}
+                  </div>
+                  <span className="text-sm font-semibold">Bestellungen pausiert</span>
+                </div>
+                <ShoppingCart size={18} />
+              </button>
+            )}
+          </div>
+        )}
+        <OrdersClosedModal open={ordersClosedModalOpen} onClose={() => setOrdersClosedModalOpen(false)} />
       </div>
     </section>
   );

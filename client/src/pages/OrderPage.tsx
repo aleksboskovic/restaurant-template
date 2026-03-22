@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MenuSection from '@/components/MenuSection';
+import OrdersClosedModal from '@/components/OrdersClosedModal';
 // menuData wird nicht mehr benötigt - Warenkorb enthält alle nötigen Daten
 import { trpc } from '@/lib/trpc';
 import {
@@ -869,6 +870,36 @@ export default function OrderPage() {
   const [step, setStep] = useState(1);
   const [deliveryData, setDeliveryData] = useState({ deliveryType: 'asap' });
   const [orderNum, setOrderNum] = useState('');
+
+  const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
+
+  // If orders are disabled, show a full-page block
+  if (orderSettingsData !== undefined && !ordersEnabled) {
+    return (
+      <div className="min-h-screen bg-[#fdfbf7]">
+        <Navbar />
+        <div className="max-w-lg mx-auto px-4 py-40 text-center">
+          <div className="text-6xl mb-6">🔒</div>
+          <h1 className="font-serif text-3xl font-bold text-[#1a3a32] mb-4">Bestellungen pausiert</h1>
+          <p className="text-[#1a3a32]/65 text-base leading-relaxed mb-8">
+            Wir nehmen gerade keine Online-Bestellungen an.<br />
+            Bitte rufen Sie uns an oder versuchen Sie es später erneut.
+          </p>
+          <a
+            href="tel:+436607324766"
+            className="inline-flex items-center gap-2 bg-[#1a3a32] text-white font-bold py-3.5 px-8 rounded-2xl hover:bg-[#1a3a32]/90 transition-colors text-sm"
+          >
+            +43 660 732 47 66
+          </a>
+          <div className="mt-6">
+            <a href="/" className="text-[#1a3a32]/50 text-sm hover:text-[#1a3a32] transition-colors">← Zurück zur Startseite</a>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (orderNum) {
     return (

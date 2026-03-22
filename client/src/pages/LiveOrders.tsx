@@ -5,6 +5,7 @@ import {
   CheckCircle, Clock, Phone, Mail, MapPin, Utensils,
   RefreshCw, Volume2, VolumeX, History, TrendingUp,
   Search, LogOut, ChevronDown, ChevronUp, X, Package, KeyRound, Eye, EyeOff,
+  ShoppingBag, ShoppingCart,
 } from 'lucide-react';
 
 type OrderStatus = 'new' | 'in_progress' | 'done';
@@ -240,9 +241,26 @@ function LiveOrdersDashboard() {
   const [lastOrderCount, setLastOrderCount] = useState<number | null>(null);
   const [justUpdated, setJustUpdated] = useState<string | null>(null);
   const [showPinDialog, setShowPinDialog] = useState(false);
+  const [orderToggleLoading, setOrderToggleLoading] = useState(false);
 
   const updateStatus = trpc.orders.updateStatus.useMutation();
   const utils = trpc.useUtils();
+
+  // ── Orders enabled state (DB-persisted) ──
+  const { data: orderSettingsData, refetch: refetchOrderSettings } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
+  const setEnabledMutation = trpc.orderSettings.setEnabled.useMutation({
+    onSuccess: () => {
+      refetchOrderSettings();
+      setOrderToggleLoading(false);
+    },
+    onError: () => setOrderToggleLoading(false),
+  });
+
+  const handleToggleOrders = () => {
+    setOrderToggleLoading(true);
+    setEnabledMutation.mutate({ enabled: !ordersEnabled });
+  };
 
   const { data: orders = [], isLoading, refetch } = trpc.orders.getActive.useQuery(undefined, {
     refetchInterval: 10000,
@@ -333,6 +351,32 @@ function LiveOrdersDashboard() {
                 </button>
               </>
             )}
+            {/* BESTELLUNG STOPPEN / AKTIVIEREN */}
+            <button
+              onClick={handleToggleOrders}
+              disabled={orderToggleLoading}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all border-2 ${
+                ordersEnabled
+                  ? 'bg-red-600 hover:bg-red-700 text-white border-red-500'
+                  : 'bg-green-600 hover:bg-green-700 text-white border-green-500'
+              } disabled:opacity-60`}
+              title={ordersEnabled ? 'Bestellungen stoppen' : 'Bestellungen aktivieren'}
+            >
+              {orderToggleLoading ? (
+                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : ordersEnabled ? (
+                <ShoppingCart size={14} />
+              ) : (
+                <ShoppingBag size={14} />
+              )}
+              <span className="hidden sm:inline">
+                {ordersEnabled ? 'BESTELLUNG STOPPEN' : 'BESTELLUNG AKTIVIEREN'}
+              </span>
+              <span className="sm:hidden">
+                {ordersEnabled ? 'STOPP' : 'AKTIV'}
+              </span>
+            </button>
+
             {/* PIN ändern */}
             <button
               onClick={() => setShowPinDialog(true)}

@@ -154,3 +154,21 @@
 ## Warenkorb-Deaktivierung
 
 - [x] Warenkorb-Icon und alle "Bestellen"-Buttons deaktivieren: Info-Modal mit Lieferando-Link + Hinweis auf baldige eigene Lieferung
+
+## Eigenes Bestellsystem reaktivieren + Bestellstopp
+
+- [ ] Lieferando-Modal und DeliveryComingSoonModal komplett entfernen
+- [ ] Warenkorb und eigenes Bestellsystem wieder aktivieren
+- [ ] DB: orders_enabled Flag in app_settings Tabelle
+- [ ] Backend: tRPC-Endpunkte getOrdersEnabled / setOrdersEnabled
+- [ ] Dashboard: "BESTELLUNG STOPPEN"-Toggle (rot/grün) im Live-Orders-Header
+- [ ] Frontend: Wenn gestoppt → Kunden sehen Sperrhinweis statt Bestellformular
+
+## Eigenes Bestellsystem reaktivieren + Bestellstopp
+
+- [x] Lieferando-Modal (DeliveryComingSoonModal) komplett entfernen
+- [x] Warenkorb und eigenes Bestellsystem wieder aktivieren
+- [x] DB: app_settings Tabelle mit orders_enabled Flag (dauerhaft gespeichert)
+- [x] Backend: tRPC getOrdersEnabled / setOrdersEnabled Endpunkte
+- [x] Dashboard: "BESTELLUNG STOPPEN"-Toggle (rot/grün) im Live-Orders-Header
+- [x] Frontend: Wenn gestoppt → Kunden sehen Sperrhinweis statt Bestellformular

@@ -14,7 +14,7 @@ import {
   getDayStats,
   getMenuItems,
 } from './sanity';
-import { getStoredPinHash, savePinHash, hashPinServer } from './db';
+import { getStoredPinHash, savePinHash, hashPinServer, getOrdersEnabled, setOrdersEnabled } from './db';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-02-25.clover',
@@ -148,6 +148,23 @@ export const appRouter = router({
       const items = await getMenuItems();
       return items;
     }),
+  }),
+
+  // ─── Orders Enabled ──────────────────────────────────────────────────────
+  orderSettings: router({
+    /** Get whether orders are currently enabled (DB-persisted) */
+    getEnabled: publicProcedure.query(async () => {
+      const enabled = await getOrdersEnabled();
+      return { enabled };
+    }),
+
+    /** Set orders enabled/disabled — persists in DB until manually changed */
+    setEnabled: publicProcedure
+      .input(z.object({ enabled: z.boolean() }))
+      .mutation(async ({ input }) => {
+        await setOrdersEnabled(input.enabled);
+        return { success: true, enabled: input.enabled };
+      }),
   }),
 
   // ─── Dashboard PIN ────────────────────────────────────────────────────

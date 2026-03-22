@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLang, Lang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import { trpc } from '@/lib/trpc';
 import { Menu, X, ShoppingCart, ChevronDown } from 'lucide-react';
-import DeliveryComingSoonModal from '@/components/DeliveryComingSoonModal';
+import OrdersClosedModal from '@/components/OrdersClosedModal';
 
 // CDN URLs für die Hintergrundbilder
 const TEXTILE_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/navbar-textile-pattern_ee4e72f4.jpg';
@@ -35,7 +36,17 @@ export default function Navbar() {
   const [activeTheme, setActiveTheme] = useState<NavTheme>('transparent');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [deliveryModalOpen, setDeliveryModalOpen] = useState(false);
+  const [ordersClosedModalOpen, setOrdersClosedModalOpen] = useState(false);
+  const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
+  const ordersEnabled = orderSettingsData?.enabled ?? true;
+
+  const handleOrderClick = () => {
+    if (!ordersEnabled) {
+      setOrdersClosedModalOpen(true);
+    } else {
+      window.location.href = '/bestellen';
+    }
+  };
   const [location] = useLocation();
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -245,7 +256,7 @@ export default function Navbar() {
             </div>
 
             {/* Cart */}
-            <button onClick={() => setDeliveryModalOpen(true)} className="relative p-1">
+            <button onClick={handleOrderClick} className="relative p-1">
               <ShoppingCart
                 size={22}
                 className={`transition-colors duration-300 hover:text-[#d4af37] ${textColor}`}
@@ -374,7 +385,7 @@ export default function Navbar() {
                 {t.nav_reserve}
               </Link>
               <button
-                onClick={() => { setMobileOpen(false); setDeliveryModalOpen(true); }}
+                onClick={() => { setMobileOpen(false); handleOrderClick(); }}
                 className="flex-1 text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] hover:bg-[#1a3a32] hover:text-white transition-all"
               >
                 {t.nav_order}
@@ -383,7 +394,7 @@ export default function Navbar() {
           </div>
         </div>
       )}
-      <DeliveryComingSoonModal open={deliveryModalOpen} onClose={() => setDeliveryModalOpen(false)} />
+      <OrdersClosedModal open={ordersClosedModalOpen} onClose={() => setOrdersClosedModalOpen(false)} />
     </>
   );
 }
