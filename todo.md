@@ -213,3 +213,8 @@
 - [x] HALAL-Label: grün, Großbuchstaben, neben Produktname
 - [x] Allergene-Badges: Buchstaben A–R als kleine Kästchen unter dem Gericht
 - [x] Legende: A–R + HALAL sichtbar in der Speisekarte, passend zum Design
+
+## Bestellformular: Zeitauswahl entfernen
+
+- [x] Zeitauswahl-Feld aus OrderPage entfernen
+- [x] deliveryTime fix auf 'asap' setzen (kein Benutzereingabe)

@@ -165,16 +165,6 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
     else if (!/\S+@\S+\.\S+/.test(deliveryData.email)) e.email = 'Ungültige E-Mail-Adresse';
     if (!deliveryData.street) e.street = 'Pflichtfeld';
     if (!deliveryData.city) e.city = 'Pflichtfeld';
-    if (deliveryData.deliveryType === 'schedule') {
-      if (!deliveryData.scheduleDate) e.scheduleDate = 'Pflichtfeld';
-      else {
-        const d = new Date(deliveryData.scheduleDate);
-        const tod = new Date(); tod.setHours(0,0,0,0);
-        if (d < tod) e.scheduleDate = t.order_past_error;
-        if (d.getDay() === 0) e.scheduleDate = t.order_sunday_error;
-      }
-      if (!deliveryData.scheduleTime) e.scheduleTime = 'Pflichtfeld';
-    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -225,62 +215,13 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
         />
       </div>
 
-      {/* Delivery time */}
-      <div>
-        <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-3 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
-          Lieferzeit *
-        </label>
-        <div className="grid sm:grid-cols-2 gap-3">
-          {[
-            { key: 'asap', icon: Clock, title: t.order_asap, sub: t.order_asap_desc },
-            { key: 'schedule', icon: Calendar, title: t.order_schedule, sub: t.order_schedule_desc },
-          ].map(({ key, icon: Icon, title, sub }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setDeliveryData({ ...deliveryData, deliveryType: key })}
-              className={`p-4 rounded-xl border-2 text-left transition-all ${
-                deliveryData.deliveryType === key
-                  ? 'border-[#1a3a32] bg-[#1a3a32]/5'
-                  : 'border-gray-200 hover:border-[#d4af37]/50'
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Icon size={16} className={deliveryData.deliveryType === key ? 'text-[#1a3a32]' : 'text-gray-400'} />
-                <span className={`text-sm font-semibold ${deliveryData.deliveryType === key ? 'text-[#1a3a32]' : 'text-gray-600'} ${lang === 'am' ? 'font-ethiopic' : ''}`}>{title}</span>
-              </div>
-              <p className={`text-xs ${deliveryData.deliveryType === key ? 'text-[#1a3a32]/60' : 'text-gray-400'} ${lang === 'am' ? 'font-ethiopic' : ''}`}>{sub}</p>
-            </button>
-          ))}
+      {/* Lieferzeit: immer so bald wie möglich */}
+      <div className="flex items-center gap-3 p-4 rounded-xl bg-[#1a3a32]/5 border border-[#1a3a32]/15">
+        <Clock size={16} className="text-[#1a3a32] flex-shrink-0" />
+        <div>
+          <p className="text-sm font-semibold text-[#1a3a32]">{t.order_asap}</p>
+          <p className="text-xs text-[#1a3a32]/60">{t.order_asap_desc}</p>
         </div>
-
-        {deliveryData.deliveryType === 'schedule' && (
-          <div className="grid sm:grid-cols-2 gap-4 mt-4">
-            <div>
-              <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2">Datum *</label>
-              <input
-                type="date"
-                min={today}
-                value={deliveryData.scheduleDate || ''}
-                onChange={e => setDeliveryData({ ...deliveryData, scheduleDate: e.target.value })}
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all ${errors.scheduleDate ? 'border-red-400' : 'border-gray-200'}`}
-              />
-              {errors.scheduleDate && <p className="text-red-500 text-xs mt-1">{errors.scheduleDate}</p>}
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2">Uhrzeit *</label>
-              <select
-                value={deliveryData.scheduleTime || ''}
-                onChange={e => setDeliveryData({ ...deliveryData, scheduleTime: e.target.value })}
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all bg-white ${errors.scheduleTime ? 'border-red-400' : 'border-gray-200'}`}
-              >
-                <option value="">Wählen...</option>
-                {TIME_SLOTS.map(s => <option key={s} value={s}>{s} Uhr</option>)}
-              </select>
-              {errors.scheduleTime && <p className="text-red-500 text-xs mt-1">{errors.scheduleTime}</p>}
-            </div>
-          </div>
-        )}
       </div>
 
       <div>
@@ -446,9 +387,10 @@ function PaymentFormShell({
     const deliveryAddress = deliveryData.street
       ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
       : undefined;
-    const deliveryTime = deliveryData.deliveryType === 'asap'
+    const deliveryTime = 'asap'; // immer so bald wie möglich
+    void (deliveryData.deliveryType === 'asap'
       ? 'So schnell wie möglich (~45–60 Min.)'
-      : `${deliveryData.scheduleDate || ''} um ${deliveryData.scheduleTime || ''} Uhr`;
+      : 'asap');
     const orderItems = items.map(item => ({ dishName: item.name, quantity: item.quantity, price: item.price }));
     try {
       const { orderNum } = await createOrder.mutateAsync({
@@ -491,7 +433,7 @@ function PaymentFormShell({
         </div>
         <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
           <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
-          <p>🕐 {deliveryData.deliveryType === 'asap' ? t.order_asap_desc : `${deliveryData.scheduleDate} um ${deliveryData.scheduleTime} Uhr`}</p>
+          <p>🕐 {t.order_asap_desc}</p>
         </div>
       </div>
       {/* Payment method selector */}
@@ -572,9 +514,10 @@ function CardPaymentInner({
     const deliveryAddress = deliveryData.street
       ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
       : undefined;
-    const deliveryTime = deliveryData.deliveryType === 'asap'
+    const deliveryTime = 'asap'; // immer so bald wie möglich
+    void (deliveryData.deliveryType === 'asap'
       ? 'So schnell wie möglich (~45–60 Min.)'
-      : `${deliveryData.scheduleDate || ''} um ${deliveryData.scheduleTime || ''} Uhr`;
+      : 'asap');
     const orderItems = items.map(item => ({ dishName: item.name, quantity: item.quantity, price: item.price }));
     try {
       const { error: stripeError } = await stripe.confirmPayment({
@@ -695,9 +638,10 @@ function PaymentForm({
     const deliveryAddress = deliveryData.street
       ? `${deliveryData.street}, ${deliveryData.zip || ''} ${deliveryData.city || ''}`.trim()
       : undefined;
-    const deliveryTime = deliveryData.deliveryType === 'asap'
+    const deliveryTime = 'asap'; // immer so bald wie möglich
+    void (deliveryData.deliveryType === 'asap'
       ? 'So schnell wie möglich (~45–60 Min.)'
-      : `${deliveryData.scheduleDate || ''} um ${deliveryData.scheduleTime || ''} Uhr`;
+      : 'asap');
     const orderItems = items.map(item => ({
       dishName: item.name,
       quantity: item.quantity,
@@ -785,7 +729,7 @@ function PaymentForm({
         </div>
         <div className="mt-3 pt-3 border-t border-[#1a3a32]/10 text-xs text-[#1a3a32]/60">
           <p>📍 {deliveryData.street}, {deliveryData.zip} {deliveryData.city}</p>
-          <p>🕐 {deliveryData.deliveryType === 'asap' ? t.order_asap_desc : `${deliveryData.scheduleDate} um ${deliveryData.scheduleTime} Uhr`}</p>
+          <p>🕐 {t.order_asap_desc}</p>
         </div>
       </div>
 
