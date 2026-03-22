@@ -22,7 +22,7 @@ interface SEOHeadProps {
 }
 
 const SITE_NAME = 'HABESHA – Äthiopisches Restaurant Salzburg';
-const DEFAULT_OG_IMAGE = 'https://www.habesha-salzburg.at/og-image.jpg';
+const DEFAULT_OG_IMAGE = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/og-image_9004108a.jpg';
 const BASE_URL = 'https://www.habesha-salzburg.at';
 
 // Global keywords always appended to every page

@@ -47,3 +47,8 @@
 - [x] Blog-Beiträge: SEO-Texte optimieren + interne Verlinkungen
 - [x] Sitemap.xml + robots.txt erstellen
 - [x] Glutenfrei/Zöliakie-Keywords in SEO einbauen (glutenfrei Salzburg, Zöliakie Restaurant, ohne Weizen, Teff glutenfrei)
+
+## Open Graph / Social Media Vorschaubild
+- [x] Foto komprimieren und auf CDN hochladen (117 KB, 1200x630px)
+- [x] og:image in index.html einbauen (1200x630px, CDN-URL)
+- [x] og:image in SEOHead-Komponente für alle Seiten einbauen
