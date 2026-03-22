@@ -12,6 +12,7 @@ export default defineType({
     defineField({ name: 'description_en', title: 'Beschreibung (EN)', type: 'text' }),
     defineField({ name: 'description_am', title: 'Beschreibung (AM)', type: 'text' }),
     defineField({ name: 'price', title: 'Preis', type: 'number', validation: Rule => Rule.required().min(0) }),
+    defineField({ name: 'deliveryPrice', title: 'Preis Lieferung', description: 'Spezieller Preis für Lieferungen (optional)', type: 'number', validation: Rule => Rule.min(0) }),
     defineField({
       name: 'allergens',
       title: 'Allergene (A-R)',

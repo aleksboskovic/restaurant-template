@@ -250,3 +250,7 @@
 - [x] Letzter Bestell-Button umbenennen zu "Kostenpflichtig bestellen"
 - [x] E-Mail bei /Reservierung auf restaurant@habesha-salzburg.at ändern
 - [x] Zentrale restaurantConfig.ts anlegen (Kontakt, Öffnungszeiten, Liefergebiet, Mindestbestellwert)
+
+## Bug: priceDelivery wird nicht angezeigt
+- [x] Sanity-Feldname prüfen (priceDelivery vs. price_delivery o.ä.)
+- [x] GROQ-Query und normalizeSanityMenuItem debuggen (Feld heißt deliveryPrice in Sanity)

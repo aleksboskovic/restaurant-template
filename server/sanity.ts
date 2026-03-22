@@ -247,7 +247,8 @@ interface RawSanityMenuItem {
   description_en?: string;
   description_am?: string;
   price?: number;       // numeric price (Abholung)
-  priceDelivery?: number; // optional delivery price
+  priceDelivery?: number; // optional delivery price (mapped from deliveryPrice in Sanity)
+  deliveryPrice?: number; // actual field name in Sanity
   category?: string;
   isVegan?: boolean;
   isVegetarian?: boolean;
@@ -286,7 +287,8 @@ function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
   const priceNum = raw.price ?? 0;
   const priceFormatted = priceNum.toFixed(2).replace('.', ',') + ' €';
   // If no delivery price set, fall back to pickup price
-  const priceDeliveryNum = raw.priceDelivery ?? priceNum;
+  // Note: Sanity stores this as 'deliveryPrice', not 'priceDelivery'
+  const priceDeliveryNum = raw.deliveryPrice ?? raw.priceDelivery ?? priceNum;
   const priceDeliveryFormatted = priceDeliveryNum.toFixed(2).replace('.', ',') + ' €';
   return {
     _id: raw._id,
@@ -316,7 +318,7 @@ export async function getMenuItems(): Promise<SanityMenuItem[]> {
   const query = `*[_type == "menuItem" && isAvailable != false] | order(sortOrder asc, _createdAt asc) {
     _id, _type, name, name_en, name_am,
     description, description_en, description_am,
-    price, priceDelivery,
+    price, deliveryPrice,
     category, isVegan, isVegetarian, badge, sortOrder, isAvailable,
     allergens, isHalal
   }`;
