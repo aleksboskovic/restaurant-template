@@ -52,3 +52,7 @@
 - [x] Foto komprimieren und auf CDN hochladen (117 KB, 1200x630px)
 - [x] og:image in index.html einbauen (1200x630px, CDN-URL)
 - [x] og:image in SEOHead-Komponente für alle Seiten einbauen
+
+## Favicon
+- [x] Favicon aus HABESHA-Foto generieren (favicon.ico, apple-touch-icon, android icons)
+- [x] Favicon in index.html einbinden + site.webmanifest erstellt

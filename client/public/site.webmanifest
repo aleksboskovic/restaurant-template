@@ -1,0 +1,21 @@
+{
+  "name": "HABESHA – Äthiopisches Restaurant Salzburg",
+  "short_name": "HABESHA",
+  "description": "Authentische äthiopische Küche in Salzburg. Halal, vegan & glutenfrei.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a0a00",
+  "theme_color": "#c8a96e",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
