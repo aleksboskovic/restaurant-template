@@ -43,10 +43,10 @@ function renderSection(section: Section, idx: number) {
           <p className="text-[#c9a84c] font-medium text-lg leading-relaxed">
             {section.text}
           </p>
-          <a href="tel:+436607324766" className="mt-4 inline-flex items-center gap-2 bg-[#c9a84c] text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#e0bc6a] transition-colors text-sm">
+          <Link href="/reservierung" className="mt-4 inline-flex items-center gap-2 bg-[#c9a84c] text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#e0bc6a] transition-colors text-sm">
             Tisch reservieren
             <ArrowRight size={14} />
-          </a>
+          </Link>
         </div>
       );
     default:

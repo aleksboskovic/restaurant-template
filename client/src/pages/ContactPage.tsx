@@ -8,7 +8,7 @@ import { Phone, Mail, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'luci
 const PHONE_NUMBER = '+436607324766';
 const PHONE_DISPLAY = '+43 660 732 47 66';
 
-const PLACEHOLDER_MESSAGE = 'TISCHRESERVIERUNGEN BITTE PER TELEFON, DA EMAILS ERST ZEITVERZÖGERT GESEHEN WERDEN.\n\nFür alle anderen Anfragen schreiben Sie uns gerne hier:';
+const PLACEHOLDER_MESSAGE = 'Bitte beachten Sie: Tischreservierungen nehmen wir ausschließlich telefonisch entgegen, da E-Mails erst zeitverzögert gelesen werden.\n\nFür alle anderen Anfragen schreiben Sie uns gerne hier:';
 
 export default function ContactPage() {
   const { t } = useLang();
@@ -138,11 +138,10 @@ export default function ContactPage() {
               <div>
                 <p className="font-semibold text-[#1a3a32] text-sm mb-1">Öffnungszeiten</p>
                 <div className="text-[#1a3a32]/60 text-sm space-y-0.5">
-                  <div className="flex justify-between gap-6"><span>Sonntag</span><span>13:00–22:00</span></div>
+                  <div className="flex justify-between gap-6"><span>Mi – Fr</span><span>11–14 &amp; 17–22 Uhr</span></div>
+                  <div className="flex justify-between gap-6"><span>Sa – So</span><span>13–22 Uhr</span></div>
+                  <div className="flex justify-between gap-6"><span>Dienstag</span><span>17–22 Uhr</span></div>
                   <div className="flex justify-between gap-6"><span>Montag</span><span className="text-red-500">Geschlossen</span></div>
-                  <div className="flex justify-between gap-6"><span>Dienstag</span><span>17:00–22:00</span></div>
-                  <div className="flex justify-between gap-6"><span>Mi – Fr</span><span>11:00–14:00, 17:00–22:00</span></div>
-                  <div className="flex justify-between gap-6"><span>Samstag</span><span>13:00–22:00</span></div>
                 </div>
               </div>
             </div>

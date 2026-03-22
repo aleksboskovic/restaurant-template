@@ -200,3 +200,9 @@
 - [x] Backend: tRPC-Endpunkt zum Senden der Kontaktanfrage (E-Mail an Besitzer)
 - [x] Alle "Tisch reservieren"/"Book a Table"-Buttons → tel: Anruf-Link (+43 660 732 47 66)
 - [x] Navbar-Link "Reservieren" → tel: Anruf-Link
+
+## Kontaktseite Korrekturen
+
+- [x] Hinweistext grammatikalisch korrigieren
+- [x] Öffnungszeiten in ContactPage aktualisieren (Mi–Fr: 11–14 & 17–22, Sa–So: 13–22, Di: 17–22, Mo: Geschlossen)
+- [x] Alle "Tisch reservieren"-Buttons → /reservierung (statt tel:)

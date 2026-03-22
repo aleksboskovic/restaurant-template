@@ -34,6 +34,7 @@ export default function Footer() {
                 {[
                   { label: t.nav_home, href: '/' },
                   { label: t.nav_menu, href: '/#menu' },
+                  { label: t.nav_reserve, href: '/reservierung' },
                   { label: t.nav_order, href: '/bestellen' },
                   { label: 'Kontakt', href: '/kontakt' },
                 ].map(({ label, href }) => (
@@ -46,14 +47,6 @@ export default function Footer() {
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <a
-                    href="tel:+436607324766"
-                    className={`text-white/60 text-sm hover:text-[#d4af37] transition-colors ${lang === 'am' ? 'font-ethiopic' : ''}`}
-                  >
-                    {t.nav_reserve}
-                  </a>
-                </li>
               </ul>
             </div>
 

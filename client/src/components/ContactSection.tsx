@@ -92,14 +92,14 @@ export default function ContactSection() {
 
             {/* Action buttons */}
             <div className="flex flex-wrap gap-3 pt-4">
-              {/* Tisch Reservieren – direct phone call */}
-              <a
-                href="tel:+436607324766"
+              {/* Tisch Reservieren – links to reservation/contact page */}
+              <Link
+                href="/reservierung"
                 className="flex items-center gap-2 bg-[#d4af37] text-[#1a3a32] text-xs font-bold px-5 py-2.5 rounded-full hover:bg-[#d4af37]/90 transition-colors tracking-wide uppercase"
               >
-                <Phone size={14} />
+                <CalendarCheck size={14} />
                 {t.nav_reserve}
-              </a>
+              </Link>
               <a
                 href="tel:+436607324766"
                 className="flex items-center gap-2 border border-white/30 text-white text-xs font-bold px-5 py-2.5 rounded-full hover:bg-white/10 transition-colors tracking-wide uppercase"

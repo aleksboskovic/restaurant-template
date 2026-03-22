@@ -1,4 +1,4 @@
-import { useRoute, useLocation } from 'wouter';
+import { useRoute, useLocation, Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { useLang } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
@@ -145,12 +145,12 @@ export default function EventDetail() {
           <p className="text-[#1a3a32]/60 text-sm mb-4">
             Reservieren Sie jetzt Ihren Tisch für dieses besondere Event.
           </p>
-          <a
-            href="tel:+436607324766"
+          <Link
+            href="/reservierung"
             className="btn-premium px-8 py-3 rounded-xl text-sm font-bold tracking-widest uppercase inline-block"
           >
             Tisch reservieren
-          </a>
+          </Link>
         </div>
       </div>
 

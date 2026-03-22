@@ -94,12 +94,12 @@ export default function HeroSection() {
           >
             {t.hero_cta_menu}
           </button>
-          <a
-            href="tel:+436607324766"
+          <Link
+            href="/reservierung"
             className="px-8 py-3.5 rounded-full text-sm font-semibold tracking-widest uppercase min-w-[200px] border-2 border-white text-white hover:bg-white hover:text-[#1a3a32] transition-all duration-300 text-center"
           >
             {t.hero_cta_reserve}
-          </a>
+          </Link>
         </div>
       </div>
 
