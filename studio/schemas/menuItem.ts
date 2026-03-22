@@ -1,0 +1,60 @@
+import { defineType, defineField } from 'sanity';
+
+export default defineType({
+  name: 'menuItem',
+  title: 'Speisekarte',
+  type: 'document',
+  fields: [
+    defineField({ name: 'name', title: 'Name (DE)', type: 'string', validation: Rule => Rule.required() }),
+    defineField({ name: 'name_en', title: 'Name (EN)', type: 'string' }),
+    defineField({ name: 'name_am', title: 'Name (Amharisch)', type: 'string' }),
+    defineField({ name: 'description', title: 'Beschreibung (DE)', type: 'text' }),
+    defineField({ name: 'description_en', title: 'Beschreibung (EN)', type: 'text' }),
+    defineField({ name: 'description_am', title: 'Beschreibung (AM)', type: 'text' }),
+    defineField({ name: 'price', title: 'Preis', type: 'number', validation: Rule => Rule.required().min(0) }),
+    defineField({
+      name: 'allergens',
+      title: 'Allergene (A-R)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: [
+          { title: 'A - glutenhaltiges Getreide', value: 'A' },
+          { title: 'B - Krebstiere', value: 'B' },
+          { title: 'C - Ei', value: 'C' },
+          { title: 'D - Fisch', value: 'D' },
+          { title: 'E - Erdnuss', value: 'E' },
+          { title: 'F - Soja', value: 'F' },
+          { title: 'G - Milch oder Laktose', value: 'G' },
+          { title: 'H - Schalenfrüchte', value: 'H' },
+          { title: 'L - Sellerie', value: 'L' },
+          { title: 'M - Senf', value: 'M' },
+          { title: 'N - Sesam', value: 'N' },
+          { title: 'O - Sulfite', value: 'O' },
+          { title: 'P - Lupinen', value: 'P' },
+          { title: 'R - Weichtiere', value: 'R' },
+        ],
+      },
+    }),
+    defineField({ name: 'isHalal', title: 'Halal-Zertifiziert', type: 'boolean', initialValue: false }),
+    defineField({
+      name: 'category',
+      title: 'Kategorie',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Hauptspeisen (Mains)', value: 'mains' },
+          { title: 'Vegan/Vegi', value: 'vegan' },
+          { title: 'Kombiplatten (Plates)', value: 'plates' },
+          { title: 'Beilagen (Sides)', value: 'sides' },
+        ],
+      },
+    }),
+    defineField({ name: 'isVegan', title: 'Vegan', type: 'boolean', initialValue: false }),
+    defineField({ name: 'isVegetarian', title: 'Vegetarisch', type: 'boolean', initialValue: false }),
+    defineField({ name: 'badge', title: 'Badge (z.B. Beliebt)', type: 'string' }),
+    defineField({ name: 'sortOrder', title: 'Sortier-Reihenfolge', type: 'number' }),
+    defineField({ name: 'isAvailable', title: 'Verfügbar', type: 'boolean', initialValue: true }),
+    defineField({ name: 'image', title: 'Bild', type: 'image', options: { hotspot: true } }),
+  ],
+});
