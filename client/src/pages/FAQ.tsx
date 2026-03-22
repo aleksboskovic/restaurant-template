@@ -64,7 +64,7 @@ const faqCategories = [
       },
       {
         q: 'Muss man im Habesha Restaurant reservieren?',
-        a: 'Eine Reservierung wird besonders am Wochenende und für Gruppen ab 4 Personen empfohlen. Unter der Woche sind spontane Besuche meist kein Problem. Sie können bequem online über unsere Website reservieren oder uns telefonisch unter 0660 7324766 erreichen.',
+        a: 'Eine Reservierung wird besonders am Wochenende und für Gruppen ab 4 Personen empfohlen. Unter der Woche sind spontane Besuche meist kein Problem. Bitte rufen Sie uns unter 0660 7324766 an — wir freuen uns auf Sie!',
       },
       {
         q: 'Kann man im Habesha einen Geburtstag oder eine Firmenfeier feiern?',
@@ -226,7 +226,7 @@ export default function FAQ() {
         <div className="text-center pt-4">
           <p className="text-white/60 mb-4 text-sm">Ihre Frage ist nicht dabei?</p>
           <Link
-            href="/#contact"
+            href="/kontakt"
             className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1a3a32] font-bold px-6 py-3 rounded-full hover:bg-[#d4af37]/90 transition-colors text-sm uppercase tracking-wide"
           >
             Kontakt aufnehmen

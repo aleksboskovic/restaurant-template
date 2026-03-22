@@ -15,6 +15,7 @@ import {
   getMenuItems,
 } from './sanity';
 import { getStoredPinHash, savePinHash, hashPinServer, getOrdersEnabled, setOrdersEnabled } from './db';
+import { notifyOwner } from './_core/notification';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-02-25.clover',
@@ -164,6 +165,37 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await setOrdersEnabled(input.enabled);
         return { success: true, enabled: input.enabled };
+      }),
+  }),
+
+  // ─── Contact Form ──────────────────────────────────────────────────────
+  contact: router({
+    /** Send a contact message — notifies the owner via Manus notification */
+    send: publicProcedure
+      .input(z.object({
+        name: z.string().min(1).max(100),
+        email: z.string().email(),
+        phone: z.string().optional(),
+        subject: z.string().min(1).max(200),
+        message: z.string().min(1).max(5000),
+      }))
+      .mutation(async ({ input }) => {
+        const content = [
+          `Name: ${input.name}`,
+          `E-Mail: ${input.email}`,
+          input.phone ? `Telefon: ${input.phone}` : null,
+          `Betreff: ${input.subject}`,
+          ``,
+          `Nachricht:`,
+          input.message,
+        ].filter(Boolean).join('\n');
+
+        await notifyOwner({
+          title: `📩 Neue Kontaktanfrage: ${input.subject}`,
+          content,
+        });
+
+        return { success: true };
       }),
   }),
 

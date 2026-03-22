@@ -7,7 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
 import Home from "./pages/Home";
-import ReservationPage from "./pages/ReservationPage";
+import ContactPage from './pages/ContactPage';
 import OrderPage from './pages/OrderPage';
 import LiveOrders from './pages/LiveOrders';
 import NotFound from './pages/NotFound';
@@ -35,7 +35,8 @@ function Router() {
       <ScrollToTop />
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/reservierung" component={ReservationPage} />
+        <Route path="/reservierung" component={ContactPage} />
+        <Route path="/kontakt" component={ContactPage} />
         <Route path="/bestellen" component={OrderPage} />
         <Route path="/live-orders" component={LiveOrders} />
         <Route path="/events/:id" component={EventDetail} />

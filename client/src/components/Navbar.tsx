@@ -268,13 +268,13 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Reserve Button */}
-            <Link
-              href="/reservierung"
-              className={`hidden md:block text-xs font-semibold tracking-widest uppercase px-5 py-2.5 rounded-full transition-all duration-300 shadow-sm ${reserveBtnClass}`}
+            {/* Reserve Button — direct phone call */}
+            <a
+              href="tel:+436607324766"
+              className={`hidden md:flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-5 py-2.5 rounded-full transition-all duration-300 shadow-sm ${reserveBtnClass}`}
             >
               {t.nav_reserve}
-            </Link>
+            </a>
 
             {/* Mobile toggle */}
             <button
@@ -377,13 +377,13 @@ export default function Navbar() {
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Link
-                href="/reservierung"
+              <a
+                href="tel:+436607324766"
                 onClick={() => setMobileOpen(false)}
                 className="flex-1 bg-[#1a3a32] text-white text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full hover:bg-[#d4af37] hover:text-[#1a3a32] transition-all"
               >
                 {t.nav_reserve}
-              </Link>
+              </a>
               <button
                 onClick={() => { setMobileOpen(false); handleOrderClick(); }}
                 className="flex-1 text-center text-xs font-semibold tracking-widest uppercase px-4 py-3 rounded-full border-2 border-[#1a3a32] text-[#1a3a32] hover:bg-[#1a3a32] hover:text-white transition-all"

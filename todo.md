@@ -191,3 +191,12 @@
 ## FASIKA Pop-up Fix
 
 - [x] Pop-up auch für zukünftige Events anzeigen (validUntil >= jetzt, egal ob validFrom noch nicht erreicht)
+
+## Reservierung → Kontaktformular
+
+- [x] Reservierungsseite (/reservierung) entfernen
+- [x] Kontaktformular-Seite (/kontakt) mit Feldern: Name, Email, Telefon, Betreff, Nachricht
+- [x] Hinweistext im Nachrichtenfeld: "TISCHRESERVIERUNGEN BITTE PER TELEFON..."
+- [x] Backend: tRPC-Endpunkt zum Senden der Kontaktanfrage (E-Mail an Besitzer)
+- [x] Alle "Tisch reservieren"/"Book a Table"-Buttons → tel: Anruf-Link (+43 660 732 47 66)
+- [x] Navbar-Link "Reservieren" → tel: Anruf-Link
