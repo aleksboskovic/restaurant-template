@@ -71,6 +71,72 @@ export const blogPosts: BlogPost[] = [
     ],
   },
 
+  // 10 — 22.03.2026 — Kaffeezeremonie
+  {
+    slug: 'aethiopische-kaffeezeremonie-salzburg',
+    title: 'Die äthiopische Kaffeezeremonie: Wo der beste Kaffee in Salzburg frisch geröstet wird',
+    metaDescription: 'Erlebe die traditionelle äthiopische Kaffeezeremonie (Buna) im Habesha Restaurant Salzburg. Frisch gerösteter Hochlandkaffee & echte Gastfreundschaft.',
+    keywords: ['Kaffeezeremonie Salzburg', 'Äthiopischer Kaffee Salzburg', 'Habesha Restaurant', 'Buna Kaffee', 'Kaffee Rösten Salzburg', 'traditioneller Kaffee Äthiopien'],
+    date: '2026-03-22',
+    category: 'Kultur & Tradition',
+    readingTime: 5,
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/coffee-ceremony_2cf07b22.jpg',
+    imageAlt: 'Äthiopische Kaffeezeremonie mit Jebena-Kanne und kleinen Tassen',
+    teaser: 'Kaffee stammt aus Äthiopien – und im Habesha Restaurant Salzburg können Sie erleben, wie er dort seit Jahrhunderten zubereitet wird: frisch geröstet, in der Jebena aufgebrüht, in drei Runden serviert. Ein Ritual, das Entschleunigung pur bedeutet.',
+    content: [
+      {
+        type: 'paragraph',
+        text: 'Wüsstest du, dass Kaffee seinen Ursprung in Äthiopien hat? Während man in Europa oft schnell einen Espresso im Stehen trinkt, ist Kaffee in seiner Heimat weit mehr als ein Wachmacher. Er ist das Herzstück des sozialen Lebens. Im Habesha Restaurant in Salzburg bringen wir dieses jahrhundertealte Ritual direkt zu dir.',
+      },
+      {
+        type: 'heading',
+        text: 'Buna: Mehr als nur ein Getränk',
+      },
+      {
+        type: 'paragraph',
+        text: 'In Äthiopien nennt man Kaffee „Buna“. Die Kaffeezeremonie ist ein Zeichen von Gastfreundschaft und Respekt. Es geht nicht darum, Koffein zu tanken, sondern sich Zeit zu nehmen – für Freunde, für die Familie und für gute Gespräche.',
+      },
+      {
+        type: 'heading',
+        text: 'Der Ablauf: Ein Erlebnis für alle Sinne',
+      },
+      {
+        type: 'paragraph',
+        text: 'Eine echte Zeremonie dauert Zeit und folgt festen Regeln. Wenn du uns in Salzburg besuchst, kannst du dieses Erlebnis oft schon am Duft erkennen, der durch das Restaurant zieht.',
+      },
+      {
+        type: 'list',
+        items: [
+          'Das Waschen: Die grünen Rohkaffeebohnen werden gründlich gewaschen.',
+          'Das Rösten (Mankeshksh): Die Bohnen werden frisch in einer flachen Pfanne vor deinen Augen geröstet. Sobald sie dunkel glänzen, wird der aromatische Rauch im Raum verteilt.',
+          'Das Mahlen: Die frisch gerösteten Bohnen werden traditionell mit Mörser und Stößel zerkleinert.',
+          'Das Aufbrühen (Jebena): Der Kaffee wird in der Jebena – einer bauchigen Tonkanne – mit heißem Wasser aufgebrüht.',
+          'Das Servieren: Der Kaffee wird aus großer Höhe in kleinen Tassen (Cini) eingegossen. Dazu reichen wir oft traditionell geröstetes Popcorn oder Dabo (Brot).',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Die drei Runden: Abol, Tona und Baraka',
+      },
+      {
+        type: 'paragraph',
+        text: 'Bei einer traditionellen Zeremonie trinkt man drei Tassen, jede mit eigenem Namen und eigener Bedeutung: Abol (die erste Runde, stark und rein), Tona (die zweite Runde, milder) und Baraka (die dritte Runde, „Segen“ – die Krönung der Zeremonie).',
+      },
+      {
+        type: 'heading',
+        text: 'Warum du den Kaffee im Habesha Salzburg probieren musst',
+      },
+      {
+        type: 'paragraph',
+        text: 'Wir verwenden ausschließlich hochwertigen äthiopischen Hochlandkaffee. Durch das schonende, frische Rösten vor Ort verliert der Kaffee seine Bitterstoffe und entfaltet ein fruchtiges, fast schokoladiges Aroma, das du so in keinem Supermarkt findest.',
+      },
+      {
+        type: 'cta',
+        text: 'Komm vorbei und erlebe Entschleunigung pur mitten in Salzburg – bei einer echten äthiopischen Kaffeezeremonie im Habesha Restaurant.',
+      },
+    ],
+  },
+
   // 2 — 11.03.2026
   {
     slug: 'vegan-essen-salzburg-aethiopische-kueche',

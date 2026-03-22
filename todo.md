@@ -218,3 +218,9 @@
 
 - [x] Zeitauswahl-Feld aus OrderPage entfernen
 - [x] deliveryTime fix auf 'asap' setzen (kein Benutzereingabe)
+
+## Blog: Kaffeezeremonie-Beitrag
+
+- [x] Neuen SEO-Blog-Beitrag "Äthiopische Kaffeezeremonie Salzburg" in blogPosts.ts angelegt
+- [x] SEO-Metadaten: Fokus-Keywords, Meta-Description, Slug gesetzt
+- [x] Bild hochgeladen und Blog-Teaser erscheint automatisch als neuester Beitrag
