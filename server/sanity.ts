@@ -127,15 +127,53 @@ export async function updateOrderStatus(orderId: string, status: 'new' | 'in_pro
   }]);
 }
 
+function buildSanityImageUrl(asset: { _ref?: string } | null | undefined): string | undefined {
+  if (!asset?._ref) return undefined;
+  // Ref format: image-<id>-<dimensions>-<format>
+  const ref = asset._ref;
+  const parts = ref.replace('image-', '').split('-');
+  const format = parts.pop();
+  const id = parts.join('-');
+  return `https://cdn.sanity.io/images/${SANITY_PROJECT_ID}/${SANITY_DATASET}/${id}.${format}`;
+}
+
 export async function getActiveSpecialEvents(): Promise<SpecialEvent[]> {
   const now = new Date().toISOString();
-  const query = `*[_type == "specialEvent" && validFrom <= "${now}" && validUntil >= "${now}"]`;
-  return (await sanityQuery(query)) as SpecialEvent[];
+  const query = `*[_type == "specialEvent" && validFrom <= "${now}" && validUntil >= "${now}"] {
+    _id,
+    title,
+    description,
+    description_en,
+    description_am,
+    validFrom,
+    validUntil,
+    isActive,
+    "imageAsset": bannerImage.asset
+  }`;
+  const raw = (await sanityQuery(query)) as Array<SpecialEvent & { imageAsset?: { _ref?: string } }>;
+  return raw.map(e => ({
+    ...e,
+    imageUrl: buildSanityImageUrl(e.imageAsset),
+  }));
 }
 
 export async function getAllSpecialEvents(): Promise<SpecialEvent[]> {
-  const query = `*[_type == "specialEvent"] | order(validFrom desc)`;
-  return (await sanityQuery(query)) as SpecialEvent[];
+  const query = `*[_type == "specialEvent"] | order(validFrom desc) {
+    _id,
+    title,
+    description,
+    description_en,
+    description_am,
+    validFrom,
+    validUntil,
+    isActive,
+    "imageAsset": bannerImage.asset
+  }`;
+  const raw = (await sanityQuery(query)) as Array<SpecialEvent & { imageAsset?: { _ref?: string } }>;
+  return raw.map(e => ({
+    ...e,
+    imageUrl: buildSanityImageUrl(e.imageAsset),
+  }));
 }
 
 export interface OrderHistoryFilter {

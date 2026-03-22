@@ -172,3 +172,11 @@
 - [x] Backend: tRPC getOrdersEnabled / setOrdersEnabled Endpunkte
 - [x] Dashboard: "BESTELLUNG STOPPEN"-Toggle (rot/grün) im Live-Orders-Header
 - [x] Frontend: Wenn gestoppt → Kunden sehen Sperrhinweis statt Bestellformular
+
+## Special Events Pop-up
+
+- [x] Beide aktiven Special Events als schwebendes Pop-up beim Seitenaufruf anzeigen
+- [x] Banner-Bild aus Sanity korrekt laden und anzeigen
+- [x] Alten Ticker-Streifen oben entfernen
+- [x] Pop-up mit einem Klick wegdrückbar (X-Button), mobile + desktop optimiert
+- [x] Mehrere aktive Events als Carousel/Slides im Pop-up

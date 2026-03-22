@@ -9,7 +9,7 @@ import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import FactCard from '@/components/FactCard';
-import SpecialEventBanner from '@/components/SpecialEventBanner';
+import SpecialEventPopup from '@/components/SpecialEventPopup';
 import BlogTeaser from '@/components/BlogTeaser';
 
 const MANUSCRIPT_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663222217661/9HrMebUv6xYuQJf7s9tVq7/gaesteerlebnis-bg_ebbf3e17.jpg';
@@ -19,8 +19,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <SpecialEventBanner />
-      {/* Banner-Spacer: Platz für den fixed Banner unter der Navbar */}
+      <SpecialEventPopup />
       <HeroSection />
 
       {/* CultureSection: Textilmuster-Hintergrund */}
