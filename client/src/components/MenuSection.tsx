@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useLang } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { trpc } from '@/lib/trpc';
@@ -9,6 +9,7 @@ import OrdersClosedModal from '@/components/OrdersClosedModal';
 type Tab = 'mains' | 'vegan' | 'plates' | 'sides';
 
 interface MenuItem {
+  _id: string;
   id: string;
   nameDe: string;
   nameEn: string;
@@ -22,7 +23,27 @@ interface MenuItem {
   isVegan?: boolean;
   isVegetarian?: boolean;
   badge?: string;
+  allergens?: string[];
+  isHalal?: boolean;
 }
+
+// EU Allergen legend A–R
+const ALLERGEN_LEGEND: { code: string; label: string }[] = [
+  { code: 'A', label: 'Glutenhaltiges Getreide' },
+  { code: 'B', label: 'Krebstiere' },
+  { code: 'C', label: 'Ei' },
+  { code: 'D', label: 'Fisch' },
+  { code: 'E', label: 'Erdnuss' },
+  { code: 'F', label: 'Soja' },
+  { code: 'G', label: 'Milch / Laktose' },
+  { code: 'H', label: 'Schalenfrüchte' },
+  { code: 'L', label: 'Sellerie' },
+  { code: 'M', label: 'Senf' },
+  { code: 'N', label: 'Sesam' },
+  { code: 'O', label: 'Sulfite' },
+  { code: 'P', label: 'Lupinen' },
+  { code: 'R', label: 'Weichtiere' },
+];
 
 function VeganBadge({ isVegan, isVegetarian }: { isVegan?: boolean; isVegetarian?: boolean }) {
   if (isVegan) return (
@@ -39,13 +60,37 @@ function VeganBadge({ isVegan, isVegetarian }: { isVegan?: boolean; isVegetarian
   return null;
 }
 
-function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () => void }) {
+function HalalBadge() {
+  return (
+    <span className="inline-flex items-center text-[10px] font-bold tracking-wider text-[#078930] uppercase leading-none border border-[#078930]/40 rounded px-1 py-0.5">
+      HALAL
+    </span>
+  );
+}
+
+function AllergenBadges({ allergens }: { allergens?: string[] }) {
+  if (!allergens || allergens.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-1 mt-2">
+      {allergens.map((code) => (
+        <span
+          key={code}
+          title={ALLERGEN_LEGEND.find(a => a.code === code)?.label || code}
+          className="inline-flex items-center justify-center w-5 h-5 rounded bg-[#1a3a32]/10 text-[#1a3a32] text-[10px] font-bold border border-[#1a3a32]/20 cursor-default"
+        >
+          {code}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function MenuCard({ item }: { item: MenuItem }) {
   const { lang } = useLang();
   const { items, addItem, removeItem } = useCart();
   const cartItem = items.find(i => i.id === item._id);
   const qty = cartItem?.quantity || 0;
 
-  // Lokalisierter Name und Beschreibung direkt aus Sanity-Feldern
   const name = lang === 'en' ? (item.nameEn || item.nameDe)
              : lang === 'am' ? (item.nameAm || item.nameDe)
              : item.nameDe;
@@ -63,6 +108,7 @@ function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () =>
             <h3 className={`font-serif text-base font-bold text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>
               {name}
             </h3>
+            {item.isHalal && <HalalBadge />}
             <VeganBadge isVegan={item.isVegan} isVegetarian={item.isVegetarian} />
             {item.badge && (
               <span className="text-[10px] bg-[#d4af37] text-white px-2 py-0.5 rounded-full font-medium tracking-wide">
@@ -71,30 +117,33 @@ function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () =>
             )}
           </div>
           {/* Amharischer Name falls nicht AM-Sprache */}
-          {lang !== 'am' && item.name_am && (
-            <p className="text-[#d4af37] text-xs font-ethiopic mt-0.5">{item.name_am}</p>
+          {lang !== 'am' && item.nameAm && (
+            <p className="text-[#d4af37] text-xs font-ethiopic mt-0.5">{item.nameAm}</p>
           )}
         </div>
         <span className="text-[#1a3a32] font-bold text-sm whitespace-nowrap">
-          {item.price.toFixed(2).replace('.', ',')} €
+          {item.priceNum.toFixed(2).replace('.', ',')} €
         </span>
       </div>
 
       {/* Description */}
-      <p className={`text-[#1a3a32]/65 text-sm leading-relaxed flex-1 mb-4 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
+      <p className={`text-[#1a3a32]/65 text-sm leading-relaxed flex-1 mb-3 ${lang === 'am' ? 'font-ethiopic' : ''}`}>
         {desc}
       </p>
 
+      {/* Allergen badges */}
+      <AllergenBadges allergens={item.allergens} />
+
       {/* Add to cart */}
-      <div className="flex items-center justify-between mt-auto">
+      <div className="flex items-center justify-between mt-auto pt-3">
         {qty === 0 ? (
           <button
-            onClick={() => addItem({ 
-              id: item._id, 
-              name: item.name, 
-              nameEn: item.name_en || item.name, 
-              nameAm: item.name_am || item.name, 
-              price: item.price 
+            onClick={() => addItem({
+              id: item._id,
+              name: item.nameDe,
+              nameEn: item.nameEn || item.nameDe,
+              nameAm: item.nameAm || item.nameDe,
+              price: item.priceNum,
             })}
             className="flex items-center gap-2 bg-[#1a3a32] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#1a3a32]/90 transition-colors"
           >
@@ -111,12 +160,12 @@ function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () =>
             </button>
             <span className="text-[#1a3a32] font-bold text-sm w-4 text-center">{qty}</span>
             <button
-              onClick={() => addItem({ 
-                id: item._id, 
-                name: item.name, 
-                nameEn: item.name_en || item.name, 
-                nameAm: item.name_am || item.name, 
-                price: item.price 
+              onClick={() => addItem({
+                id: item._id,
+                name: item.nameDe,
+                nameEn: item.nameEn || item.nameDe,
+                nameAm: item.nameAm || item.nameDe,
+                price: item.priceNum,
               })}
               className="w-8 h-8 rounded-full bg-[#1a3a32] text-white flex items-center justify-center hover:bg-[#1a3a32]/90 transition-colors"
             >
@@ -129,21 +178,48 @@ function MenuCard({ item, onOrderClick }: { item: MenuItem; onOrderClick?: () =>
   );
 }
 
+function AllergenLegend() {
+  return (
+    <div className="mt-12 bg-[#1a3a32]/5 border border-[#1a3a32]/15 rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-[#1a3a32] text-xs font-bold tracking-[0.2em] uppercase">Allergeninformation</span>
+        <span className="text-[#1a3a32]/40 text-xs">gemäß Codex-Empfehlung</span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-1.5">
+        {ALLERGEN_LEGEND.map(({ code, label }) => (
+          <div key={code} className="flex items-center gap-1.5">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-[#1a3a32]/10 text-[#1a3a32] text-[10px] font-bold border border-[#1a3a32]/20 flex-shrink-0">
+              {code}
+            </span>
+            <span className="text-[#1a3a32]/70 text-[11px] leading-tight">{label}</span>
+          </div>
+        ))}
+        {/* HALAL */}
+        <div className="flex items-center gap-1.5">
+          <span className="inline-flex items-center text-[10px] font-bold tracking-wider text-[#078930] uppercase border border-[#078930]/40 rounded px-1 py-0.5 flex-shrink-0">
+            HALAL
+          </span>
+          <span className="text-[#1a3a32]/70 text-[11px] leading-tight">Halal-zertifiziert</span>
+        </div>
+      </div>
+      <p className="text-[#1a3a32]/40 text-[10px] mt-3 italic">* Buchstabencodes nur in Verbindung mit dieser Legende zulässig.</p>
+    </div>
+  );
+}
+
 export default function MenuSection() {
   const { t, lang } = useLang();
   const { itemCount, total } = useCart();
   const [activeTab, setActiveTab] = useState<Tab>('mains');
   const [ordersClosedModalOpen, setOrdersClosedModalOpen] = useState(false);
+
   const { data: orderSettingsData } = trpc.orderSettings.getEnabled.useQuery();
   const ordersEnabled = orderSettingsData?.enabled ?? true;
 
-  // Sanity-Daten laden
   const { data: sanityItems, isLoading, isError } = trpc.menu.getAll.useQuery(undefined, {
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
-
-  const { data: menuItemsData, isLoading } = trpc.menu.getAll.useQuery();
 
   const tabs: { key: Tab; label: string }[] = [
     { key: 'mains', label: t.menu_tab_mains },
@@ -152,7 +228,7 @@ export default function MenuSection() {
     { key: 'sides', label: t.menu_tab_sides },
   ];
 
-  const allItems: MenuItem[] = (sanityItems as MenuItem[] | undefined) ?? [];
+  const allItems = (sanityItems as MenuItem[] | undefined) ?? [];
   const items = allItems.filter(item => item.category === activeTab);
 
   return (
@@ -216,7 +292,7 @@ export default function MenuSection() {
         {!isLoading && !isError && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map((item) => (
-              <MenuCard key={item.id} item={item} />
+              <MenuCard key={item._id} item={item} />
             ))}
             {items.length === 0 && (
               <div className="col-span-3 text-center py-12 text-[#1a3a32]/50">
@@ -225,6 +301,9 @@ export default function MenuSection() {
             )}
           </div>
         )}
+
+        {/* Allergen Legend */}
+        {!isLoading && !isError && <AllergenLegend />}
 
         {/* Floating Cart Bar */}
         {itemCount > 0 && (

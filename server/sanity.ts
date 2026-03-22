@@ -253,6 +253,8 @@ interface RawSanityMenuItem {
   badge?: string;
   sortOrder?: number;
   isAvailable?: boolean;
+  allergens?: string[];
+  isHalal?: boolean;
 }
 
 // Normalized shape used throughout the app
@@ -273,6 +275,8 @@ export interface SanityMenuItem {
   badge?: string;
   sortOrder?: number;
   isAvailable?: boolean;
+  allergens?: string[];
+  isHalal?: boolean;
 }
 
 function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
@@ -295,6 +299,8 @@ function normalizeSanityMenuItem(raw: RawSanityMenuItem): SanityMenuItem {
     badge: raw.badge || undefined,
     sortOrder: raw.sortOrder,
     isAvailable: raw.isAvailable !== false,
+    allergens: raw.allergens || [],
+    isHalal: raw.isHalal ?? false,
   };
 }
 

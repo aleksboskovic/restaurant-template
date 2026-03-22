@@ -206,3 +206,10 @@
 - [x] Hinweistext grammatikalisch korrigieren
 - [x] Öffnungszeiten in ContactPage aktualisieren (Mi–Fr: 11–14 & 17–22, Sa–So: 13–22, Di: 17–22, Mo: Geschlossen)
 - [x] Alle "Tisch reservieren"-Buttons → /reservierung (statt tel:)
+
+## Allergene & HALAL-Kennzeichnung
+
+- [x] Sanity-Query: allergens und isHalal Felder abfragen
+- [x] HALAL-Label: grün, Großbuchstaben, neben Produktname
+- [x] Allergene-Badges: Buchstaben A–R als kleine Kästchen unter dem Gericht
+- [x] Legende: A–R + HALAL sichtbar in der Speisekarte, passend zum Design
