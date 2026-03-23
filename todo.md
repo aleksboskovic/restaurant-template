@@ -59,3 +59,16 @@
 
 ## Footer Credit
 - [x] "Created by QuantumCreativity" Link im Footer einbauen (https://www.quantumcreativity.one), auf jeder Seite sichtbar
+
+## SEO / Barrierefreiheit
+- [ ] Alle fehlenden alt-Attribute bei Bildern ergänzen (12 Bilder betroffen)
+
+## Speisekarte v2 (Druck-PDF)
+- [ ] Jedes Gericht mit großem Foto-Platzhalter (wie alte Karte)
+- [ ] Bessere Platzaufteilung (ca. 10-12 Seiten A4)
+- [ ] Äthiopien-Fakt auf jeder Seite
+
+## Floating Buttons Layout
+- [x] Warenkorb-Button rechts unten positionieren (erscheint wenn Gericht hinzugefügt)
+- [x] Telefon-Button rutscht nach oben wenn Warenkorb erscheint
+- [x] QuantumCreativity-Credit bleibt immer sichtbar (im Footer, nicht durch Buttons verdeckt)

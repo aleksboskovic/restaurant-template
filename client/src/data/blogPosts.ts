@@ -314,7 +314,7 @@ export const blogPosts: BlogPost[] = [
     slug: 'date-night-salzburg-injera-platte',
     title: 'Date Night in Salzburg: Warum das Teilen einer Injera-Platte das perfekte Date ist',
     metaDescription: 'Romantisches Restaurant Salzburg: Date Night im HABESHA – gemeinsam von einer äthiopischen Platte essen. Besonderes Erlebnis für zwei. Romantic restaurant Salzburg.',
-    keywords: ['romantisches Restaurant Salzburg', 'Date Night Salzburg', 'besonderes Restaurant Salzburg', 'Erlebnis für zwei Salzburg', 'HABESHA Salzburg', 'romantic restaurant Salzburg', 'besondere Restaurants Salzburg'],
+    keywords: ['romantisches Restaurant Salzburg', 'Date Night Salzburg', 'besonderes Restaurant Salzburg', 'Erlebnis fuer zwei Salzburg', 'HABESHA Salzburg', 'romantic restaurant Salzburg', 'besondere Restaurants Salzburg'],
     date: '2026-03-16',
     category: 'Erlebnisse',
     readingTime: 4,
