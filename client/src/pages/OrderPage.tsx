@@ -255,14 +255,16 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
         </>
       )}
 
-      {/* Time info */}
-      <div className="flex items-center gap-3 p-4 rounded-xl bg-[#1a3a32]/5 border border-[#1a3a32]/15">
-        <Clock size={16} className="text-[#1a3a32] flex-shrink-0" />
-        <div>
-          <p className="text-sm font-semibold text-[#1a3a32]">{t.order_asap}</p>
-          <p className="text-xs text-[#1a3a32]/60">{t.order_asap_desc}</p>
+      {/* Time info – nur bei Zustellung anzeigen */}
+      {isDelivery && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-[#1a3a32]/5 border border-[#1a3a32]/15">
+          <Clock size={16} className="text-[#1a3a32] flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-[#1a3a32]">{t.order_asap}</p>
+            <p className="text-xs text-[#1a3a32]/60">{t.order_asap_desc}</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div>
         <label className={`block text-xs font-semibold text-[#1a3a32] tracking-widest uppercase mb-2 ${lang === 'am' ? 'font-ethiopic' : ''}`}>

@@ -80,3 +80,9 @@
 - [x] E-Mail-Versand nach erfolgreicher Bestellung auslösen (orders.create in routers.ts)
 - [x] Owner-Benachrichtigung bei neuer Bestellung hinzugefügt
 - [x] Tests: 8 Unit-Tests für E-Mail-Helper (alle bestanden)
+
+## Fixes (25.03.2026)
+- [x] Infobox "so schnell wie möglich" in Schritt 2 (Dateneingabe) nur bei Zustellung anzeigen, bei Abholung ausblenden
+- [x] EmailJS-E-Mail-Versand debuggen und beheben (Private Key + non-browser access aktiviert, Status 200 bestätigt)
+- [x] EmailJS Private Key als Secret hinterlegen und E-Mail-Versand testen
+- [x] Bestellungen-Toggle im Dashboard als Lichtschalter (ON grün links / OFF rot rechts) umgebaut

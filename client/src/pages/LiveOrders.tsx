@@ -351,30 +351,43 @@ function LiveOrdersDashboard() {
                 </button>
               </>
             )}
-            {/* BESTELLUNG STOPPEN / AKTIVIEREN */}
+            {/* BESTELLUNG LICHTSCHALTER */}
             <button
               onClick={handleToggleOrders}
               disabled={orderToggleLoading}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all border-2 ${
-                ordersEnabled
-                  ? 'bg-red-600 hover:bg-red-700 text-white border-red-500'
-                  : 'bg-green-600 hover:bg-green-700 text-white border-green-500'
-              } disabled:opacity-60`}
               title={ordersEnabled ? 'Bestellungen stoppen' : 'Bestellungen aktivieren'}
+              className="flex items-center rounded-xl overflow-hidden border-2 border-white/10 disabled:opacity-60 transition-all hover:border-white/30"
             >
-              {orderToggleLoading ? (
-                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : ordersEnabled ? (
-                <ShoppingCart size={14} />
-              ) : (
-                <ShoppingBag size={14} />
-              )}
-              <span className="hidden sm:inline">
-                {ordersEnabled ? 'BESTELLUNG STOPPEN' : 'BESTELLUNG AKTIVIEREN'}
-              </span>
-              <span className="sm:hidden">
-                {ordersEnabled ? 'STOPP' : 'AKTIV'}
-              </span>
+              {/* ON – linke Seite */}
+              <div className={`flex items-center gap-1 px-3 py-2 text-xs font-bold transition-all ${
+                ordersEnabled
+                  ? 'bg-green-500 text-white'
+                  : 'bg-white/10 text-white/30'
+              }`}>
+                {orderToggleLoading && ordersEnabled ? (
+                  <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <span className={`w-2 h-2 rounded-full ${
+                    ordersEnabled ? 'bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]' : 'bg-white/30'
+                  }`} />
+                )}
+                <span>ON</span>
+              </div>
+              {/* OFF – rechte Seite */}
+              <div className={`flex items-center gap-1 px-3 py-2 text-xs font-bold transition-all ${
+                !ordersEnabled
+                  ? 'bg-red-500 text-white'
+                  : 'bg-white/10 text-white/30'
+              }`}>
+                {orderToggleLoading && !ordersEnabled ? (
+                  <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <span className={`w-2 h-2 rounded-full ${
+                    !ordersEnabled ? 'bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]' : 'bg-white/30'
+                  }`} />
+                )}
+                <span>OFF</span>
+              </div>
             </button>
 
             {/* PIN ändern */}

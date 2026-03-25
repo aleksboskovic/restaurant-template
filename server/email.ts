@@ -18,7 +18,7 @@ export interface OrderConfirmationData {
  * EmailJS is called server-side to keep the public key usage consistent.
  */
 export async function sendOrderConfirmation(data: OrderConfirmationData): Promise<boolean> {
-  const { emailjsServiceId, emailjsTemplateId, emailjsPublicKey } = ENV;
+  const { emailjsServiceId, emailjsTemplateId, emailjsPublicKey, emailjsPrivateKey } = ENV;
 
   if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey) {
     console.warn('[EmailJS] Missing credentials – skipping order confirmation email.');
@@ -58,6 +58,7 @@ export async function sendOrderConfirmation(data: OrderConfirmationData): Promis
         service_id: emailjsServiceId,
         template_id: emailjsTemplateId,
         user_id: emailjsPublicKey,
+        ...(emailjsPrivateKey ? { accessToken: emailjsPrivateKey } : {}),
         template_params: templateParams,
       }),
     });
