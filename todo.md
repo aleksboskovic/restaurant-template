@@ -72,3 +72,11 @@
 - [x] Warenkorb-Button rechts unten positionieren (erscheint wenn Gericht hinzugefügt)
 - [x] Telefon-Button rutscht nach oben wenn Warenkorb erscheint
 - [x] QuantumCreativity-Credit bleibt immer sichtbar (im Footer, nicht durch Buttons verdeckt)
+
+## EmailJS – Bestellbestätigung
+- [x] EmailJS Service ID, Template ID und Public Key als Secrets hinterlegen
+- [ ] EmailJS-Template-Inhalt in der EmailJS-Konsole befüllen (Variablen: to_name, to_email, order_num, order_type, items_list, total_price, delivery_time, payment_method, delivery_address, notes)
+- [x] Server-seitige E-Mail-Funktion via EmailJS REST API implementieren (server/email.ts)
+- [x] E-Mail-Versand nach erfolgreicher Bestellung auslösen (orders.create in routers.ts)
+- [x] Owner-Benachrichtigung bei neuer Bestellung hinzugefügt
+- [x] Tests: 8 Unit-Tests für E-Mail-Helper (alle bestanden)

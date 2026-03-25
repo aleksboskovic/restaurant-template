@@ -16,6 +16,7 @@ import {
 } from './sanity';
 import { getStoredPinHash, savePinHash, hashPinServer, getOrdersEnabled, setOrdersEnabled } from './db';
 import { notifyOwner } from './_core/notification';
+import { sendOrderConfirmation } from './email';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-02-25.clover',
@@ -82,6 +83,40 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const orderId = await createOrder(input);
         const orderNum = `HAB-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        // Send order confirmation email to customer (non-blocking)
+        sendOrderConfirmation({
+          customerName: input.customerName,
+          customerEmail: input.email,
+          orderNum,
+          orderType: input.orderType,
+          items: input.items,
+          totalPrice: input.totalPrice,
+          deliveryAddress: input.deliveryAddress,
+          deliveryTime: input.deliveryTime,
+          paymentMethod: input.paymentMethod,
+          notes: input.notes,
+        }).catch(err => console.error('[EmailJS] Non-blocking error:', err));
+
+        // Notify restaurant owner about new order
+        notifyOwner({
+          title: `🛒 Neue Bestellung ${orderNum} – ${input.orderType === 'delivery' ? 'Lieferung' : 'Abholung'}`,
+          content: [
+            `Bestellung: ${orderNum}`,
+            `Kunde: ${input.customerName} (${input.email})`,
+            `Telefon: ${input.phone}`,
+            `Art: ${input.orderType === 'delivery' ? 'Lieferung' : 'Abholung'}`,
+            input.deliveryAddress ? `Adresse: ${input.deliveryAddress}` : null,
+            `Zeit: ${input.deliveryTime}`,
+            `Zahlung: ${input.paymentMethod === 'card' ? 'Karte' : 'Bar'}`,
+            `Gesamt: ${input.totalPrice.toFixed(2)} €`,
+            ``,
+            `Gerichte:`,
+            ...input.items.map(i => `  ${i.quantity}× ${i.dishName} (${i.price.toFixed(2)} €)`),
+            input.notes ? `\nAnmerkungen: ${input.notes}` : null,
+          ].filter(Boolean).join('\n'),
+        }).catch(err => console.error('[notifyOwner] Error:', err));
+
         return { success: true, orderId, orderNum };
       }),
 
