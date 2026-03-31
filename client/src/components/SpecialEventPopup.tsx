@@ -72,7 +72,7 @@ function EventDetailView({ event, lang, onBack }: { event: SanityEvent; lang: st
       {/* Banner image */}
       {event.imageUrl && (
         <div className="relative w-full h-48 sm:h-56 overflow-hidden rounded-t-2xl flex-shrink-0">
-          <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+          <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" width="800" height="224" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a32]/70 via-transparent to-transparent" />
           {/* Back button */}
           <button
