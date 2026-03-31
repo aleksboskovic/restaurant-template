@@ -1,10 +1,11 @@
 import { useParams, Link } from 'wouter';
 import SEOHead from '@/components/SEOHead';
 import { getBlogPostBySlug, getLatestBlogPosts, type Section } from '@/data/blogPosts';
-import { Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight, Home } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
+import { useLang } from '@/contexts/LanguageContext';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -50,6 +51,18 @@ function renderSection(section: Section, idx: number) {
           </Link>
         </div>
       );
+    case 'internalLink':
+      return (
+        <div key={idx} className="my-6 flex items-start gap-3 p-4 bg-white/5 border border-[#c9a84c]/20 rounded-xl">
+          <span className="text-[#c9a84c] mt-0.5 shrink-0"><ChevronRight size={16} /></span>
+          <span className="text-white/60 text-sm leading-relaxed">
+            {section.text}{' '}
+            <Link href={section.href || '#'} className="text-[#c9a84c] hover:text-[#e0bc6a] underline underline-offset-2 transition-colors font-medium">
+              {section.linkText}
+            </Link>
+          </span>
+        </div>
+      );
     default:
       return null;
   }
@@ -57,6 +70,8 @@ function renderSection(section: Section, idx: number) {
 
 export default function BlogPostPage() {
   const params = useParams<{ slug: string }>();
+  const { lang } = useLang();
+  const isEn = lang === 'en';
   const post = getBlogPostBySlug(params.slug);
   const related = getLatestBlogPosts(4).filter(p => p.slug !== params.slug).slice(0, 3);
 
@@ -75,6 +90,11 @@ export default function BlogPostPage() {
     );
   }
 
+  const activeTitle = isEn && post.titleEn ? post.titleEn : post.title;
+  const activeDesc = isEn && post.metaDescriptionEn ? post.metaDescriptionEn : post.metaDescription;
+  const activeTeaser = isEn && post.teaserEn ? post.teaserEn : post.teaser;
+  const activeContent = isEn && post.contentEn ? post.contentEn : post.content;
+
   // Build Article schema for this blog post
   const articleSchema = {
     "@context": "https://schema.org",
@@ -84,14 +104,15 @@ export default function BlogPostPage() {
     "image": post.image,
     "datePublished": post.date,
     "dateModified": post.date,
-    "author": { "@type": "Organization", "name": "HABESHA – Äthiopisches Restaurant Salzburg" },
+    "inLanguage": ["de-AT", "en"],
+    "author": { "@type": "Organization", "name": "HABESHA – Äthiopisches Restaurant Salzburg", "url": "https://www.habesha-salzburg.at" },
     "publisher": {
       "@type": "Organization",
       "name": "HABESHA – Äthiopisches Restaurant Salzburg",
       "logo": { "@type": "ImageObject", "url": "https://www.habesha-salzburg.at/logo.png" }
     },
     "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.habesha-salzburg.at/blog/${post.slug}` },
-    "keywords": `${post.category}, äthiopische Küche, Ethiopian food Salzburg, HABESHA Salzburg, ${post.title}`
+    "keywords": post.keywords.join(', ')
   };
 
   const breadcrumbSchema = {
@@ -107,13 +128,13 @@ export default function BlogPostPage() {
   return (
     <div className="min-h-screen bg-[#1a1208]">
       <SEOHead
-        title={post.title}
-        description={post.metaDescription}
+        title={activeTitle}
+        description={activeDesc}
         canonical={`https://www.habesha-salzburg.at/blog/${post.slug}`}
         ogImage={post.image}
         ogImageAlt={post.imageAlt}
         ogType="article"
-        keywords={`${post.category}, äthiopische Küche Salzburg, Ethiopian food Salzburg, HABESHA Salzburg, äthiopisches Restaurant Salzburg`}
+        keywords={post.keywords.join(', ')}
         structuredData={[articleSchema, breadcrumbSchema]}
       />
       <Navbar />
@@ -135,12 +156,18 @@ export default function BlogPostPage() {
 
       {/* Article */}
       <div className="max-w-3xl mx-auto px-4 -mt-16 relative z-10 pb-24">
-        {/* Back link */}
-        <Link href="/blog">
-          <button className="flex items-center gap-2 text-[#c9a84c] text-sm mb-6 hover:gap-3 transition-all">
-            <ArrowLeft size={14} /> Alle Beiträge
-          </button>
-        </Link>
+        {/* Visible breadcrumb nav */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-white/40 mb-6 flex-wrap">
+          <Link href="/" className="flex items-center gap-1 hover:text-[#c9a84c] transition-colors">
+            <Home size={11} /><span>{isEn ? 'Home' : 'Start'}</span>
+          </Link>
+          <ChevronRight size={10} />
+          <Link href="/blog" className="hover:text-[#c9a84c] transition-colors">
+            Blog
+          </Link>
+          <ChevronRight size={10} />
+          <span className="text-white/60 line-clamp-1">{activeTitle}</span>
+        </nav>
 
         {/* Card */}
         <div className="bg-[#231a0c] border border-[#c9a84c]/20 rounded-2xl p-8 md:p-12">
@@ -161,17 +188,17 @@ export default function BlogPostPage() {
 
           {/* Title */}
           <h1 className="text-3xl md:text-4xl font-serif text-white leading-tight mb-6">
-            {post.title}
+            {activeTitle}
           </h1>
 
           {/* Teaser */}
           <p className="text-white/60 text-lg leading-relaxed mb-8 pb-8 border-b border-white/10 italic">
-            {post.teaser}
+            {activeTeaser}
           </p>
 
           {/* Content */}
           <div>
-            {post.content.map((section, idx) => renderSection(section, idx))}
+            {activeContent.map((section, idx) => renderSection(section, idx))}
           </div>
         </div>
 

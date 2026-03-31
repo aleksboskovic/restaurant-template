@@ -19,6 +19,8 @@ interface SEOHeadProps {
   structuredData?: object | object[];
   /** noindex – set true for pages that should not be indexed */
   noIndex?: boolean;
+  /** hreflang alternate URL for English version (if different from canonical) */
+  hreflangEn?: string;
 }
 
 const SITE_NAME = 'HABESHA – Äthiopisches Restaurant Salzburg';
@@ -45,6 +47,7 @@ export default function SEOHead({
   keywords,
   structuredData,
   noIndex = false,
+  hreflangEn,
 }: SEOHeadProps) {
   const fullTitle = title
     ? `${title} | HABESHA Salzburg`
@@ -74,6 +77,10 @@ export default function SEOHead({
         : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       }
       <link rel="canonical" href={canonicalUrl} />
+      {/* hreflang – tells Google which language each URL targets */}
+      <link rel="alternate" hrefLang="de-AT" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="en" href={hreflangEn || canonicalUrl} />
+      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
 
       {/* Open Graph */}
       <meta property="og:type" content={ogType} />
