@@ -294,8 +294,9 @@ function Step2({ onNext, onBack, deliveryData, setDeliveryData }: {
 // Step 3: Payment wrapper
 function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; deliveryData: any; onSuccess: (orderNum: string) => void }) {
   const { getTotalForType } = useCart();
-  const { orderType } = useOrderType();
+  const { orderType, isDelivery } = useOrderType();
   const grandTotal = getTotalForType(orderType);
+  // Delivery always requires card payment – cash is only available for pickup
   const [payMethod, setPayMethod] = useState<'card' | 'cash'>('card');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
@@ -325,6 +326,8 @@ function PaymentStep({ onBack, deliveryData, onSuccess }: { onBack: () => void; 
   };
 
   const handlePayMethodChange = (method: 'card' | 'cash') => {
+    // Cash not allowed for delivery orders
+    if (isDelivery && method === 'cash') return;
     setPayMethod(method);
     if (method === 'card' && !clientSecret) {
       loadPaymentIntent();
@@ -499,14 +502,19 @@ function PaymentFormShell({
           {[
             { key: 'card' as const, label: t.order_pay_card, icon: '💳' },
             { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
-          ].map(({ key, label, icon }) => (
-            <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === key ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
-              <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
-              <span className="text-lg">{icon}</span>
-              <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
-            </label>
-          ))}
+          ]
+            .filter(({ key }) => !(isDelivery && key === 'cash'))
+            .map(({ key, label, icon }) => (
+              <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === key ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
+                <input type="radio" name="pay" value={key} checked={payMethod === key} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
+                <span className="text-lg">{icon}</span>
+                <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
+              </label>
+            ))}
         </div>
+        {isDelivery && (
+          <p className="text-xs text-[#1a3a32]/50 mt-2">Bei Lieferung ist nur Online-Zahlung möglich.</p>
+        )}
       </div>
 
       {children}
@@ -656,14 +664,19 @@ function CardPaymentInner({
           {[
             { key: 'card' as const, label: t.order_pay_card, icon: '💳' },
             { key: 'cash' as const, label: t.order_pay_cash, icon: '💵' },
-          ].map(({ key, label, icon }) => (
-            <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${key === 'card' ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
-              <input type="radio" name="pay" value={key} checked={key === 'card'} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
-              <span className="text-lg">{icon}</span>
-              <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
-            </label>
-          ))}
+          ]
+            .filter(({ key }) => !(isDelivery && key === 'cash'))
+            .map(({ key, label, icon }) => (
+              <label key={key} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${key === 'card' ? 'border-[#1a3a32] bg-[#1a3a32]/5' : 'border-gray-200'}`}>
+                <input type="radio" name="pay" value={key} checked={key === 'card'} onChange={() => onPayMethodChange(key)} className="accent-[#1a3a32]" />
+                <span className="text-lg">{icon}</span>
+                <span className={`text-sm font-medium text-[#1a3a32] ${lang === 'am' ? 'font-ethiopic' : ''}`}>{label}</span>
+              </label>
+            ))}
         </div>
+        {isDelivery && (
+          <p className="text-xs text-[#1a3a32]/50 mt-2">Bei Lieferung ist nur Online-Zahlung möglich.</p>
+        )}
       </div>
 
       {/* Stripe Payment Element */}
