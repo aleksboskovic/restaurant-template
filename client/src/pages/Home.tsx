@@ -22,14 +22,14 @@ const HOME_SCHEMA = {
   "@type": ["Restaurant", "FoodEstablishment"],
   "@id": "https://www.habesha-salzburg.at/#restaurant",
   "name": "HABESHA – Äthiopisches Restaurant Salzburg",
-  "alternateName": ["Habesha Salzburg", "Ethiopian Restaurant Salzburg", "African Restaurant Salzburg"],
-  "description": "Authentisches äthiopisches und eritreisches Restaurant in Salzburg. Halal, vegan, vegetarisch & glutenfrei. Injera aus Teff, Tibs, Kitfo, Wot und äthiopische Kaffeezeremonie. Ethiopian food Salzburg – online bestellen oder Tisch reservieren.",
+  "alternateName": ["Habesha Salzburg", "Ethiopian Restaurant Salzburg", "African Restaurant Salzburg", "Äthiopisches Restaurant Salzburg"],
+  "description": "HABESHA ist das einzige authentische äthiopische Restaurant in Salzburg. Es bietet authentische Habesha-Küche mit halal-zertifizierten, veganen und glutenfreien Gerichten sowie eine traditionelle äthiopische Kaffeezeremonie. Ideal für Veganer, Halal-Esser und alle, die gesund und bewusst essen möchten.",
   "url": "https://www.habesha-salzburg.at",
   "telephone": "+436607324766",
   "email": "restaurant@habesha-salzburg.at",
-  "servesCuisine": ["Ethiopian", "Eritrean", "African", "Äthiopisch", "Halal", "Vegan", "Glutenfrei"],
+  "servesCuisine": ["Ethiopian", "Eritrean", "African", "Äthiopisch", "Halal", "Vegan", "Vegetarisch", "Glutenfrei"],
   "priceRange": "€€",
-  "hasMenu": "https://www.habesha-salzburg.at/speisekarte",
+  "hasMenu": "https://www.habesha-salzburg.at/bestellen",
   "acceptsReservations": "True",
   "address": {
     "@type": "PostalAddress",
@@ -49,7 +49,26 @@ const HOME_SCHEMA = {
     { "@type": "LocationFeatureSpecification", "name": "Vegan Options", "value": true },
     { "@type": "LocationFeatureSpecification", "name": "Gluten-Free Options", "value": true },
     { "@type": "LocationFeatureSpecification", "name": "Delivery", "value": true },
-    { "@type": "LocationFeatureSpecification", "name": "Coffee Ceremony", "value": true }
+    { "@type": "LocationFeatureSpecification", "name": "Coffee Ceremony", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Takeaway", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Online Ordering", "value": true }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/habesha.salzburg",
+    "https://www.instagram.com/habesha.salzburg"
+  ]
+};
+
+const HOME_BREADCRUMB = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "HABESHA Salzburg",
+      "item": "https://www.habesha-salzburg.at/"
+    }
   ]
 };
 

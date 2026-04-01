@@ -4,7 +4,8 @@ import { useLang } from '@/contexts/LanguageContext';
 import { trpc } from '@/lib/trpc';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Calendar, Clock, Users, Phone, Mail, User, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, Users, Phone, Mail, User, MessageSquare, CheckCircle, AlertCircle, ChevronRight, Home } from 'lucide-react';
+import { Link } from 'wouter';
 
 const TIME_SLOTS = [
   '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
@@ -97,13 +98,28 @@ export default function ReservationPage() {
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
       <SEOHead
-        title="Tisch reservieren"
-        description="Tisch im äthiopischen Restaurant HABESHA Salzburg reservieren. Kaffeezeremonie, Injera & authentische Küche erleben. Jetzt online buchen. Reserve a table Ethiopian restaurant Salzburg."
+        title="Tisch reservieren – HABESHA Äthiopisches Restaurant Salzburg"
+        description="Tisch im besten veganen, halal & glutenfreien Restaurant Salzburgs reservieren. Kaffeezeremonie buchen. HABESHA – äthiopische Küche. Reserve a table Ethiopian restaurant Salzburg."
         canonical="https://www.habesha-salzburg.at/reservierung"
-        keywords="Tisch reservieren äthiopisches Restaurant Salzburg, reserve table Ethiopian restaurant Salzburg, Reservierung HABESHA, Kaffeezeremonie buchen Salzburg, Äthiopien Erlebnis Salzburg"
-        structuredData={reservationSchema}
+        keywords="Tisch reservieren äthiopisches Restaurant Salzburg, veganes Restaurant Salzburg reservieren, halal Restaurant Salzburg buchen, Kaffeezeremonie buchen Salzburg, reserve table Ethiopian restaurant Salzburg, Reservierung HABESHA Salzburg, glutenfreies Restaurant Salzburg reservieren, Tisch buchen Salzburg Restaurant, Geburtstag feiern Salzburg Restaurant"
+        structuredData={[
+          reservationSchema,
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://www.habesha-salzburg.at/" },
+              { "@type": "ListItem", "position": 2, "name": "Tisch reservieren", "item": "https://www.habesha-salzburg.at/reservierung" }
+            ]
+          }
+        ]}
       />
       <Navbar />
+      <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 pt-20 pb-0 flex items-center gap-2 text-xs text-white/50 flex-wrap">
+        <Link href="/" className="flex items-center gap-1 hover:text-[#c8a96e] transition-colors"><Home size={11} /><span>Start</span></Link>
+        <ChevronRight size={10} />
+        <span className="text-white/70">Tisch reservieren</span>
+      </nav>
 
       {/* Hero */}
       <div className="relative bg-[#1a3a32] pt-32 pb-16 text-center overflow-hidden">

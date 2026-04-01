@@ -4,7 +4,8 @@ import { trpc } from '@/lib/trpc';
 import { useLang } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, AlertCircle, ChevronRight, Home } from 'lucide-react';
+import { Link } from 'wouter';
 
 const PHONE_NUMBER = '+436607324766';
 const PHONE_DISPLAY = '+43 660 732 47 66';
@@ -75,13 +76,28 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
       <SEOHead
-        title="Kontakt & Anfahrt"
-        description="HABESHA Restaurant Salzburg: Schallmooser Hauptstraße 34, Tel: +43 660 732 47 66. Öffnungszeiten, Anfahrt & Kontaktformular. Ethiopian restaurant contact Salzburg."
+        title="Kontakt & Anfahrt – HABESHA Restaurant Salzburg"
+        description="HABESHA Restaurant Salzburg: Schallmooser Hauptstraße 34 – halal, vegan & glutenfrei. Tel: +43 660 732 47 66. Öffnungszeiten Di–So. Jetzt Tisch reservieren."
         canonical="https://www.habesha-salzburg.at/kontakt"
-        keywords="Kontakt HABESHA Salzburg, äthiopisches Restaurant Salzburg Adresse, Ethiopian restaurant Salzburg contact, Anfahrt HABESHA, Schallmooser Hauptstraße Restaurant, Öffnungszeiten HABESHA"
-        structuredData={contactSchema}
+        keywords="äthiopisches Restaurant Salzburg Adresse, halal Restaurant Salzburg Kontakt, veganes Restaurant Salzburg Adresse, Kontakt HABESHA Salzburg, Ethiopian restaurant Salzburg contact, Anfahrt HABESHA, Öffnungszeiten HABESHA, Restaurant Schallmooser Hauptstraße Salzburg, glutenfreies Restaurant Salzburg"
+        structuredData={[
+          contactSchema,
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://www.habesha-salzburg.at/" },
+              { "@type": "ListItem", "position": 2, "name": "Kontakt", "item": "https://www.habesha-salzburg.at/kontakt" }
+            ]
+          }
+        ]}
       />
       <Navbar />
+      <nav aria-label="Breadcrumb" className="max-w-5xl mx-auto px-4 pt-20 pb-0 flex items-center gap-2 text-xs text-white/50 flex-wrap">
+        <Link href="/" className="flex items-center gap-1 hover:text-[#c8a96e] transition-colors"><Home size={11} /><span>Start</span></Link>
+        <ChevronRight size={10} />
+        <span className="text-white/70">Kontakt</span>
+      </nav>
 
       {/* Hero */}
       <div

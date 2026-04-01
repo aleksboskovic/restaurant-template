@@ -3,7 +3,7 @@ import SEOHead from '@/components/SEOHead';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight, Home } from 'lucide-react';
 import { Link } from 'wouter';
 
 const faqCategories = [
@@ -176,15 +176,39 @@ export default function FAQ() {
   return (
     <div className="min-h-screen bg-[#0d1f1a]">
       <SEOHead
-        title="FAQ – Häufige Fragen"
-        description="Antworten auf häufige Fragen zu HABESHA Salzburg: Öffnungszeiten, Reservierung, Lieferung, Halal, vegane Gerichte, glutenfrei & Kaffeezeremonie. Ethiopian restaurant FAQ."
+        title="FAQ – Häufige Fragen | HABESHA Salzburg"
+        description="Wo kann ich in Salzburg vegan, halal oder glutenfrei essen? Alle Antworten zu Öffnungszeiten, Lieferung, Kaffeezeremonie & mehr im HABESHA Restaurant Salzburg."
         canonical="https://www.habesha-salzburg.at/faq"
-        keywords="FAQ äthiopisches Restaurant Salzburg, Halal Restaurant Fragen, glutenfrei Salzburg FAQ, veganes Restaurant Salzburg FAQ, Öffnungszeiten HABESHA, Reservierung Salzburg, Ethiopian food FAQ"
+        keywords="veganes Restaurant Salzburg FAQ, halal Restaurant Salzburg Fragen, glutenfreies Essen Salzburg, äthiopisches Restaurant Salzburg FAQ, Kaffeezeremonie Salzburg, vegan essen Salzburg, wo halal essen Salzburg, vegetarisch essen Salzburg, Lieferung Salzburg Restaurant, Öffnungszeiten HABESHA"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": allFaqs.map(f => ({
+              "@type": "Question",
+              "name": f.q,
+              "acceptedAnswer": { "@type": "Answer", "text": f.a }
+            }))
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://www.habesha-salzburg.at/" },
+              { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://www.habesha-salzburg.at/faq" }
+            ]
+          }
+        ]}
       />
       <Navbar />
+      <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 pt-24 pb-0 flex items-center gap-2 text-xs text-white/30 flex-wrap">
+        <Link href="/" className="flex items-center gap-1 hover:text-[#d4af37] transition-colors"><Home size={11} /><span>Start</span></Link>
+        <ChevronRight size={10} />
+        <span className="text-white/50">FAQ</span>
+      </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-16 px-4 text-center">
+      <section className="pt-6 pb-16 px-4 text-center">
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="flex gap-0.5">
             <div className="h-px w-8 bg-[#078930]" />

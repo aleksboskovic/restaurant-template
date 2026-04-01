@@ -1,7 +1,7 @@
 import { Link } from 'wouter';
 import SEOHead from '@/components/SEOHead';
 import { blogPosts } from '@/data/blogPosts';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, ChevronRight, Home } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
@@ -28,12 +28,36 @@ export default function Blog() {
   return (
     <div className="min-h-screen bg-[#1a1208]">
       <SEOHead
-        title="Blog – Äthiopische Küche & Kultur"
-        description="Wissenswertes über äthiopische Küche, Gewürze & Kaffeezeremonie. Berbere, Injera, Teff, Niter Kibbeh – entdecken Sie Äthiopien in Salzburg. Ethiopian food blog."
+        title="Blog – Äthiopische Küche, Kultur & Tipps | HABESHA Salzburg"
+        description="Vegane Rezepte, Halal-Küche, glutenfreies Essen & äthiopische Kultur: Der HABESHA Blog. Berbere, Injera, Teff, Kaffeezeremonie – alles über Ethiopian food Salzburg."
         canonical="https://www.habesha-salzburg.at/blog"
-        keywords="äthiopische Küche Blog, Ethiopian food blog, Injera Rezept, Berbere Gewürz, Kaffeezeremonie Äthiopien, Teff glutenfrei, Niter Kibbeh, äthiopische Kultur Salzburg, African food blog"
+        keywords="vegane äthiopische Küche Blog, halal Küche Blog Salzburg, glutenfreies Essen Blog, äthiopische Kultur Salzburg, Ethiopian food blog, Injera Teff glutenfrei, Berbere Gewürz Blog, Kaffeezeremonie Äthiopien, gesund essen Blog Salzburg, African food Salzburg Blog, vegan essen Salzburg Tipps"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "HABESHA Magazin – Äthiopische Küche & Kultur",
+          "description": "Wissenswertes über äthiopische Küche, Kultur und Ernährung: vegan, halal, glutenfrei und gesund.",
+          "url": "https://www.habesha-salzburg.at/blog",
+          "publisher": {
+            "@type": "Organization",
+            "name": "HABESHA – Äthiopisches Restaurant Salzburg",
+            "logo": { "@type": "ImageObject", "url": "https://www.habesha-salzburg.at/logo.png" }
+          },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://www.habesha-salzburg.at/" },
+              { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.habesha-salzburg.at/blog" }
+            ]
+          }
+        }}
       />
       <Navbar />
+      <nav aria-label="Breadcrumb" className="max-w-6xl mx-auto px-4 pt-24 pb-0 flex items-center gap-2 text-xs text-white/30 flex-wrap relative z-10">
+        <Link href="/" className="flex items-center gap-1 hover:text-[#c9a84c] transition-colors"><Home size={11} /><span>Start</span></Link>
+        <ChevronRight size={10} />
+        <span className="text-white/50">Blog</span>
+      </nav>
       {/* Hero */}
       <div className="relative pt-36 pb-24 px-4 text-center overflow-hidden">
         <div
