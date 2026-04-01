@@ -110,8 +110,8 @@ const faqCategories = [
         a: 'Ja, sehr gerne! Das Habesha eignet sich hervorragend für Gruppenevents. Unsere Sharing-Platten sind ideal für gemeinsame Feiern. Bitte kontaktieren Sie uns im Voraus für größere Gruppen – wir machen Ihren Anlass unvergesslich.',
       },
       {
-        q: 'Gibt es einen Mittagstisch oder ein Tagesmenü?',
-        a: 'Ja! Mittwoch bis Freitag von 11:00 bis 14:00 Uhr bieten wir ein wechselndes Tagesmenü mit traditionellen äthiopischen Gerichten zu attraktiven Mittagspreisen an – ideal für eine besondere Mittagspause in Salzburg.',
+        q: 'Kann man bei euch auch mittags essen?',
+        a: 'Ja! Mittwoch bis Freitag haben wir bereits ab 11:00 Uhr geöffnet – ideal für eine besondere Mittagspause in Salzburg mit authentischer äthiopischer Küche.',
       },
       {
         q: 'Gibt es kinderfreundliche Gerichte?',
