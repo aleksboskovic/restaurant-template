@@ -5,6 +5,7 @@ import { Calendar, Clock, ArrowRight, ChevronRight, Home } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
+import { useLang } from '@/contexts/LanguageContext';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -21,6 +22,7 @@ const categoryColors: Record<string, string> = {
 };
 
 export default function Blog() {
+  const { lang } = useLang();
   const sorted = [...blogPosts].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -114,12 +116,12 @@ export default function Blog() {
 
                   {/* Title */}
                   <h2 className="text-white font-serif text-lg leading-snug mb-3 group-hover:text-[#c9a84c] transition-colors">
-                    {post.title}
+                    {lang === 'en' ? (post.titleEn ?? post.title) : post.title}
                   </h2>
 
                   {/* Teaser */}
                   <p className="text-white/50 text-sm leading-relaxed flex-1 line-clamp-3">
-                    {post.teaser}
+                    {lang === 'en' ? (post.teaserEn ?? post.teaser) : post.teaser}
                   </p>
 
                   {/* CTA */}
