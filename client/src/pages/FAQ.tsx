@@ -212,9 +212,9 @@ const faqCategories = [
       },
       {
         q: 'Wie lange dauert die Lieferung?',
-        a: 'Die durchschnittliche Lieferzeit beträgt ca. 45 Minuten. Bestellungen nehmen wir bis 30 Minuten vor Geschäftsschluss entgegen.',
+        a: 'Die durchschnittliche Lieferzeit beträgt ca. 45 Minuten. Letzte Bestellung: Mittwoch bis Freitag mittags bis 13:00 Uhr, abends täglich bis 21:40 Uhr.',
         qEn: 'How long does delivery take?',
-        aEn: 'Average delivery time is approximately 45 minutes. We accept orders up to 30 minutes before closing time.',
+        aEn: 'Average delivery time is approximately 45 minutes. Last order: Wednesday to Friday at lunchtime until 1:00 PM, every evening until 9:40 PM.',
       },
       {
         q: 'Gibt es eine Mindestbestellmenge?',
