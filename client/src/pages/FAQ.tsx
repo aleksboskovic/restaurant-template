@@ -5,183 +5,258 @@ import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import { ChevronDown, ChevronRight, Home } from 'lucide-react';
 import { Link } from 'wouter';
+import { useLang } from '@/contexts/LanguageContext';
 
 const faqCategories = [
   {
     category: 'Küche & Kultur',
+    categoryEn: 'Kitchen & Culture',
     icon: '🌍',
     questions: [
       {
         q: 'Muss ich bei euch mit den Händen essen?',
         a: 'Äthiopische Küche wird traditionell mit den Händen gegessen – das gehört zur Kultur und macht das Erlebnis besonders. Man reißt ein Stück Injera ab und greift damit Soßen und Beilagen. Natürlich kannst du auch mit Besteck essen – sag uns einfach Bescheid und wir bringen es dir gerne.',
+        qEn: 'Do I have to eat with my hands?',
+        aEn: 'Ethiopian cuisine is traditionally eaten with the hands – it\'s part of the culture and makes the experience special. You tear off a piece of Injera and use it to scoop up sauces and sides. Of course you can also use cutlery – just let us know and we\'ll bring it right away.',
       },
       {
         q: 'Was genau ist "Injera" und woraus besteht es?',
         a: 'Injera ist das Herzstück der Habesha-Küche – ein weiches, luftiges Sauerteig-Fladenbrot aus Teff-Mehl (Zwerghirse). Teff ist ein traditionelles äthiopisches Getreide: extrem eisenreich, ballaststoffreich und von Natur aus glutenfrei. Injera dient gleichzeitig als Teller und Besteck.',
+        qEn: 'What exactly is "Injera" and what is it made of?',
+        aEn: 'Injera is the heart of Habesha cuisine – a soft, airy sourdough flatbread made from teff flour (dwarf millet). Teff is a traditional Ethiopian grain: extremely iron-rich, high in fiber, and naturally gluten-free. Injera serves as both plate and utensil at the same time.',
       },
       {
         q: 'Ist afrikanisches Essen immer sehr scharf?',
         a: 'Nein, bei uns ist für jeden Geschmack etwas dabei! Gerichte mit unserer Gewürzmischung Berbere (Chili, Ingwer, Knoblauch) sind pikant bis scharf (oft „Wot" genannt). Viele unserer Gerichte sind aber mild und aromatisch – sogenannte „Alicha"-Gerichte mit Kurkuma und Ingwer.',
+        qEn: 'Is African food always very spicy?',
+        aEn: 'No, we have something for every taste! Dishes with our Berbere spice blend (chili, ginger, garlic) are spicy to hot (often called "Wot"). However, many of our dishes are mild and aromatic – so-called "Alicha" dishes seasoned with turmeric and ginger.',
       },
       {
         q: 'Was ist Berbere?',
         a: 'Berbere ist die wichtigste Gewürzmischung der äthiopischen Küche – eine Komposition aus Chili, Ingwer, Knoblauch, Kreuzkümmel und weiteren Gewürzen. Sie gibt vielen Gerichten ihre typische rote Farbe und ihren komplexen, aromatischen Geschmack.',
+        qEn: 'What is Berbere?',
+        aEn: 'Berbere is the most important spice blend in Ethiopian cuisine – a composition of chili, ginger, garlic, cumin, and other spices. It gives many dishes their typical red color and complex, aromatic flavor.',
       },
       {
         q: 'Was ist Misir Wot?',
         a: 'Misir Wot ist ein würziger roter Linseneintopf mit Berbere-Gewürz – eines unserer beliebtesten veganen Gerichte. Reich an Protein und Ballaststoffen und absolut empfehlenswert für Erstbesucher.',
+        qEn: 'What is Misir Wot?',
+        aEn: 'Misir Wot is a spicy red lentil stew with Berbere spice – one of our most popular vegan dishes. Rich in protein and fiber, and absolutely recommended for first-time visitors.',
       },
       {
         q: 'Was macht das Habesha Restaurant in Salzburg besonders?',
         a: 'Das Habesha ist das einzige authentische äthiopisch-eritreische Restaurant in Salzburg. Wir kochen nach traditionellen Familienrezepten, verwenden frische Gewürze und servieren unsere Gerichte auf der typischen Injera-Platte zum gemeinsamen Teilen. Kaffeezeremonie, Kulturerlebnis und herzliche Atmosphäre inklusive.',
+        qEn: 'What makes Habesha Restaurant in Salzburg special?',
+        aEn: 'Habesha is the only authentic Ethiopian-Eritrean restaurant in Salzburg. We cook from traditional family recipes, use fresh spices, and serve our dishes on the typical Injera platter for sharing. Coffee ceremony, cultural experience, and warm atmosphere included.',
       },
       {
         q: 'Was ist der Unterschied zwischen äthiopischer und eritreischer Küche?',
         a: 'Die beiden Küchen sind eng verwandt und teilen viele Grundzutaten wie Injera, Berbere und Teff. Eritreische Gerichte sind oft etwas milder und verwenden häufiger Fisch. Im Habesha vereinen wir beide Traditionen und bieten die besten Gerichte beider Kulturen.',
+        qEn: 'What is the difference between Ethiopian and Eritrean cuisine?',
+        aEn: 'Both cuisines are closely related and share many basic ingredients like Injera, Berbere, and Teff. Eritrean dishes tend to be milder and use more fish. At Habesha, we combine both traditions and offer the best dishes from both cultures.',
       },
     ],
   },
   {
     category: 'Ernährung & Allergien',
+    categoryEn: 'Nutrition & Allergies',
     icon: '🌱',
     questions: [
       {
         q: 'Ist das HABESHA Restaurant halal?',
         a: 'Ja, alle Fleischgerichte bei HABESHA sind halal-zertifiziert.',
+        qEn: 'Is HABESHA Restaurant halal?',
+        aEn: 'Yes, all meat dishes at HABESHA are halal-certified.',
       },
       {
         q: 'Gibt es bei euch eine gute Auswahl an veganen oder vegetarischen Gerichten?',
         a: 'Absolut! Die äthiopische Küche ist ein echtes Paradies für Veganer. Aufgrund der strengen orthodoxen Fastenzeiten in Äthiopien gibt es bei uns fantastische, von Natur aus vegane Gerichte. Über 60% unserer Speisekarte ist vegan – besonders beliebt: Misir Wot, Shiro und frische Gemüsevariationen.',
+        qEn: 'Do you have a good selection of vegan or vegetarian dishes?',
+        aEn: 'Absolutely! Ethiopian cuisine is a true paradise for vegans. Due to the strict Orthodox fasting periods in Ethiopia, we have fantastic naturally vegan dishes. Over 60% of our menu is vegan – particularly popular: Misir Wot, Shiro, and fresh vegetable variations.',
       },
       {
         q: 'Bietet ihr glutenfreies Essen an?',
         a: 'Unser Injera wird aus Teff-Mehl gebacken und ist von Natur aus glutenfrei – ideal für Zöliakie-Betroffene. Da wir in der Küche auch weizenhaltige Produkte verarbeiten, bitten wir Gäste mit Zöliakie, uns vorab zu kontaktieren.',
+        qEn: 'Do you offer gluten-free food?',
+        aEn: 'Our Injera is baked from teff flour and is naturally gluten-free – ideal for people with celiac disease. Since we also process wheat-containing products in our kitchen, we ask guests with celiac disease to contact us in advance.',
       },
       {
         q: 'Gibt es laktosefreie Gerichte?',
         a: 'Ja, die meisten unserer veganen Gerichte sind automatisch laktosefrei. Frag uns gerne bei der Reservierung nach Details – wir bereiten uns gerne optimal für dich vor.',
+        qEn: 'Are there lactose-free dishes?',
+        aEn: 'Yes, most of our vegan dishes are automatically lactose-free. Feel free to ask us about details when making your reservation – we\'ll be happy to prepare accordingly.',
       },
       {
         q: 'Ist äthiopisches Essen gesund?',
         a: 'Ja, äthiopische Küche gilt als eine der gesündesten der Welt! Teff-Mehl ist reich an Eisen, Kalzium und Ballaststoffen. Hülsenfrüchte liefern pflanzliches Protein. Kurkuma, Ingwer und Knoblauch wirken entzündungshemmend. Viele Gerichte sind von Natur aus vegan und fettarm.',
+        qEn: 'Is Ethiopian food healthy?',
+        aEn: 'Yes, Ethiopian cuisine is considered one of the healthiest in the world! Teff flour is rich in iron, calcium, and fiber. Legumes provide plant-based protein. Turmeric, ginger, and garlic have anti-inflammatory properties. Many dishes are naturally vegan and low in fat.',
       },
     ],
   },
   {
     category: 'Kaffeezeremonie & Specials',
+    categoryEn: 'Coffee Ceremony & Specials',
     icon: '☕',
     questions: [
       {
         q: 'Was ist eine äthiopische Kaffeezeremonie (Buna)?',
         a: 'Äthiopien ist das Ursprungsland des Kaffees! Bei der traditionellen Kaffeezeremonie (Buna) rösten wir grüne Kaffeebohnen frisch vor Ihren Augen. Der Kaffee wird in einer Tonkanne (Jebena) aufgebrüht und mit brennendem Weihrauch serviert. Ein absolutes Muss für Kaffee-Liebhaber in Salzburg!',
+        qEn: 'What is an Ethiopian coffee ceremony (Buna)?',
+        aEn: 'Ethiopia is the birthplace of coffee! During the traditional coffee ceremony (Buna), we roast green coffee beans fresh before your eyes. The coffee is brewed in a clay pot (Jebena) and served with burning incense. An absolute must for coffee lovers in Salzburg!',
       },
       {
         q: 'Was ist Tej?',
         a: 'Tej ist traditioneller äthiopischer Honigwein – eines der ältesten alkoholischen Getränke Afrikas, hergestellt aus Honig und dem Gesho-Strauch. Ein echtes Highlight für Genießer, bei HABESHA erhältlich.',
+        qEn: 'What is Tej?',
+        aEn: 'Tej is traditional Ethiopian honey wine – one of the oldest alcoholic beverages in Africa, made from honey and the gesho shrub. A true highlight for connoisseurs, available at HABESHA.',
       },
       {
         q: 'Was bedeutet "Gursha"?',
         a: 'Gursha ist eine äthiopische Tradition der Zuneigung: Man formt ein Stück Injera mit Beilage und gibt es direkt in den Mund einer anderen Person – als Zeichen von Freundschaft und Wertschätzung. Bei uns darf gegurshot werden!',
+        qEn: 'What does "Gursha" mean?',
+        aEn: 'Gursha is an Ethiopian tradition of affection: you form a piece of Injera with a side dish and place it directly into another person\'s mouth – as a sign of friendship and appreciation. Feel free to practice Gursha with us!',
       },
       {
         q: 'Kann man eure Speiseplatten gut in Gruppen teilen?',
         a: 'Genau dafür sind sie gemacht! Äthiopisches Essen ist „Sharing Culture" pur. Alle Soßen und Fleischgerichte werden gemeinsam auf einer großen Injera-Platte serviert – ideal für Date-Nights, Geburtstage oder Firmenfeiern.',
+        qEn: 'Can your food platters be shared in groups?',
+        aEn: 'That\'s exactly what they\'re made for! Ethiopian food is pure sharing culture. All sauces and meat dishes are served together on a large Injera platter – ideal for date nights, birthdays, or company celebrations.',
       },
       {
         q: 'Kann man bei HABESHA etwas über äthiopische Kultur lernen?',
         a: 'Ja! Wir leben äthiopische Kultur – vom Essen mit den Händen über die Kaffeezeremonie bis zu traditionellen Gewürzen und afrikanischem Geschirr. Jeder Besuch ist ein authentisches Kulturerlebnis direkt in Salzburg.',
+        qEn: 'Can you learn about Ethiopian culture at HABESHA?',
+        aEn: 'Yes! We live Ethiopian culture – from eating with the hands to the coffee ceremony, traditional spices, and African tableware. Every visit is an authentic cultural experience right here in Salzburg.',
       },
     ],
   },
   {
     category: 'Reservierung & Besuch',
+    categoryEn: 'Reservations & Visit',
     icon: '🎉',
     questions: [
       {
         q: 'Muss man im Habesha Restaurant reservieren?',
         a: 'Eine Reservierung wird besonders am Wochenende und für Gruppen ab 4 Personen empfohlen. Unter der Woche sind spontane Besuche meist kein Problem. Einfach anrufen: +43 660 7324766 – wir freuen uns auf Sie!',
+        qEn: 'Do I need to make a reservation at Habesha Restaurant?',
+        aEn: 'A reservation is especially recommended on weekends and for groups of 4 or more. During the week, spontaneous visits are usually no problem. Just call: +43 660 7324766 – we look forward to seeing you!',
       },
       {
         q: 'Wie groß können Gruppen sein?',
         a: 'Wir begrüßen gerne Gruppen jeder Größe. Für Runden ab 8 Personen bitte vorab anrufen, damit wir alles optimal vorbereiten können: +43 660 7324766.',
+        qEn: 'How large can groups be?',
+        aEn: 'We welcome groups of any size. For parties of 8 or more, please call ahead so we can prepare everything optimally: +43 660 7324766.',
       },
       {
         q: 'Kann man im Habesha einen Geburtstag oder eine Firmenfeier feiern?',
         a: 'Ja, sehr gerne! Das Habesha eignet sich hervorragend für Gruppenevents. Unsere Sharing-Platten sind ideal für gemeinsame Feiern. Bitte kontaktieren Sie uns im Voraus für größere Gruppen – wir machen Ihren Anlass unvergesslich.',
+        qEn: 'Can I celebrate a birthday or company event at Habesha?',
+        aEn: 'Yes, absolutely! Habesha is perfect for group events. Our sharing platters are ideal for celebrations. Please contact us in advance for larger groups – we\'ll make your occasion unforgettable.',
       },
       {
         q: 'Kann man bei euch auch mittags essen?',
         a: 'Ja! Mittwoch bis Freitag haben wir bereits ab 11:00 Uhr geöffnet – ideal für eine besondere Mittagspause in Salzburg mit authentischer äthiopischer Küche.',
+        qEn: 'Can you eat lunch here?',
+        aEn: 'Yes! Wednesday through Friday we are open from 11:00 AM – perfect for a special lunch break in Salzburg with authentic Ethiopian cuisine.',
       },
       {
         q: 'Gibt es kinderfreundliche Gerichte?',
         a: 'Ja! Unsere milden Alicha-Gerichte und die Injera-Platte sind ideal für Kinder. Das gemeinsame Essen von einer Platte macht Kindern besonders viel Spaß und weckt die Neugier auf neue Geschmäcker.',
+        qEn: 'Are there child-friendly dishes?',
+        aEn: 'Yes! Our mild Alicha dishes and the Injera platter are ideal for children. Eating together from one platter is especially fun for kids and sparks curiosity for new flavors.',
       },
     ],
   },
   {
     category: 'Standort & Öffnungszeiten',
+    categoryEn: 'Location & Opening Hours',
     icon: '📍',
     questions: [
       {
         q: 'Wo genau befindet sich das Habesha Restaurant in Salzburg?',
         a: 'Das Habesha Restaurant befindet sich am Gebirgsjägerplatz 1, 5020 Salzburg. Gut erreichbar mit öffentlichen Verkehrsmitteln.',
+        qEn: 'Where exactly is Habesha Restaurant in Salzburg?',
+        aEn: 'Habesha Restaurant is located at Gebirgsjägerplatz 1, 5020 Salzburg. Easily accessible by public transport.',
       },
       {
         q: 'Wie sind die Öffnungszeiten des Habesha Restaurants?',
         a: 'Dienstag: 17:00–22:00 Uhr | Mittwoch bis Freitag: 11:00–14:00 und 17:00–22:00 Uhr | Samstag und Sonntag: 13:00–22:00 Uhr | Montag: Ruhetag. Für Feiertage empfehlen wir, vorab anzurufen.',
+        qEn: 'What are the opening hours of Habesha Restaurant?',
+        aEn: 'Tuesday: 5:00–10:00 PM | Wednesday to Friday: 11:00 AM–2:00 PM and 5:00–10:00 PM | Saturday and Sunday: 1:00–10:00 PM | Monday: closed. For public holidays we recommend calling ahead.',
       },
       {
         q: 'Gibt es Parkplätze in der Nähe des Habesha Restaurants?',
         a: 'In der Nähe des Gebirgsjägerplatzes gibt es öffentliche Parkmöglichkeiten. Wir empfehlen die Anreise mit öffentlichen Verkehrsmitteln. Bei Fragen zur Anreise helfen wir gerne weiter.',
+        qEn: 'Is there parking near Habesha Restaurant?',
+        aEn: 'There are public parking options near Gebirgsjägerplatz. We recommend arriving by public transport. Feel free to call us for directions.',
       },
       {
         q: 'Verkauft HABESHA auch afrikanisches Geschirr?',
         a: 'Ja! Bei HABESHA gibt es afrikanisches Porzellan und Dekorationsartikel direkt im Restaurant zu kaufen – schöne Mitbringsel oder Geschenkideen mit afrikanischem Flair.',
+        qEn: 'Does HABESHA also sell African tableware?',
+        aEn: 'Yes! At HABESHA you can purchase African porcelain and decorative items directly in the restaurant – great souvenirs or gift ideas with African flair.',
       },
     ],
   },
   {
     category: 'Lieferung & Bestellung',
+    categoryEn: 'Delivery & Ordering',
     icon: '🛵',
     questions: [
       {
         q: 'Liefert ihr das Essen auch nach Hause?',
         a: 'Ja! Wir bringen das authentische Habesha-Erlebnis direkt ins Wohnzimmer. Online bestellen auf habesha-salzburg.at – bequem mit Kreditkarte, Apple Pay oder Google Pay bezahlen.',
+        qEn: 'Do you deliver food to my home?',
+        aEn: 'Yes! We bring the authentic Habesha experience right to your living room. Order online at habesha-salzburg.at – pay conveniently by credit card, Apple Pay, or Google Pay.',
       },
       {
         q: 'Wie lange dauert die Lieferung?',
         a: 'Die durchschnittliche Lieferzeit beträgt ca. 45 Minuten. Bestellungen nehmen wir bis 30 Minuten vor Geschäftsschluss entgegen.',
+        qEn: 'How long does delivery take?',
+        aEn: 'Average delivery time is approximately 45 minutes. We accept orders up to 30 minutes before closing time.',
       },
       {
         q: 'Gibt es eine Mindestbestellmenge?',
         a: 'Ja, die Mindestbestellmenge beträgt 25 Euro.',
+        qEn: 'Is there a minimum order amount?',
+        aEn: 'Yes, the minimum order amount is 25 euros.',
       },
       {
         q: 'Wohin liefert HABESHA?',
         a: 'Wir liefern hauptsächlich im Salzburger Stadtgebiet. Für Lieferungen in die Umgebung einfach anrufen – wir helfen gerne weiter: +43 660 7324766.',
+        qEn: 'Where does HABESHA deliver?',
+        aEn: 'We deliver mainly within the Salzburg city area. For deliveries to surrounding areas, please call us – we\'re happy to help: +43 660 7324766.',
       },
       {
         q: 'Welche Zahlungsmethoden werden akzeptiert?',
         a: 'Online: Kreditkarte, Debitkarte, Apple Pay und Google Pay. Bei Abholung auch Barzahlung möglich.',
+        qEn: 'What payment methods are accepted?',
+        aEn: 'Online: credit card, debit card, Apple Pay, and Google Pay. Cash payment also possible for pickup.',
       },
       {
         q: 'Kommt das Injera bei der Lieferung nicht matschig an?',
         a: 'Keine Sorge! Wir verpacken das frische Injera-Brot und die warmen Soßen separat. So bleibt das Brot schön fluffig und Sie können sich die Platte zu Hause selbst anrichten.',
+        qEn: 'Does the Injera arrive soggy after delivery?',
+        aEn: 'Don\'t worry! We pack the fresh Injera bread and warm sauces separately. This keeps the bread nice and fluffy so you can arrange your platter at home.',
       },
       {
         q: 'Gibt es ein Takeaway-Angebot?',
         a: 'Ja! Gerichte zum Mitnehmen einfach online auf habesha-salzburg.at bestellen oder anrufen. Wir bereiten alles frisch für Sie vor.',
+        qEn: 'Is there a takeaway option?',
+        aEn: 'Yes! Simply order online at habesha-salzburg.at or give us a call. We prepare everything fresh for you.',
       },
       {
         q: 'Was kostet ein Hauptgericht im Habesha Restaurant?',
         a: 'Unsere Hauptgerichte beginnen ab ca. 14 Euro. Die Sharing-Platten für 1–2 Personen liegen zwischen 18 und 38 Euro – faire Preise bei höchster Qualität.',
+        qEn: 'What does a main course cost at Habesha Restaurant?',
+        aEn: 'Our main courses start from around 14 euros. Sharing platters for 1–2 people range from 18 to 38 euros – fair prices with the highest quality.',
       },
     ],
   },
 ];
 
-// Build flat list for JSON-LD
+// Build flat list for JSON-LD (always German for schema)
 const allFaqs = faqCategories.flatMap(c => c.questions);
 
 function AccordionItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boolean; onToggle: () => void }) {
@@ -211,6 +286,8 @@ function AccordionItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpe
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<string | null>(null);
+  const { lang } = useLang();
+  const isEn = lang !== 'de';
 
   // Inject JSON-LD FAQ schema
   useEffect(() => {
@@ -277,7 +354,7 @@ export default function FAQ() {
             <div className="h-px w-8 bg-[#FCDD09]" />
             <div className="h-px w-8 bg-[#DA121A]" />
           </div>
-          <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">Häufige Fragen</span>
+          <span className="text-[#d4af37] text-xs tracking-[0.3em] uppercase font-medium">{isEn ? 'Frequently Asked Questions' : 'Häufige Fragen'}</span>
           <div className="flex gap-0.5">
             <div className="h-px w-8 bg-[#DA121A]" />
             <div className="h-px w-8 bg-[#FCDD09]" />
@@ -285,10 +362,12 @@ export default function FAQ() {
           </div>
         </div>
         <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
-          Fragen & Antworten
+          {isEn ? 'Questions & Answers' : 'Fragen & Antworten'}
         </h1>
         <p className="text-white/60 max-w-xl mx-auto text-base">
-          Alles, was Sie über das Habesha Restaurant, unsere Küche und unseren Service wissen möchten.
+          {isEn
+            ? 'Everything you want to know about Habesha Restaurant, our cuisine, and our service.'
+            : 'Alles, was Sie über das Habesha Restaurant, unsere Küche und unseren Service wissen möchten.'}
         </p>
       </section>
 
@@ -298,15 +377,15 @@ export default function FAQ() {
           <div key={cat.category} className="bg-[#1a3a32]/60 rounded-2xl p-6 ring-1 ring-[#d4af37]/20">
             <h2 className="text-[#d4af37] font-semibold text-lg mb-4 flex items-center gap-2">
               <span>{cat.icon}</span>
-              {cat.category}
+              {isEn ? cat.categoryEn : cat.category}
             </h2>
             {cat.questions.map((item, i) => {
               const key = `${cat.category}-${i}`;
               return (
                 <AccordionItem
                   key={key}
-                  q={item.q}
-                  a={item.a}
+                  q={isEn ? item.qEn : item.q}
+                  a={isEn ? item.aEn : item.a}
                   isOpen={openIndex === key}
                   onToggle={() => toggle(key)}
                 />
@@ -317,12 +396,12 @@ export default function FAQ() {
 
         {/* CTA */}
         <div className="text-center pt-4">
-          <p className="text-white/60 mb-4 text-sm">Ihre Frage ist nicht dabei?</p>
+          <p className="text-white/60 mb-4 text-sm">{isEn ? 'Your question is not listed?' : 'Ihre Frage ist nicht dabei?'}</p>
           <Link
             href="/kontakt"
             className="inline-flex items-center gap-2 bg-[#d4af37] text-[#1a3a32] font-bold px-6 py-3 rounded-full hover:bg-[#d4af37]/90 transition-colors text-sm uppercase tracking-wide"
           >
-            Kontakt aufnehmen
+            {isEn ? 'Contact Us' : 'Kontakt aufnehmen'}
           </Link>
         </div>
       </section>
