@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
-import { X, ChevronDown, ChevronUp, Shield, BarChart2, Megaphone } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Shield, BarChart2 } from 'lucide-react';
 
 // Global event to re-open the cookie banner from anywhere
 export function openCookieSettings() {
@@ -10,12 +10,11 @@ export function openCookieSettings() {
 export type CookieConsent = {
   necessary: true;       // immer true, nicht änderbar
   analytics: boolean;
-  marketing: boolean;
   timestamp: number;
 };
 
 const STORAGE_KEY = 'habesha_cookie_consent';
-const CONSENT_VERSION = 1; // erhöhen wenn neue Kategorien hinzukommen
+const CONSENT_VERSION = 2; // erhöhen wenn neue Kategorien hinzukommen
 
 export function getCookieConsent(): CookieConsent | null {
   try {
@@ -44,7 +43,6 @@ export default function CookieBanner() {
   }, []);
   const [showDetails, setShowDetails] = useState(false);
   const [analytics, setAnalytics] = useState(false);
-  const [marketing, setMarketing] = useState(false);
 
   useEffect(() => {
     const existing = getCookieConsent();
@@ -58,17 +56,17 @@ export default function CookieBanner() {
   if (!visible) return null;
 
   function acceptAll() {
-    saveCookieConsent({ necessary: true, analytics: true, marketing: true, timestamp: Date.now() });
+    saveCookieConsent({ necessary: true, analytics: true, timestamp: Date.now() });
     setVisible(false);
   }
 
   function rejectAll() {
-    saveCookieConsent({ necessary: true, analytics: false, marketing: false, timestamp: Date.now() });
+    saveCookieConsent({ necessary: true, analytics: false, timestamp: Date.now() });
     setVisible(false);
   }
 
   function saveSelection() {
-    saveCookieConsent({ necessary: true, analytics, marketing, timestamp: Date.now() });
+    saveCookieConsent({ necessary: true, analytics, timestamp: Date.now() });
     setVisible(false);
   }
 
@@ -178,32 +176,6 @@ export default function CookieBanner() {
                   </button>
                 </div>
 
-                {/* Marketing */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-2.5">
-                    <Megaphone size={14} className="text-[#c0392b] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-white text-xs font-medium">Marketing-Cookies</p>
-                      <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
-                        Für personalisierte Werbung auf externen Plattformen (z.B. Facebook Pixel).
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    role="switch"
-                    aria-checked={marketing}
-                    onClick={() => setMarketing(!marketing)}
-                    className={`relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#c9a84c]/50 ${
-                      marketing ? 'bg-[#c9a84c]' : 'bg-white/20'
-                    }`}
-                  >
-                    <span
-                      className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${
-                        marketing ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
-                </div>
               </div>
             )}
 

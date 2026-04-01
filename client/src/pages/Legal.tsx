@@ -158,12 +158,16 @@ function Datenschutz() {
           Für die Abwicklung Ihrer Online-Bestellung speichern wir: Name, Adresse, Telefonnummer, E-Mail-Adresse und die gewählte Zahlungsmethode.
           Dies ist zur Vertragserfüllung notwendig (Art. 6 Abs. 1 lit. b DSGVO).
         </p>
+        <p>
+          <strong>Speicherdauer:</strong> Bestelldaten werden gemäß § 132 BAO und § 212 UGB für 7 Jahre aufbewahrt und danach gelöscht.
+        </p>
       </Section>
 
       <Section title="2. Zahlungsdienstleister (Stripe)">
         <p>
           Wir bieten Online-Zahlungen via Stripe an. Bei Auswahl einer Online-Zahlungsart (Kreditkarte, Google Pay, Apple Pay etc.) werden Ihre
-          Zahlungsdaten sicher an Stripe (Stripe Payments Europe Ltd., Irland) übermittelt. Dies erfolgt ausschließlich zum Zweck der Zahlungsabwicklung.
+          Zahlungsdaten sicher an Stripe Payments Europe Ltd., 1 Grand Canal Street Lower, Dublin 2, Irland übermittelt.
+          Dies erfolgt ausschließlich zum Zweck der Zahlungsabwicklung. Ein Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO ist abgeschlossen.
         </p>
       </Section>
 
@@ -174,14 +178,31 @@ function Datenschutz() {
         </p>
       </Section>
 
-      <Section title="4. Google Analytics">
+      <Section title="4. E-Mail-Versand (EmailJS)">
         <p>
-          Diese Website nutzt Google Analytics zur Analyse der Website-Nutzung. Daten werden anonymisiert erhoben.
-          Sie können der Erfassung jederzeit über unseren Cookie-Banner widersprechen.
+          Für den Versand von Bestellbestätigungen nutzen wir EmailJS (EmailJS Ltd., Großbritannien). Dabei werden Name und
+          E-Mail-Adresse des Bestellers sowie Bestelldetails übermittelt. Die Verarbeitung erfolgt auf Basis von Art. 6 Abs. 1 lit. b DSGVO
+          (Vertragserfüllung). Ein Auftragsverarbeitungsvertrag (AVV) ist abgeschlossen.
         </p>
       </Section>
 
-      <Section title="5. Ihre Rechte">
+      <Section title="5. Inhalts-Verwaltungssystem (Sanity CMS)">
+        <p>
+          Speisekarte und Veranstaltungsinhalte werden über Sanity (Sanity AS, Norwegen) verwaltet.
+          Dabei werden ausschließlich redaktionelle Inhaltsdaten (Gerichte, Preise, Bilder) verarbeitet – keine personenbezogenen Kundendaten.
+          Ein Auftragsverarbeitungsvertrag (AVV) ist abgeschlossen.
+        </p>
+      </Section>
+
+      <Section title="6. Google Analytics">
+        <p>
+          Diese Website nutzt Google Analytics zur Analyse der Website-Nutzung. Daten werden anonymisiert erhoben (IP-Anonymisierung aktiv).
+          Die Verarbeitung erfolgt nur nach Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) über unseren Cookie-Banner.
+          Sie können Ihre Einwilligung jederzeit widerrufen.
+        </p>
+      </Section>
+
+      <Section title="7. Ihre Rechte">
         <p>
           Ihnen stehen die Rechte auf Auskunft, Berichtigung, Löschung und Widerspruch zu.
           Kontaktieren Sie uns dazu bitte unter{' '}
@@ -215,14 +236,14 @@ function AGB() {
       <Section title="§ 2 Vertragsschluss">
         <p>
           Die Darstellung der Speisen ist kein bindendes Angebot. Erst durch Klicken auf den Button „Zahlungspflichtig bestellen"
-          gibt der Kunde eine verbindliche Bestellung ab. Dies gilt für Online-Zahlungen sowie für die Option „Barzahlung bei Zustellung".
+          gibt der Kunde eine verbindliche Bestellung ab.
         </p>
       </Section>
 
       <Section title="§ 3 Zahlung & Preise">
         <p>Alle Preise verstehen sich in Euro inkl. der gesetzlichen MwSt.</p>
-        <p><strong>Online-Zahlung:</strong> Erfolgt via Stripe (Kreditkarte, Google Pay, Apple Pay).</p>
-        <p><strong>Barzahlung:</strong> Erfolgt direkt bei Übergabe an unseren Fahrer oder im Restaurant.</p>
+        <p><strong>Online-Zahlung:</strong> Erfolgt via Stripe (Kreditkarte, Google Pay, Apple Pay). Bei Lieferung ist ausschließlich Online-Zahlung möglich.</p>
+        <p><strong>Barzahlung:</strong> Nur bei Abholung im Restaurant möglich.</p>
       </Section>
 
       <Section title="§ 4 Lieferung durch eigene Fahrer">
