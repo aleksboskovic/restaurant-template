@@ -50,7 +50,7 @@ export default function PressSection() {
           <div className="relative">
             <img
               src={PRESS_IMAGE}
-              alt="Habesha Restaurant Interieur"
+              alt="Innenraum des HABESHA – äthiopisches Restaurant Salzburg mit authentischem Ambiente"
               className="w-full h-[400px] object-cover rounded-2xl shadow-2xl"
             />
             <div className="absolute inset-0 rounded-2xl ring-1 ring-[#d4af37]/30" />

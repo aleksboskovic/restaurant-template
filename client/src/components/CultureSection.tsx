@@ -52,7 +52,7 @@ export default function CultureSection() {
               {/* Main image */}
               <img
                 src={CULTURE_IMAGE}
-                alt="Äthiopische Injera Platte"
+                alt="Traditionelle äthiopische Injera-Platte zum Teilen – halal, vegan und glutenfrei im HABESHA Salzburg"
                 className="w-full h-[480px] object-cover rounded-2xl shadow-2xl"
               />
               {/* Ethiopian flag border accent – vertical strip on left */}

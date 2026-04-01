@@ -152,7 +152,7 @@ export default function CoffeeCeremonySection() {
                 <div className="flex gap-4 bg-white rounded-xl p-4 shadow-sm border border-[#1a3a32]/8 hover:shadow-md hover:border-[#d4af37]/40 transition-all duration-300 cursor-pointer">
                   <img
                     src={image}
-                    alt={name}
+                    alt={`${name} – äthiopische Spezialität im HABESHA Restaurant Salzburg`}
                     className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">

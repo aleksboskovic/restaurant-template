@@ -37,7 +37,7 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <img
           src={HERO_IMAGE}
-          alt="Äthiopische Speisen bei Habesha"
+          alt="Äthiopische Injera-Platte mit Misir Wot und veganen Gerichten – HABESHA Restaurant Salzburg"
           className="w-full h-full object-cover"
         />
         {/* Dark overlay */}
