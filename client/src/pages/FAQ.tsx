@@ -8,28 +8,36 @@ import { Link } from 'wouter';
 
 const faqCategories = [
   {
-    category: 'Das Erlebnis & Die Kultur',
+    category: 'Küche & Kultur',
     icon: '🌍',
     questions: [
       {
-        q: 'Muss ich bei euch wirklich mit den Händen essen?',
-        a: 'Ja, und das macht den Reichtum unserer Kultur aus! Traditionell isst man äthiopische Gerichte mit der rechten Hand. Das Injera (unser weiches Fladenbrot) dient dabei gleichzeitig als Teller und Besteck: Man reißt ein Stück ab und greift damit die Soßen und Beilagen. Das macht Spaß und verbindet. Wer sich unsicher fühlt, bekommt aber natürlich jederzeit klassisches Besteck von uns.',
+        q: 'Muss ich bei euch mit den Händen essen?',
+        a: 'Äthiopische Küche wird traditionell mit den Händen gegessen – das gehört zur Kultur und macht das Erlebnis besonders. Man reißt ein Stück Injera ab und greift damit Soßen und Beilagen. Natürlich kannst du auch mit Besteck essen – sag uns einfach Bescheid und wir bringen es dir gerne.',
       },
       {
         q: 'Was genau ist "Injera" und woraus besteht es?',
-        a: 'Injera ist das Herzstück der Habesha-Küche. Es ist ein weiches, luftiges Sauerteig-Fladenbrot. Das Original wird aus Teff-Mehl (Zwerghirse) gebacken, einem traditionellen äthiopischen Getreide, das super gesund und extrem eisenreich ist.',
+        a: 'Injera ist das Herzstück der Habesha-Küche – ein weiches, luftiges Sauerteig-Fladenbrot aus Teff-Mehl (Zwerghirse). Teff ist ein traditionelles äthiopisches Getreide: extrem eisenreich, ballaststoffreich und von Natur aus glutenfrei. Injera dient gleichzeitig als Teller und Besteck.',
       },
       {
         q: 'Ist afrikanisches Essen immer sehr scharf?',
-        a: 'Nein, bei uns ist für jeden Geschmack etwas dabei! Gerichte, die unsere rote Gewürzmischung Berbere (u.a. Chili, Ingwer, Knoblauch) enthalten, sind pikant bis scharf (oft "Wot" genannt). Wir bieten aber genauso viele milde, hocharomatische Alternativen an, die oft mit Kurkuma und Ingwer verfeinert sind (diese nennen sich "Alicha").',
+        a: 'Nein, bei uns ist für jeden Geschmack etwas dabei! Gerichte mit unserer Gewürzmischung Berbere (Chili, Ingwer, Knoblauch) sind pikant bis scharf (oft „Wot" genannt). Viele unserer Gerichte sind aber mild und aromatisch – sogenannte „Alicha"-Gerichte mit Kurkuma und Ingwer.',
+      },
+      {
+        q: 'Was ist Berbere?',
+        a: 'Berbere ist die wichtigste Gewürzmischung der äthiopischen Küche – eine Komposition aus Chili, Ingwer, Knoblauch, Kreuzkümmel und weiteren Gewürzen. Sie gibt vielen Gerichten ihre typische rote Farbe und ihren komplexen, aromatischen Geschmack.',
+      },
+      {
+        q: 'Was ist Misir Wot?',
+        a: 'Misir Wot ist ein würziger roter Linseneintopf mit Berbere-Gewürz – eines unserer beliebtesten veganen Gerichte. Reich an Protein und Ballaststoffen und absolut empfehlenswert für Erstbesucher.',
       },
       {
         q: 'Was macht das Habesha Restaurant in Salzburg besonders?',
-        a: 'Das Habesha ist das einzige authentische äthiopisch-eritreische Restaurant in Salzburg. Wir kochen nach traditionellen Familienrezepten, verwenden frische Gewürze und servieren unsere Gerichte auf der typischen Injera-Platte zum gemeinsamen Teilen. Die Kaffeezeremonie, das Essen mit den Händen und die herzliche Atmosphäre machen jeden Besuch zu einem echten Kulturerlebnis.',
+        a: 'Das Habesha ist das einzige authentische äthiopisch-eritreische Restaurant in Salzburg. Wir kochen nach traditionellen Familienrezepten, verwenden frische Gewürze und servieren unsere Gerichte auf der typischen Injera-Platte zum gemeinsamen Teilen. Kaffeezeremonie, Kulturerlebnis und herzliche Atmosphäre inklusive.',
       },
       {
         q: 'Was ist der Unterschied zwischen äthiopischer und eritreischer Küche?',
-        a: 'Die beiden Küchen sind eng verwandt und teilen viele Grundzutaten wie Injera, Berbere und Teff. Der Unterschied liegt in den Gewürzmischungen und regionalen Spezialitäten. Eritreische Gerichte sind oft etwas milder und verwenden häufiger Fisch (besonders in Küstenregionen). Im Habesha vereinen wir beide Traditionen und bieten Ihnen die besten Gerichte beider Kulturen.',
+        a: 'Die beiden Küchen sind eng verwandt und teilen viele Grundzutaten wie Injera, Berbere und Teff. Eritreische Gerichte sind oft etwas milder und verwenden häufiger Fisch. Im Habesha vereinen wir beide Traditionen und bieten die besten Gerichte beider Kulturen.',
       },
     ],
   },
@@ -38,42 +46,76 @@ const faqCategories = [
     icon: '🌱',
     questions: [
       {
+        q: 'Ist das HABESHA Restaurant halal?',
+        a: 'Ja, alle Fleischgerichte bei HABESHA sind halal-zertifiziert.',
+      },
+      {
         q: 'Gibt es bei euch eine gute Auswahl an veganen oder vegetarischen Gerichten?',
-        a: 'Absolut! Die äthiopische Küche ist ein echtes Paradies für Veganer. Aufgrund der strengen orthodoxen Fastenzeiten in Äthiopien (in denen auf alle tierischen Produkte verzichtet wird) gibt es bei uns fantastische, von Natur aus vegane Gerichte. Besonders beliebt sind unsere Linseneintöpfe (Misir Wot), Kichererbsenpüree (Shiro) und frische Gemüsevariationen.',
+        a: 'Absolut! Die äthiopische Küche ist ein echtes Paradies für Veganer. Aufgrund der strengen orthodoxen Fastenzeiten in Äthiopien gibt es bei uns fantastische, von Natur aus vegane Gerichte. Über 60% unserer Speisekarte ist vegan – besonders beliebt: Misir Wot, Shiro und frische Gemüsevariationen.',
       },
       {
         q: 'Bietet ihr glutenfreies Essen an?',
-        a: 'Unser traditionelles Injera-Fladenbrot wird aus Teff-Mehl gebacken, das von Natur aus glutenfrei ist. Da wir in der Küche jedoch auch weizenhaltige Produkte verarbeiten, bitten wir Gäste mit Zöliakie, uns vorab zu kontaktieren, damit wir gemeinsam die beste Option für Sie finden können.',
+        a: 'Unser Injera wird aus Teff-Mehl gebacken und ist von Natur aus glutenfrei – ideal für Zöliakie-Betroffene. Da wir in der Küche auch weizenhaltige Produkte verarbeiten, bitten wir Gäste mit Zöliakie, uns vorab zu kontaktieren.',
+      },
+      {
+        q: 'Gibt es laktosefreie Gerichte?',
+        a: 'Ja, die meisten unserer veganen Gerichte sind automatisch laktosefrei. Frag uns gerne bei der Reservierung nach Details – wir bereiten uns gerne optimal für dich vor.',
       },
       {
         q: 'Ist äthiopisches Essen gesund?',
-        a: 'Ja, äthiopische Küche gilt als eine der gesündesten der Welt! Teff-Mehl ist reich an Eisen, Kalzium und Ballaststoffen. Unsere Hülsenfrüchte (Linsen, Kichererbsen) liefern pflanzliches Protein. Die Gewürze wie Kurkuma, Ingwer und Knoblauch haben entzündungshemmende Eigenschaften. Viele Gerichte sind von Natur aus vegan und fettarm.',
+        a: 'Ja, äthiopische Küche gilt als eine der gesündesten der Welt! Teff-Mehl ist reich an Eisen, Kalzium und Ballaststoffen. Hülsenfrüchte liefern pflanzliches Protein. Kurkuma, Ingwer und Knoblauch wirken entzündungshemmend. Viele Gerichte sind von Natur aus vegan und fettarm.',
       },
     ],
   },
   {
-    category: 'Specials & Reservierung',
+    category: 'Kaffeezeremonie & Specials',
     icon: '☕',
     questions: [
       {
         q: 'Was ist eine äthiopische Kaffeezeremonie (Buna)?',
-        a: 'Äthiopien ist das Ursprungsland des Kaffees! Bei einer traditionellen Kaffeezeremonie (Buna) rösten wir die grünen Kaffeebohnen frisch vor Ihren Augen in der Pfanne. Der Kaffee wird dann in einer speziellen Tonkanne (Jebena) aufgebrüht und mit brennendem Weihrauch serviert. Ein absolutes Muss für Kaffee-Liebhaber in Salzburg!',
+        a: 'Äthiopien ist das Ursprungsland des Kaffees! Bei der traditionellen Kaffeezeremonie (Buna) rösten wir grüne Kaffeebohnen frisch vor Ihren Augen. Der Kaffee wird in einer Tonkanne (Jebena) aufgebrüht und mit brennendem Weihrauch serviert. Ein absolutes Muss für Kaffee-Liebhaber in Salzburg!',
+      },
+      {
+        q: 'Was ist Tej?',
+        a: 'Tej ist traditioneller äthiopischer Honigwein – eines der ältesten alkoholischen Getränke Afrikas, hergestellt aus Honig und dem Gesho-Strauch. Ein echtes Highlight für Genießer, bei HABESHA erhältlich.',
+      },
+      {
+        q: 'Was bedeutet "Gursha"?',
+        a: 'Gursha ist eine äthiopische Tradition der Zuneigung: Man formt ein Stück Injera mit Beilage und gibt es direkt in den Mund einer anderen Person – als Zeichen von Freundschaft und Wertschätzung. Bei uns darf gegurshot werden!',
       },
       {
         q: 'Kann man eure Speiseplatten gut in Gruppen teilen?',
-        a: 'Genau dafür sind sie gemacht! Äthiopisches Essen ist "Sharing Culture" pur. Wir servieren die verschiedenen Soßen und Fleischgerichte gemeinsam auf einer riesigen Injera-Platte in der Mitte des Tisches. So kann jeder von allem probieren – ideal für Date-Nights, Geburtstage oder Firmenfeiern.',
+        a: 'Genau dafür sind sie gemacht! Äthiopisches Essen ist „Sharing Culture" pur. Alle Soßen und Fleischgerichte werden gemeinsam auf einer großen Injera-Platte serviert – ideal für Date-Nights, Geburtstage oder Firmenfeiern.',
       },
       {
+        q: 'Kann man bei HABESHA etwas über äthiopische Kultur lernen?',
+        a: 'Ja! Wir leben äthiopische Kultur – vom Essen mit den Händen über die Kaffeezeremonie bis zu traditionellen Gewürzen und afrikanischem Geschirr. Jeder Besuch ist ein authentisches Kulturerlebnis direkt in Salzburg.',
+      },
+    ],
+  },
+  {
+    category: 'Reservierung & Besuch',
+    icon: '🎉',
+    questions: [
+      {
         q: 'Muss man im Habesha Restaurant reservieren?',
-        a: 'Eine Reservierung wird besonders am Wochenende und für Gruppen ab 4 Personen empfohlen. Unter der Woche sind spontane Besuche meist kein Problem. Bitte rufen Sie uns unter 0660 7324766 an — wir freuen uns auf Sie!',
+        a: 'Eine Reservierung wird besonders am Wochenende und für Gruppen ab 4 Personen empfohlen. Unter der Woche sind spontane Besuche meist kein Problem. Einfach anrufen: +43 660 7324766 – wir freuen uns auf Sie!',
+      },
+      {
+        q: 'Wie groß können Gruppen sein?',
+        a: 'Wir begrüßen gerne Gruppen jeder Größe. Für Runden ab 8 Personen bitte vorab anrufen, damit wir alles optimal vorbereiten können: +43 660 7324766.',
       },
       {
         q: 'Kann man im Habesha einen Geburtstag oder eine Firmenfeier feiern?',
-        a: 'Ja, sehr gerne! Das Habesha eignet sich hervorragend für Gruppen-Events. Unsere Sharing-Platten sind ideal für gemeinsame Feiern. Bitte kontaktieren Sie uns im Voraus für größere Gruppen, damit wir alles optimal vorbereiten können. Wir freuen uns, Ihren besonderen Anlass unvergesslich zu machen.',
+        a: 'Ja, sehr gerne! Das Habesha eignet sich hervorragend für Gruppenevents. Unsere Sharing-Platten sind ideal für gemeinsame Feiern. Bitte kontaktieren Sie uns im Voraus für größere Gruppen – wir machen Ihren Anlass unvergesslich.',
       },
       {
         q: 'Gibt es einen Mittagstisch oder ein Tagesmenü?',
-        a: 'Ja! Mittwoch bis Freitag sind wir von 11:00 bis 14:00 Uhr für den Mittagstisch geöffnet. Wir bieten ein wechselndes Tagesmenü mit traditionellen äthiopischen Gerichten zu einem attraktiven Mittagspreis an. Ideal für eine besondere Mittagspause in Salzburg.',
+        a: 'Ja! Mittwoch bis Freitag von 11:00 bis 14:00 Uhr bieten wir ein wechselndes Tagesmenü mit traditionellen äthiopischen Gerichten zu attraktiven Mittagspreisen an – ideal für eine besondere Mittagspause in Salzburg.',
+      },
+      {
+        q: 'Gibt es kinderfreundliche Gerichte?',
+        a: 'Ja! Unsere milden Alicha-Gerichte und die Injera-Platte sind ideal für Kinder. Das gemeinsame Essen von einer Platte macht Kindern besonders viel Spaß und weckt die Neugier auf neue Geschmäcker.',
       },
     ],
   },
@@ -83,15 +125,19 @@ const faqCategories = [
     questions: [
       {
         q: 'Wo genau befindet sich das Habesha Restaurant in Salzburg?',
-        a: 'Das Habesha Restaurant befindet sich am Gebirgsjägerplatz 1, 5020 Salzburg. Wir sind gut mit öffentlichen Verkehrsmitteln erreichbar und befinden uns im Herzen von Salzburg.',
+        a: 'Das Habesha Restaurant befindet sich am Gebirgsjägerplatz 1, 5020 Salzburg. Gut erreichbar mit öffentlichen Verkehrsmitteln.',
       },
       {
         q: 'Wie sind die Öffnungszeiten des Habesha Restaurants?',
-        a: 'Dienstag: 17:00–22:00 Uhr | Mittwoch bis Freitag: 11:00–14:00 und 17:00–22:00 Uhr | Samstag und Sonntag: 13:00–22:00 Uhr | Montag: Ruhetag. Für Feiertage und besondere Anlässe empfehlen wir, vorab anzurufen.',
+        a: 'Dienstag: 17:00–22:00 Uhr | Mittwoch bis Freitag: 11:00–14:00 und 17:00–22:00 Uhr | Samstag und Sonntag: 13:00–22:00 Uhr | Montag: Ruhetag. Für Feiertage empfehlen wir, vorab anzurufen.',
       },
       {
         q: 'Gibt es Parkplätze in der Nähe des Habesha Restaurants?',
-        a: 'In der Nähe des Gebirgsjägerplatzes gibt es öffentliche Parkmöglichkeiten. Wir empfehlen jedoch die Anreise mit öffentlichen Verkehrsmitteln, da Salzburg gut erschlossen ist. Bei Fragen zur Anreise helfen wir Ihnen gerne telefonisch weiter.',
+        a: 'In der Nähe des Gebirgsjägerplatzes gibt es öffentliche Parkmöglichkeiten. Wir empfehlen die Anreise mit öffentlichen Verkehrsmitteln. Bei Fragen zur Anreise helfen wir gerne weiter.',
+      },
+      {
+        q: 'Verkauft HABESHA auch afrikanisches Geschirr?',
+        a: 'Ja! Bei HABESHA gibt es afrikanisches Porzellan und Dekorationsartikel direkt im Restaurant zu kaufen – schöne Mitbringsel oder Geschenkideen mit afrikanischem Flair.',
       },
     ],
   },
@@ -101,19 +147,35 @@ const faqCategories = [
     questions: [
       {
         q: 'Liefert ihr das Essen auch nach Hause?',
-        a: 'Ja! Wir bringen Ihnen das authentische Habesha-Erlebnis direkt ins Wohnzimmer. Wir liefern in ausgewiesenen Gebieten in Salzburg mit unseren eigenen Fahrern. Sie können bequem online bestellen und entweder bar an der Tür oder vorab sicher mit Kreditkarte, Google Pay oder Revolut Pay bezahlen.',
+        a: 'Ja! Wir bringen das authentische Habesha-Erlebnis direkt ins Wohnzimmer. Online bestellen auf habesha-salzburg.at – bequem mit Kreditkarte, Apple Pay oder Google Pay bezahlen.',
+      },
+      {
+        q: 'Wie lange dauert die Lieferung?',
+        a: 'Die durchschnittliche Lieferzeit beträgt ca. 45 Minuten. Bestellungen nehmen wir bis 30 Minuten vor Geschäftsschluss entgegen.',
+      },
+      {
+        q: 'Gibt es eine Mindestbestellmenge?',
+        a: 'Ja, die Mindestbestellmenge beträgt 25 Euro.',
+      },
+      {
+        q: 'Wohin liefert HABESHA?',
+        a: 'Wir liefern hauptsächlich im Salzburger Stadtgebiet. Für Lieferungen in die Umgebung einfach anrufen – wir helfen gerne weiter: +43 660 7324766.',
+      },
+      {
+        q: 'Welche Zahlungsmethoden werden akzeptiert?',
+        a: 'Online: Kreditkarte, Debitkarte, Apple Pay und Google Pay. Bei Abholung auch Barzahlung möglich.',
       },
       {
         q: 'Kommt das Injera bei der Lieferung nicht matschig an?',
-        a: 'Keine Sorge! Wir verpacken das frische Injera-Brot und die warmen Soßen (Wots) separat. So bleibt das Brot schön fluffig und Sie können sich Ihre Platte zu Hause selbst anrichten.',
+        a: 'Keine Sorge! Wir verpacken das frische Injera-Brot und die warmen Soßen separat. So bleibt das Brot schön fluffig und Sie können sich die Platte zu Hause selbst anrichten.',
+      },
+      {
+        q: 'Gibt es ein Takeaway-Angebot?',
+        a: 'Ja! Gerichte zum Mitnehmen einfach online auf habesha-salzburg.at bestellen oder anrufen. Wir bereiten alles frisch für Sie vor.',
       },
       {
         q: 'Was kostet ein Hauptgericht im Habesha Restaurant?',
-        a: 'Unsere Hauptgerichte beginnen ab ca. 12 Euro. Die großen Sharing-Platten für zwei Personen liegen zwischen 20 und 28 Euro. Wir legen Wert auf faire Preise bei höchster Qualität und Authentizität.',
-      },
-      {
-        q: 'Gibt es ein Mitnahme-/Takeaway-Angebot?',
-        a: 'Ja! Sie können unsere Gerichte auch zum Mitnehmen bestellen. Rufen Sie uns einfach an oder bestellen Sie online über unsere Website. Wir bereiten alles frisch für Sie vor.',
+        a: 'Unsere Hauptgerichte beginnen ab ca. 12 Euro. Die großen Sharing-Platten für zwei Personen liegen zwischen 20 und 28 Euro – faire Preise bei höchster Qualität.',
       },
     ],
   },
@@ -177,9 +239,9 @@ export default function FAQ() {
     <div className="min-h-screen bg-[#0d1f1a]">
       <SEOHead
         title="FAQ – Häufige Fragen | HABESHA Salzburg"
-        description="Wo kann ich in Salzburg vegan, halal oder glutenfrei essen? Alle Antworten zu Öffnungszeiten, Lieferung, Kaffeezeremonie & mehr im HABESHA Restaurant Salzburg."
+        description="33 Antworten rund um HABESHA Salzburg: halal, vegan, glutenfrei, Injera, Kaffeezeremonie, Lieferung, Öffnungszeiten, Reservierung & mehr. Äthiopisches Restaurant Salzburg."
         canonical="https://www.habesha-salzburg.at/faq"
-        keywords="veganes Restaurant Salzburg FAQ, halal Restaurant Salzburg Fragen, glutenfreies Essen Salzburg, äthiopisches Restaurant Salzburg FAQ, Kaffeezeremonie Salzburg, vegan essen Salzburg, wo halal essen Salzburg, vegetarisch essen Salzburg, Lieferung Salzburg Restaurant, Öffnungszeiten HABESHA"
+        keywords="veganes Restaurant Salzburg FAQ, halal Restaurant Salzburg Fragen, glutenfreies Essen Salzburg, äthiopisches Restaurant Salzburg FAQ, Kaffeezeremonie Salzburg, vegan essen Salzburg, wo halal essen Salzburg, vegetarisch essen Salzburg, Lieferung Salzburg Restaurant, Öffnungszeiten HABESHA, Berbere Gewürz Salzburg, Injera glutenfrei Salzburg, Misir Wot vegan, Tej Honigwein Salzburg, Gursha äthiopische Tradition, afrikanisches Geschirr Salzburg, kinderfreundliches Restaurant Salzburg, Mindestbestellmenge Lieferung Salzburg, Gruppenessen Salzburg"
         structuredData={[
           {
             "@context": "https://schema.org",
