@@ -175,7 +175,7 @@ const faqCategories = [
       },
       {
         q: 'Was kostet ein Hauptgericht im Habesha Restaurant?',
-        a: 'Unsere Hauptgerichte beginnen ab ca. 12 Euro. Die großen Sharing-Platten für zwei Personen liegen zwischen 20 und 28 Euro – faire Preise bei höchster Qualität.',
+        a: 'Unsere Hauptgerichte beginnen ab ca. 14 Euro. Die Sharing-Platten für 1–2 Personen liegen zwischen 18 und 38 Euro – faire Preise bei höchster Qualität.',
       },
     ],
   },
