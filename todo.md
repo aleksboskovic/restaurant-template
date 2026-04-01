@@ -61,7 +61,7 @@
 - [x] "Created by QuantumCreativity" Link im Footer einbauen (https://www.quantumcreativity.one), auf jeder Seite sichtbar
 
 ## SEO / Barrierefreiheit
-- [ ] Alle fehlenden alt-Attribute bei Bildern ergänzen (12 Bilder betroffen)
+- [x] Alle fehlenden alt-Attribute bei Bildern ergänzen (12 Bilder betroffen)
 
 ## Speisekarte v2 (Druck-PDF)
 - [ ] Jedes Gericht mit großem Foto-Platzhalter (wie alte Karte)
@@ -75,7 +75,7 @@
 
 ## EmailJS – Bestellbestätigung
 - [x] EmailJS Service ID, Template ID und Public Key als Secrets hinterlegen
-- [ ] EmailJS-Template-Inhalt in der EmailJS-Konsole befüllen (Variablen: to_name, to_email, order_num, order_type, items_list, total_price, delivery_time, payment_method, delivery_address, notes)
+- [x] EmailJS-Template-Inhalt in der EmailJS-Konsole befüllen (Variablen: to_name, to_email, order_num, order_type, items_list, total_price, delivery_time, payment_method, delivery_address, notes)
 - [x] Server-seitige E-Mail-Funktion via EmailJS REST API implementieren (server/email.ts)
 - [x] E-Mail-Versand nach erfolgreicher Bestellung auslösen (orders.create in routers.ts)
 - [x] Owner-Benachrichtigung bei neuer Bestellung hinzugefügt
